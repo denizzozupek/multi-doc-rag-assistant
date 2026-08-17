@@ -1,0 +1,103 @@
+import os
+import logging
+from langchain_openai import OpenAIEmbeddings
+from langchain_chroma import Chroma
+from langchain_core.retrievers import BaseRetriever
+from src.config import PERSIST_DIRECTORY, EMBEDDING_MODEL_NAME
+
+logger = logging.getLogger(__name__)
+
+
+def get_existing_file_names_with_hashes() -> dict[str, str]:
+    if not os.path.exists(PERSIST_DIRECTORY):
+        logger.info(
+            f"Persist directory '{PERSIST_DIRECTORY}' does not exist. Returning empty dictionary."
+        )
+        return {}
+
+    try:
+        embedding_model = OpenAIEmbeddings(
+            model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
+        )
+        vector_db = Chroma(
+            persist_directory=PERSIST_DIRECTORY, embedding_function=embedding_model
+        )
+        results = vector_db.get(include=["metadatas"])
+        metadatas = results.get("metadatas") or []
+
+        file_hash_map = {
+            x["source"]: x["pdf_hash"]
+            for x in metadatas
+            if x and "source" in x and "pdf_hash" in x
+        }
+
+        return file_hash_map
+    except Exception as e:
+        logger.error(
+            f"Error retrieving existing file names from vector database: {e}",
+            exc_info=True,
+        )
+        return {}
+
+
+def delete_file_from_vector_db(file_name: str) -> bool:
+    """Deletes a file from the vector database based on its name."""
+    try:
+        embedding_model = OpenAIEmbeddings(
+            model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
+        )
+        vector_db = Chroma(
+            persist_directory=PERSIST_DIRECTORY, embedding_function=embedding_model
+        )
+        vector_db.delete(where={"source": file_name})
+        logger.info(f"Successfully deleted '{file_name}' from the vector database.")
+        return True
+    except Exception as e:
+        logger.error(
+            f"Error deleting '{file_name}' from the vector database: {e}", exc_info=True
+        )
+        return False
+
+
+def get_retriever(k: int = 3, selected_files: list = None) -> BaseRetriever | None:
+    """Returns an LCEL Retriever. If selected_files is provided, the retriever will only search within those files."""
+
+    embedding_model = OpenAIEmbeddings(
+        model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
+    )
+
+    if not os.path.exists(PERSIST_DIRECTORY) or not os.listdir(PERSIST_DIRECTORY):
+        logger.info(
+            "Vector database not found on disk. Please load your documents to create the vector database."
+        )
+        return None
+    else:
+        logger.info("Loading existing vector database from disk...")
+        try:
+            vector_db = Chroma(
+                persist_directory=PERSIST_DIRECTORY, embedding_function=embedding_model
+            )
+        except Exception as e:
+            logger.error(
+                f"Error occurred while loading vector database: {e}", exc_info=True
+            )
+            raise
+
+    # LangChain wraps the Chroma DB object inside a VectorStoreRetriever (an LCEL Runnable) to query the vector DB.
+
+    search_kwargs = {"k": k}
+
+    if selected_files:
+        logger.info(
+            f"Filtering retriever to only include selected files: {selected_files}"
+        )
+        if len(selected_files) == 1:
+            search_kwargs["filter"] = {"source": selected_files[0]}
+        else:
+            search_kwargs["filter"] = {"source": {"$in": selected_files}}
+    else:
+        logger.info(
+            "No specific files selected. Using the entire vector database for retrieval."
+        )
+
+    return vector_db.as_retriever(search_type="similarity", search_kwargs=search_kwargs)

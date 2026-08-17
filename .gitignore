@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+*.log
+.env
+.pytest_cache/
+pdf_download.py
+app_cli.py
