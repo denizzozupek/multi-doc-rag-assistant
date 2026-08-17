@@ -31,7 +31,7 @@ def format_docs_as_context(docs) -> str:
     try:
         if not docs:
             logger.warning("No documents retrieved. Returning empty context.")
-            return "No relevant context found."
+            return ""
         return "\n\n".join([doc.page_content for doc in docs])
     except Exception as e:
         logger.error(

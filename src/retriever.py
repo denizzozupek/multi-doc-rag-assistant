@@ -59,7 +59,22 @@ def delete_file_from_vector_db(file_name: str) -> bool:
         return False
 
 
-def get_retriever(k: int = 3, selected_files: list = None) -> BaseRetriever | None:
+def build_filter(selected_files: list[str] | None = None) -> dict | None:
+    if selected_files:
+        logger.info(
+            f"Filtering retriever to only include selected files: {selected_files}"
+        )
+        if len(selected_files) == 1:
+            return {"source": selected_files[0]}
+        else:
+            return {"source": {"$in": selected_files}}
+    else:
+        logger.info(
+            "No specific files selected. Using the entire vector database for retrieval."
+        )
+        return None
+
+def get_retriever(k: int = 3, selected_files: list[str] = None) -> BaseRetriever | None:
     """Returns an LCEL Retriever. If selected_files is provided, the retriever will only search within those files."""
 
     embedding_model = OpenAIEmbeddings(
@@ -83,21 +98,10 @@ def get_retriever(k: int = 3, selected_files: list = None) -> BaseRetriever | No
             )
             raise
 
-    # LangChain wraps the Chroma DB object inside a VectorStoreRetriever (an LCEL Runnable) to query the vector DB.
-
     search_kwargs = {"k": k}
-
-    if selected_files:
-        logger.info(
-            f"Filtering retriever to only include selected files: {selected_files}"
-        )
-        if len(selected_files) == 1:
-            search_kwargs["filter"] = {"source": selected_files[0]}
-        else:
-            search_kwargs["filter"] = {"source": {"$in": selected_files}}
-    else:
-        logger.info(
-            "No specific files selected. Using the entire vector database for retrieval."
-        )
-
+    filter_dict = build_filter(selected_files)
+    if filter_dict:
+        search_kwargs["filter"] = filter_dict
+        
+    # LangChain wraps the Chroma DB object inside a VectorStoreRetriever (an LCEL Runnable) to query the vector DB.
     return vector_db.as_retriever(search_type="similarity", search_kwargs=search_kwargs)

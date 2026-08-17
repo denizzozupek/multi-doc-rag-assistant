@@ -100,7 +100,7 @@ def ingestion_pipeline(
 
         if not chunks:
             logger.warning("No chunks were created from the PDF. Check the PDF content.")
-            return None
+            return ValueError("No chunks were created from the PDF. Check the PDF content.")
 
 
         file_name = os.path.basename(pdf_path)
