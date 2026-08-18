@@ -1,5 +1,7 @@
 import os
 import logging
+from typing import Any
+from langchain_core.embeddings import Embeddings
 from langchain_openai import OpenAIEmbeddings
 from langchain_chroma import Chroma
 from langchain_core.retrievers import BaseRetriever
@@ -74,14 +76,24 @@ def build_filter(selected_files: list[str] | None = None) -> dict | None:
         )
         return None
 
-def get_retriever(k: int = 3, selected_files: list[str] = None) -> BaseRetriever | None:
+
+def get_retriever(
+    k: int = 3,
+    selected_files: list[str] | None = None,
+    embedding_model: Embeddings | None = None,
+    persist_directory: str | None = None,
+) -> BaseRetriever | None:
     """Returns an LCEL Retriever. If selected_files is provided, the retriever will only search within those files."""
 
-    embedding_model = OpenAIEmbeddings(
-        model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
-    )
+    if embedding_model is None:
+        embedding_model = OpenAIEmbeddings(
+            model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
+        )
 
-    if not os.path.exists(PERSIST_DIRECTORY) or not os.listdir(PERSIST_DIRECTORY):
+    if persist_directory is None:
+        persist_directory = PERSIST_DIRECTORY
+
+    if not os.path.exists(persist_directory) or not os.listdir(persist_directory):
         logger.info(
             "Vector database not found on disk. Please load your documents to create the vector database."
         )
@@ -90,7 +102,7 @@ def get_retriever(k: int = 3, selected_files: list[str] = None) -> BaseRetriever
         logger.info("Loading existing vector database from disk...")
         try:
             vector_db = Chroma(
-                persist_directory=PERSIST_DIRECTORY, embedding_function=embedding_model
+                persist_directory=persist_directory, embedding_function=embedding_model
             )
         except Exception as e:
             logger.error(
@@ -98,10 +110,10 @@ def get_retriever(k: int = 3, selected_files: list[str] = None) -> BaseRetriever
             )
             raise
 
-    search_kwargs = {"k": k}
+    search_kwargs: dict[str, Any] = {"k": k}
     filter_dict = build_filter(selected_files)
     if filter_dict:
         search_kwargs["filter"] = filter_dict
-        
+
     # LangChain wraps the Chroma DB object inside a VectorStoreRetriever (an LCEL Runnable) to query the vector DB.
     return vector_db.as_retriever(search_type="similarity", search_kwargs=search_kwargs)

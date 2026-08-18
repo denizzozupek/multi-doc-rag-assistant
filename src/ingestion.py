@@ -50,7 +50,7 @@ def is_file_already_ingested(
 
 # STEP 3: Ingestion Pipeline
 def ingestion_pipeline(
-    pdf_path: str = PDF_PATH, persist_directory: str = PERSIST_DIRECTORY
+    pdf_path: str = PDF_PATH, persist_directory: str | None = None, embedding_model: Embeddings | None = None
 ) -> VectorStore:
     """PDF dosyasını yükler, chunk'lara böler, metadata ekler ve ChromaDB'ye kalıcı olarak kaydeder.
 
@@ -58,9 +58,13 @@ def ingestion_pipeline(
     """
     logger.info("Starting ingestion pipeline...")
 
-    embedding_model = OpenAIEmbeddings(
-        model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
-    )
+    if embedding_model is None:
+        embedding_model = OpenAIEmbeddings(
+            model=EMBEDDING_MODEL_NAME, timeout=30, max_retries=3
+        )
+
+    if persist_directory is None:
+        persist_directory = PERSIST_DIRECTORY
 
     pdf_hash = compute_pdf_hash(pdf_path)
     logger.info(f"Processing PDF with hash: {pdf_hash}")
@@ -100,7 +104,7 @@ def ingestion_pipeline(
 
         if not chunks:
             logger.warning("No chunks were created from the PDF. Check the PDF content.")
-            return ValueError("No chunks were created from the PDF. Check the PDF content.")
+            raise ValueError("No chunks were created from the PDF. Check the PDF content.")
 
 
         file_name = os.path.basename(pdf_path)
