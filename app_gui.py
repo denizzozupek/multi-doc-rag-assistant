@@ -39,10 +39,12 @@ def process_uploaded_file(uploaded_file):
         st.error(f"Error processing uploaded file '{uploaded_file.name}': {e}")
 
 
-@st.cache_resource
-def get_cached_chain(selected_files_tuple: tuple[str, ...] | None = None) -> Runnable:
-    selected_files = list(selected_files_tuple) if selected_files_tuple else None
+def get_chain(selected_files_tuple: list[str] | None = None) -> Runnable | None:
+    selected_files = selected_files_tuple if selected_files_tuple else None
     active_retriever = get_retriever(k=3, selected_files=selected_files)
+    if active_retriever is None:
+        logger.warning("No retriever could be created. Returning None for the chain.")
+        return None
     return conversation_history(retriever=active_retriever)
 
 
@@ -82,7 +84,7 @@ with st.sidebar:
                 st.session_state.processed_files.pop(file_name, None)
         st.rerun()
 
-    chain = get_cached_chain(tuple(selected_files) if selected_files else None)
+    chain = get_chain(selected_files)
 
     st.title("Chats")
 
@@ -121,6 +123,10 @@ user_prompt = st.chat_input("Type your message here...")
 
 
 if user_prompt:
+    if chain is None:
+        st.warning(
+            "No retriever is available. Please upload and process at least one PDF file to enable the retrieval-based chat functionality.")
+        st.stop()
     if not current_chat["messages"]:
         current_chat["title"] = (
             user_prompt[:20] + "..." if len(user_prompt) > 20 else user_prompt
