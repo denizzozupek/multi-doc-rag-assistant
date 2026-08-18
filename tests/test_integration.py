@@ -138,6 +138,6 @@ def test_retriever_filters_by_selected_files(create_pdf, tmp_path):
     query = "Tell me about Succession TV show."
     results = retriever.invoke(query)
 
-    assert len(results) > 0
+    assert len(results) == 1
     assert all(doc.metadata["source"] == pdf_path1.name for doc in results) 
     assert all(doc.metadata["source"] != pdf_path2.name for doc in results)
