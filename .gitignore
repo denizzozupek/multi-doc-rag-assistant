@@ -7,3 +7,6 @@ __pycache__/
 .pytest_cache/
 pdf_download.py
 app_cli.py
+
+# Local Chroma/Vector DB artifacts
+data/vector_db/
