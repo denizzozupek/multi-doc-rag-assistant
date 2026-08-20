@@ -48,8 +48,7 @@ def evaluate_retrieval_single(retriever, query: str, expected_text_match: str):
 def evaluate_retrieval(
     filepath: str = "data/ground_truth.json",
     k: int = 5,
-    search_type: str = "similarity",
-    score_threshold: float | None = None,
+    search_type: str = "similarity"
 ):
     with open(filepath, "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
