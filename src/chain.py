@@ -18,7 +18,6 @@ from src.config import REDIS_URL
 import logging
 import os
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -61,7 +60,9 @@ def history_search_chain(llm: BaseChatModel | None = None) -> Runnable:
 
 
 def qa_chain(
-    retriever: BaseRetriever | None = None, llm: BaseChatModel | None = None
+    retriever: BaseRetriever | None = None,
+    llm: BaseChatModel | None = None,
+    return_context: bool = False,
 ) -> Runnable:
     """Returns a Runnable that answers a question using the provided context."""
     if llm is None:
@@ -90,16 +91,13 @@ def qa_chain(
         ]
     )
 
-    # RAG CHAIN (LCEL CHAIN)
-    rag_chain = (
-        RunnablePassthrough.assign(
-            context=memory_chain | retriever | format_docs_as_context
-        )
-        | qa_prompt
-        | llm
-        | StrOutputParser()
+    base_chain = RunnablePassthrough.assign(
+        context=memory_chain | retriever | format_docs_as_context
     )
-
+    if return_context:
+        rag_chain = base_chain.assign(answer=qa_prompt | llm | StrOutputParser())
+    else:
+        rag_chain = base_chain | qa_prompt | llm | StrOutputParser()
     return rag_chain
 
 
