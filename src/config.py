@@ -15,3 +15,5 @@ if not REDIS_URL:
 PDF_PATH = "data/time-clocks.pdf"
 PERSIST_DIRECTORY = "data/vector_db"
 EMBEDDING_MODEL_NAME = "text-embedding-3-small"
+CHUNK_SIZE = 1000
+OVERLAP_SIZE = 200

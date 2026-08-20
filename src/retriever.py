@@ -82,6 +82,7 @@ def get_retriever(
     selected_files: list[str] | None = None,
     embedding_model: Embeddings | None = None,
     persist_directory: str | None = None,
+    search_type: str = "similarity",
 ) -> BaseRetriever | None:
     """Returns an LCEL Retriever. If selected_files is provided, the retriever will only search within those files."""
 
@@ -116,4 +117,4 @@ def get_retriever(
         search_kwargs["filter"] = filter_dict
 
     # LangChain wraps the Chroma DB object inside a VectorStoreRetriever (an LCEL Runnable) to query the vector DB.
-    return vector_db.as_retriever(search_type="similarity", search_kwargs=search_kwargs)
+    return vector_db.as_retriever(search_type=search_type, search_kwargs=search_kwargs)

@@ -3,19 +3,19 @@ import logging
 import os
 
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyMuPDFLoader
 from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import VectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from src.config import EMBEDDING_MODEL_NAME, PDF_PATH, PERSIST_DIRECTORY
+from src.config import EMBEDDING_MODEL_NAME, PDF_PATH, PERSIST_DIRECTORY, CHUNK_SIZE, OVERLAP_SIZE
 
 logger = logging.getLogger(__name__)
 
 # STEP 1: Hashing Function
 def compute_pdf_hash(pdf_path: str) -> str:
-    """PDF dosyasının SHA-256 hash değerini 8KB bloklar halinde okuyarak hesaplar."""
+    """Calculates the SHA-256 hash of a PDF file to uniquely identify it."""
     try:
         hasher = hashlib.sha256()
         with open(pdf_path, "rb") as f:
@@ -33,7 +33,7 @@ def compute_pdf_hash(pdf_path: str) -> str:
 def is_file_already_ingested(
     hash_value: str, persist_dir: str, embedding_model: Embeddings
 ) -> bool:
-    """Belirtilen hash'e sahip dökümanın ChromaDB içinde var olup olmadığını kontrol eder."""
+    """Checks if a document with the specified hash is already ingested in ChromaDB."""
     if not os.path.exists(persist_dir):
         return False
 
@@ -52,9 +52,9 @@ def is_file_already_ingested(
 def ingestion_pipeline(
     pdf_path: str = PDF_PATH, persist_directory: str | None = None, embedding_model: Embeddings | None = None
 ) -> VectorStore:
-    """PDF dosyasını yükler, chunk'lara böler, metadata ekler ve ChromaDB'ye kalıcı olarak kaydeder.
+    """Ingests a PDF file, splits it into chunks, adds metadata, and stores it in ChromaDB.
 
-    Dosya daha önce işlendiyse API çağrısını atlar (0 maliyet).
+    If the file has already been processed, it skips the ingestion API call (0 cost).
     """
     logger.info("Starting ingestion pipeline...")
 
@@ -81,7 +81,7 @@ def ingestion_pipeline(
 
     # STEP 4: Load PDF and Split into Chunks
     try:
-        loader = PyPDFLoader(pdf_path)
+        loader = PyMuPDFLoader(pdf_path)
         raw_documents = loader.load()
         documents = [doc for doc in raw_documents if doc.page_content.strip()]
 
@@ -96,7 +96,7 @@ def ingestion_pipeline(
     # STEP 5: Split Documents into Chunks and Add Metadata
     try:
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000, chunk_overlap=200
+            chunk_size=CHUNK_SIZE, chunk_overlap=OVERLAP_SIZE
         )
         chunks = text_splitter.split_documents(documents)
 

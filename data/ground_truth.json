@@ -1,0 +1,178 @@
+[
+  {
+    "id": "tc_001",
+    "source_doc": "arxiv1.pdf",
+    "query": "How is the price of anarchy defined and measured in game theory?",
+    "expected_text_match": "worst social welfare",
+    "ground_truth_answer": "The price of anarchy is defined by comparing the ratio of the social welfare of the centralized solution to that of the social welfare of the Nash equilibrium with the worst social welfare (assuming a positive social welfare function). It quantifies the cost of using a decentralized solution compared to an optimal centralized one.",
+    "question_type": "definition"
+  },
+  {
+    "id": "tc_002",
+    "source_doc": "arxiv1.pdf",
+    "query": "Why does replacing an exact VCG mechanism with an approximation create issues according to Nisan and Ronen?",
+    "expected_text_match": "does not preserve truthfulness",
+    "ground_truth_answer": "Replacing a VCG mechanism by an approximation does not preserve truthfulness. Even though truthfully revealing one's private type is an optimal strategy in an exact VCG mechanism, it may no longer be optimal in an approximation.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_003",
+    "source_doc": "arxiv1.pdf",
+    "query": "What is the computational complexity of the winner determination problem in combinatorial auctions?",
+    "expected_text_match": "NP-complete in general",
+    "ground_truth_answer": "The winner determination problem is NP-complete in general, even in relatively simple classes of combinatorial auctions with only two bidders making rather restricted bids, and it is not polynomial-time approximable.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_004",
+    "source_doc": "arxiv1.pdf",
+    "query": "In traffic routing, what is the maximum price of anarchy when travel time is a linear function of congestion?",
+    "expected_text_match": "price of anarchy is at most 4/3",
+    "ground_truth_answer": "Roughgarden and Tardos showed that if travel time is a linear function of congestion, the price of anarchy is at most 4/3.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_005",
+    "source_doc": "arxiv1.pdf",
+    "query": "Under what condition regarding the number of faulty nodes t and total nodes n can Byzantine agreement be reached?",
+    "expected_text_match": "fewer than a third of the agents",
+    "ground_truth_answer": "In the presence of Byzantine failures, agreement can be reached if and only if fewer than a third of the agents can be faulty (t < n/3).",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_006",
+    "source_doc": "arxiv1.pdf",
+    "query": "Is deterministic consensus possible in an asynchronous system with crash failures?",
+    "expected_text_match": "impossible to reach agreement",
+    "ground_truth_answer": "No, in an asynchronous system, it is impossible to reach agreement using a deterministic protocol even if there is at most one failure (t = 1) and only crash failures are allowed.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_007",
+    "source_doc": "arxiv1.pdf",
+    "query": "What is the computational complexity class of finding a Nash equilibrium in normal-form games?",
+    "expected_text_match": "PPAD-complete",
+    "ground_truth_answer": "Finding a Nash equilibrium in normal-form games is a PPAD-complete (polynomial parity argument, directed case) problem.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_008",
+    "source_doc": "arxiv1.pdf",
+    "query": "What does the Gibbard-Satterthwaite theorem state regarding strategic voting in nondictatorial voting schemes?",
+    "expected_text_match": "better off voting strategically",
+    "ground_truth_answer": "The Gibbard-Satterthwaite theorem shows that if there are at least three alternatives, then in any nondictatorial voting scheme, there exist preferences under which an agent is better off voting strategically rather than ranking candidates by their true preferences.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_009",
+    "source_doc": "arxiv1.pdf",
+    "query": "What file sharing patterns were observed in empirical studies of the Gnutella P2P network?",
+    "expected_text_match": "studies of the Gnutella network",
+    "ground_truth_answer": "Studies of the Gnutella network by Adar and Huberman showed that almost 70 percent of users share no files, and nearly 50 percent of all responses originate from the top 1 percent of sharing hosts.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_010",
+    "source_doc": "arxiv1.pdf",
+    "query": "What can be achieved when implementing mediators using cheap talk if n > 3k + 3t holds?",
+    "expected_text_match": "requires no knowledge of other agents",
+    "ground_truth_answer": "If n > 3k + 3t, a (k, t)-robust strategy with a mediator can be implemented using cheap talk. This implementation requires no knowledge of other agents' utilities, and the cheap talk protocol has a bounded running time that does not depend on utilities.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_011",
+    "source_doc": "arxiv2.pdf",
+    "query": "What are the parametric and non-parametric memory components of RAG models?",
+    "expected_text_match": "dense vector index of Wikipedia",
+    "ground_truth_answer": "In RAG models, the parametric memory is a pre-trained sequence-to-sequence transformer (BART-large), and the non-parametric memory is a dense vector index of Wikipedia accessed using a pre-trained neural retriever (DPR).",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_012",
+    "source_doc": "arxiv2.pdf",
+    "query": "How do RAG-Sequence and RAG-Token differ in their use of retrieved passages during text generation?",
+    "expected_text_match": "different passages per token",
+    "ground_truth_answer": "RAG-Sequence conditions on the same retrieved document across the entire generated sequence, whereas RAG-Token can use and marginalize over different retrieved passages for each individual generated token.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_013",
+    "source_doc": "arxiv2.pdf",
+    "query": "Why is the document encoder kept fixed during RAG model fine-tuning?",
+    "expected_text_match": "costly as it requires the document index",
+    "ground_truth_answer": "The document encoder (BERTd) is kept fixed because updating it during training is computationally costly, requiring periodic re-indexing of the entire document collection. Only the query encoder (BERTq) and BART generator are fine-tuned.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_014",
+    "source_doc": "arxiv2.pdf",
+    "query": "How is the Wikipedia knowledge source chunked and indexed in the RAG experiments?",
+    "expected_text_match": "disjoint 100-word chunks",
+    "ground_truth_answer": "Using the December 2018 Wikipedia dump, each Wikipedia article is split into disjoint 100-word chunks, yielding a total of 21 million documents. Embeddings are computed with the document encoder and indexed using FAISS with HNSW approximation.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_015",
+    "source_doc": "arxiv2.pdf",
+    "query": "What advantage does generative answer formulation offer over extractive QA approaches in open-domain QA?",
+    "expected_text_match": "clues about the answer",
+    "ground_truth_answer": "Documents containing clues about the answer without containing the answer verbatim can still contribute towards generating a correct answer, which is not possible with standard extractive reader architectures.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_016",
+    "source_doc": "arxiv2.pdf",
+    "query": "What were the results of human evaluations regarding factuality when comparing BART and RAG on Jeopardy question generation?",
+    "expected_text_match": "more factual than RAG in only 7.1%",
+    "ground_truth_answer": "In human evaluations across 452 generation pairs, BART was found to be more factual than RAG in only 7.1% of cases, whereas RAG was more factual in 42.7% of cases (with both deemed good in an additional 17% of cases).",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_017",
+    "source_doc": "arxiv2.pdf",
+    "query": "What is the total number of trainable parameters in the fine-tuned RAG models?",
+    "expected_text_match": "626M trainable parameters",
+    "ground_truth_answer": "RAG models have a total of 626M trainable parameters: 110M from the DPR BERT-base query encoder and 406M from the BART-large sequence-to-sequence generator (the document encoder is not trained).",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_018",
+    "source_doc": "arxiv2.pdf",
+    "query": "What was demonstrated by the index hot-swapping experiment using 2016 and 2018 Wikipedia dumps?",
+    "expected_text_match": "2016 world leaders",
+    "ground_truth_answer": "The experiment demonstrated that RAG's world knowledge can be updated dynamically at test time without any retraining simply by replacing the non-parametric index: RAG answered 70% correctly for 2016 world leaders using the 2016 index and 68% for 2018 world leaders using the 2018 index.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_019",
+    "source_doc": "arxiv2.pdf",
+    "query": "How does the Thorough Decoding procedure operate for RAG-Sequence models?",
+    "expected_text_match": "additional forward pass for each document",
+    "ground_truth_answer": "In Thorough Decoding, beam search is run for each retrieved document. To estimate the marginal probability of a candidate hypothesis y, an additional forward pass is run for every document where y did not appear in the beam, multiplying generator probabilities by retriever probabilities and summing across all beams.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_020",
+    "source_doc": "arxiv2.pdf",
+    "query": "What is retrieval collapse and how does it manifest during training?",
+    "expected_text_match": "learn to retrieve the same documents",
+    "ground_truth_answer": "Retrieval collapse occurs when the retrieval component learns to retrieve the same set of documents regardless of the input, causing the generator to ignore retrieved documents and behave essentially identically to a parametric-only baseline like BART.",
+    "question_type": "direct"
+  },
+  {
+    "id": "tc_021",
+    "source_doc": "arxiv1.pdf",
+    "query": "How does the Raft consensus algorithm handle leader election timeouts?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The provided document discusses game theory, mechanism design, and Byzantine agreement, but it does not contain any information about the Raft consensus algorithm or its leader election timeouts.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_022",
+    "source_doc": "arxiv2.pdf",
+    "query": "What is the optimal learning rate and batch size for training the LoRA adapter on LLaMA-2?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The provided document introduces the original RAG architecture using BART and DPR on Wikipedia dumps; it does not contain details regarding LoRA fine-tuning or LLaMA-2 hyperparameters.",
+    "question_type": "out_of_scope"
+  }
+]
