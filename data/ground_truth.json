@@ -174,5 +174,113 @@
     "expected_text_match": null,
     "ground_truth_answer": "The provided document introduces the original RAG architecture using BART and DPR on Wikipedia dumps; it does not contain details regarding LoRA fine-tuning or LLaMA-2 hyperparameters.",
     "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_023",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is a combinatorial auction and why is communicating bids challenging in such auctions?"
+      },
+      {
+        "role": "assistant",
+        "content": "A combinatorial auction allows bidders to bid on bundles of items. Communicating bids is challenging because with n items there are 2^n possible bundles, which can require exponential communication length in general."
+      }
+    ],
+    "query": "What is the computational complexity of solving its winner determination problem?",
+    "expected_text_match": "not even polynomial-time approximable",
+    "ground_truth_answer": "The winner determination problem in combinatorial auctions is NP-complete in general (even with only two bidders making restricted bids) and is not polynomial-time approximable."
+  },
+  {
+    "id": "tc_024",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is the Byzantine agreement problem in distributed computing?"
+      },
+      {
+        "role": "assistant",
+        "content": "The Byzantine agreement problem involves n soldiers/agents, up to t of which may be faulty, where nonfaulty agents must reach the exact same decision (such as attack or retreat), matching their initial preferences if all nonfaulty agents agree."
+      }
+    ],
+    "query": "Under what condition can it be solved if faulty agents exhibit malicious behavior?",
+    "expected_text_match": "presence of Byzantine failures iff",
+    "ground_truth_answer": "In the presence of Byzantine (malicious) failures, agreement can be reached if and only if fewer than a third of the agents are faulty (t < n/3)."
+  },
+  {
+    "id": "tc_025",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "How is the price of anarchy applied to traffic routing problems?"
+      },
+      {
+        "role": "assistant",
+        "content": "In traffic routing, travel time increases with congestion. The price of anarchy measures the cost of using decentralized selfish routing compared to an optimal centralized assignment that minimizes total average travel time."
+      }
+    ],
+    "query": "How does this metric behave when the travel latency function is nonlinear versus linear?",
+    "expected_text_match": "nonlinear function of the congestion",
+    "ground_truth_answer": "The price of anarchy is unbounded if the travel time is a nonlinear function of congestion, but is at most 4/3 if the travel time is a linear function."
+  },
+  {
+    "id": "tc_026",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What are the two formulations of RAG models: RAG-Sequence and RAG-Token?"
+      },
+      {
+        "role": "assistant",
+        "content": "RAG-Sequence uses the same retrieved document to generate the entire output sequence, whereas RAG-Token can retrieve and marginalize over different documents across each generated token."
+      }
+    ],
+    "query": "How does the decoding procedure work for the first model during test time?",
+    "expected_text_match": "run beam search for each document",
+    "ground_truth_answer": "For RAG-Sequence, beam search is run per retrieved document to obtain candidate hypotheses Y. In Thorough Decoding, additional forward passes score hypotheses across documents where they did not appear in the beam before summing marginal probabilities; Fast Decoding approximates ungenerated hypotheses as zero probability to avoid extra passes."
+  },
+  {
+    "id": "tc_027",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is index hot-swapping in non-parametric memory models like RAG?"
+      },
+      {
+        "role": "assistant",
+        "content": "Index hot-swapping is the ability to update the model's factual knowledge dynamically at test time without any model retraining, simply by replacing the underlying non-parametric document index with a newer version."
+      }
+    ],
+    "query": "How was this capability validated using world leader queries from different years?",
+    "expected_text_match": "82 world leaders who had changed",
+    "ground_truth_answer": "Index hot-swapping was validated using 82 world leaders that changed between 2016 and 2018: RAG achieved 70% accuracy for 2016 leaders with the 2016 index and 68% for 2018 leaders with the 2018 index, while mismatched index-query pairs dropped significantly (to 4%-12%)."
+  },
+  {
+    "id": "tc_028",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "How do RAG models perform on the Jeopardy question generation task?"
+      },
+      {
+        "role": "assistant",
+        "content": "On Jeopardy question generation, RAG models outperform BART baselines in Q-BLEU-1, and human evaluators rated RAG generations as significantly more factual (42.7% vs 7.1%) and specific."
+      }
+    ],
+    "query": "Why does it perform particularly well on these questions that combine multiple pieces of information?",
+    "expected_text_match": "combine content from several documents",
+    "ground_truth_answer": "RAG-Token performs well on multi-fact questions because it can draw and combine information from several retrieved documents for different tokens within the same generated output, while leveraging parametric memory to complete known entity names."
   }
 ]
