@@ -1,6 +1,7 @@
 # Multi-Document Conversational RAG Assistant
 
-A robust, multi-document Retrieval-Augmented Generation (RAG) system featuring history-aware query rewriting, metadata-filtered retrieval, and LLM-as-a-Judge evaluation.
+Conversational RAG pipeline built with LangChain (LCEL) and ChromaDB — evaluated for context retention, cross-contamination, and generation faithfulness.
+
 ![Demo](assets/demo.gif)
 ---
 
