@@ -1,10 +1,7 @@
 # Multi-Document Conversational RAG Assistant
 
 A robust, multi-document Retrieval-Augmented Generation (RAG) system featuring history-aware query rewriting, metadata-filtered retrieval, and LLM-as-a-Judge evaluation.
-<p align="center">
-![demo](https://github.com/user-attachments/assets/4c6c4859-82a5-4116-9320-06b87a990211)
-</p>
-
+![Demo](assets/demo.gif)
 ---
 
 ## 1. Problem Statement
