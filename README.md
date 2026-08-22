@@ -1,6 +1,9 @@
 # Multi-Document Conversational RAG Assistant
 
 A robust, multi-document Retrieval-Augmented Generation (RAG) system featuring history-aware query rewriting, metadata-filtered retrieval, and LLM-as-a-Judge evaluation.
+<p align="center">
+![demo](https://github.com/user-attachments/assets/4c6c4859-82a5-4116-9320-06b87a990211)
+</p>
 
 ---
 
@@ -175,9 +178,8 @@ echo OPENAI_API_KEY="your-openai-api-key" > .env
 
 ### Running the Evaluation Suite
 
-Bash
+```bash
 
-```
 # Run Retrieval Benchmarks (Hit Rate & MRR)
 python -m eval.retrieval_evaluation
 
@@ -187,9 +189,8 @@ python -m eval.generation_evaluation
 
 ### Running the Application UI
 
-Bash
 
-```
+```bash
 streamlit run app.py
 ```
 
