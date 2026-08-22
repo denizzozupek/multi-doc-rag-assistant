@@ -8,9 +8,6 @@ from src.ingestion import ingestion_pipeline
 from src.config import CHUNK_SIZE, OVERLAP_SIZE
 from src.chain import history_search_chain
 
-# ==========================================
-# Logging Configuration
-# ==========================================
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -20,9 +17,7 @@ logging.basicConfig(
 history_chain = history_search_chain()
 
 
-# ==========================================
-# Helper Functions
-# ==========================================
+# HELPER FUNCTIONS
 def normalize_text(text: str) -> str:
     """Normalize text for consistent comparison by lowercasing and stripping extra whitespace."""
     return " ".join(text.lower().split())
@@ -47,9 +42,7 @@ def resolve_query(item: dict, history_chain) -> str:
     return item["query"]
 
 
-# ==========================================
-# Evaluation Logic
-# ==========================================
+# EVALUATION LOGIC (Hit Rate and MRR Metrics)
 def evaluate_retrieval_single(retriever, query: str, expected_text_match: str):
     """
     Execute retrieval for a single query and compute Hit Rate and MRR metrics.
@@ -83,12 +76,8 @@ def evaluate_retrieval_single(retriever, query: str, expected_text_match: str):
         logger.error(f"Error during retrieval for query '{query}': {e}", exc_info=True)
         return hit_score, mrr_score, []
 
-
+# EVALUATE MULTI-TURN AND SINGLE-TURN QUERIES
 def evaluate_item(item: dict, retriever, history_chain) -> dict:
-    """
-    Evaluate a single test case.
-    For multi-turn queries, calculates both Baseline (raw query) and History-Aware metrics.
-    """
     question_type = item.get("question_type")
     raw_query = item["query"]
     expected_text_match = item.get("expected_text_match")
@@ -124,6 +113,7 @@ def evaluate_item(item: dict, retriever, history_chain) -> dict:
     }
 
 
+# EVALUATION PIPELINE
 def evaluate_retrieval(
     filepath: str = "data/ground_truth.json",
     k: int = 5,
@@ -144,6 +134,8 @@ def evaluate_retrieval(
     mrr_total = 0
     total_baseline_hits = 0
     total_baseline_mrr = 0
+    total_multi_turn_hits = 0
+    total_multi_turn_mrr = 0
     multi_turn_count = 0
     detailed_results = []
 
@@ -167,15 +159,17 @@ def evaluate_retrieval(
         result = evaluate_item(item, retriever, history_chain)
         detailed_results.append(result)
 
-        # Aggregate overall performance metrics
+        # Add overall performance metrics
         total_hits += result["hit_score"]
         mrr_total += result["mrr_score"]
 
-        # Track multi-turn baseline metrics for A/B comparison
+        # Track multi-turn baseline metrics for analysis between baseline and history-aware retrieval
         if result["question_type"] == "multi_turn_followup":
             multi_turn_count += 1
             total_baseline_hits += result["baseline_hit_score"]
             total_baseline_mrr += result["baseline_mrr_score"]
+            total_multi_turn_hits += result["hit_score"]
+            total_multi_turn_mrr += result["mrr_score"]
 
     total_questions = len(evaluation_questions)
 
@@ -191,16 +185,19 @@ def evaluate_retrieval(
         "multi_turn_baseline_mrr": (
             total_baseline_mrr / multi_turn_count if multi_turn_count > 0 else 0
         ),
+        "multi_turn_history_aware_hit_rate": (
+            total_multi_turn_hits / multi_turn_count if multi_turn_count > 0 else 0
+        ),
+        "multi_turn_history_aware_mrr": (
+            total_multi_turn_mrr / multi_turn_count if multi_turn_count > 0 else 0
+        ),
         "detailed_results": detailed_results,
         "chunk_size": CHUNK_SIZE,
         "overlap_size": OVERLAP_SIZE,
     }
 
-
-# ==========================================
-# Result Persistence & Reporting
-# ==========================================
-def save_evaluation_results(results: dict, output_path: str = "evaluation_results"):
+# SAVE EVALUATION RESULTS
+def save_evaluation_results(results: dict, output_path: str = "eval/evaluation_results/evaluation_results"):
     """Save evaluation metrics to a timestamped JSON file and print summary stats to console."""
     run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_file = f"{output_path}_{run_id}.json"
@@ -224,13 +221,11 @@ def save_evaluation_results(results: dict, output_path: str = "evaluation_result
         f"Average Hit Rate: {results['average_hit_rate']:.4f}\n"
         f"Average MRR: {results['average_mrr']:.4f}\n"
         f"Multi-turn Baseline Hit Rate: {results['multi_turn_baseline_hit_rate']:.4f}\n"
-        f"Multi-turn Baseline MRR: {results['multi_turn_baseline_mrr']:.4f}"
+        f"Multi-turn Baseline MRR: {results['multi_turn_baseline_mrr']:.4f}\n"
+        f"Multi-turn History-Aware Hit Rate: {results['multi_turn_history_aware_hit_rate']:.4f}\n"
+        f"Multi-turn History-Aware MRR: {results['multi_turn_history_aware_mrr']:.4f}\n"
     )
 
-
-# ==========================================
-# Execution Entry Point
-# ==========================================
 if __name__ == "__main__":
     # Ensure vector store contains ingested documents before evaluating
     ingestion_pipeline(pdf_path="data/arxiv1.pdf")
@@ -238,6 +233,6 @@ if __name__ == "__main__":
 
     # Run retrieval benchmark and save results
     results = evaluate_retrieval(
-        filepath="data/ground_truth.json", k=8, search_type="similarity"
+        filepath="data/ground_truth.json", k=5, search_type="similarity"
     )
-    save_evaluation_results(results, output_path="evaluation_results")
+    save_evaluation_results(results, output_path="eval/evaluation_results/evaluation_results")
