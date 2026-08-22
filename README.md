@@ -2,7 +2,7 @@
 
 A robust, multi-document Retrieval-Augmented Generation (RAG) system featuring history-aware query rewriting, metadata-filtered retrieval, and LLM-as-a-Judge evaluation.
 <p align="center">
-<img width="800" height="450" alt="demo" src="[https://github.com/user-attachments/assets/4c6c4859-82a5-4116-9320-06b87a990211](https://github.com/user-attachments/assets/4c6c4859-82a5-4116-9320-06b87a990211)" />
+![demo](https://github.com/user-attachments/assets/4c6c4859-82a5-4116-9320-06b87a990211)
 </p>
 
 ---
