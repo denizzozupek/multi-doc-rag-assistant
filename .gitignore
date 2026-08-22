@@ -3,8 +3,20 @@ __pycache__/
 *$py.class
 .venv/
 *.log
+.mypy_cache/
+.ruff_cache/
 .env
 .pytest_cache/
-pdf_download.py
-app_cli.py
+
+# Local environment and IDE files
+.streamlit/secrets.toml
+.vscode/
+
+
+# Operating system files
+.DS_Store
+Thumbs.db
 data/vector_db/
+chat_history.json
+eval/evaluation_results/
+judge_results_*.json

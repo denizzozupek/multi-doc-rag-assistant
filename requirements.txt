@@ -1,8 +1,23 @@
-langchain-openai>=0.1.0
-langchain-core>=0.1.0
-langchain-community>=0.1.0
-langchain-chroma>=0.1.0
-langchain-text-splitters>=0.1.0
-streamlit>=1.28.0
-python-dotenv>=1.0.0
-pytest>=7.4.0
+# LangChain Core & Integrations
+langchain-core==1.5.5
+langchain-community==0.4.2
+langchain-openai==1.5.1
+langchain-chroma==1.1.0
+langchain-text-splitters==1.1.2
+
+# LLM & Vector Store Providers
+openai==3.1.0
+chromadb==1.5.9
+
+# Data Processing & Parsing
+pymupdf==1.28.2
+pydantic==2.13.4
+pydantic-settings==2.15.0
+
+# State, Cache & Environment
+redis==8.1.0
+python-dotenv==1.2.3
+
+# UI & Testing
+streamlit==1.61.1
+pytest==9.1.1
