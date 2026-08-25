@@ -1,5 +1,5 @@
 import pytest
-from src.chain import format_docs_as_context
+from src.generation.chain import format_docs_as_context
 from langchain_core.documents import Document
 
 def test_format_docs_as_context_no_docs():

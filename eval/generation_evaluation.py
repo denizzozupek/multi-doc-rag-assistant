@@ -6,7 +6,7 @@ from eval.eval_prompt import build_judge_prompt
 from langchain_openai import ChatOpenAI
 from langchain_core.runnables import Runnable
 from pydantic import BaseModel, Field
-from src.chain import qa_chain
+from src.generation.chain import qa_chain
 from src.utils import format_history
 
 load_dotenv()

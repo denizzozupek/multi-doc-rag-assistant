@@ -2,9 +2,9 @@ import os
 import uuid
 import streamlit as st
 from langchain_core.runnables import Runnable
-from src.chain import conversation_history
+from src.generation.chain import conversation_history
 from src.ingestion import ingestion_pipeline
-from src.retriever import (
+from src.retrieval.retriever import (
     get_retriever,
     delete_file_from_vector_db,
     get_existing_file_names_with_hashes,

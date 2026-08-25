@@ -3,10 +3,10 @@ import logging
 import datetime
 
 from src.utils import format_history
-from src.retriever import get_retriever
+from src.retrieval.retriever import get_retriever
 from src.ingestion import ingestion_pipeline
 from src.config import CHUNK_SIZE, OVERLAP_SIZE
-from src.chain import history_search_chain
+from src.generation.chain import history_search_chain
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(

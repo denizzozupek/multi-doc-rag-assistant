@@ -1,9 +1,9 @@
 import uuid
 import pytest
 from reportlab.pdfgen import canvas
-from src.chain import conversation_history, get_chat_history
+from src.generation.chain import conversation_history, get_chat_history
 from src.ingestion import ingestion_pipeline
-from src.retriever import get_retriever
+from src.retrieval.retriever import get_retriever
 
 
 @pytest.fixture

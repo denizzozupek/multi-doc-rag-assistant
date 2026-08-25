@@ -12,8 +12,8 @@ from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 from langchain_core.retrievers import BaseRetriever
 
-from src.retriever import get_retriever
-from src.prompt import memory_search_system_prompt, system_prompt
+from src.retrieval.retriever import get_retriever
+from src.generation.prompt import memory_search_system_prompt, system_prompt
 from src.config import REDIS_URL
 import logging
 import os

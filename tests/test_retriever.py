@@ -1,5 +1,5 @@
 import pytest
-from src.retriever import build_filter
+from src.retrieval.retriever import build_filter
 
 
 def test_build_filter_no_selected_files():

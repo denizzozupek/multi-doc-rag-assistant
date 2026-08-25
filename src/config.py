@@ -12,8 +12,9 @@ if not OPENAI_API_KEY:
 if not REDIS_URL:
     raise ValueError("REDIS_URL is not set in the environment variables.")
 
-PDF_PATH = "data/time-clocks.pdf"
+PDF_PATH = "data/arxiv1.pdf"
 PERSIST_DIRECTORY = "data/vector_db"
+BM25_PERSIST_DIRECTORY = "data/bm25_index"
 EMBEDDING_MODEL_NAME = "text-embedding-3-small"
 CHUNK_SIZE = 1000
 OVERLAP_SIZE = 200
