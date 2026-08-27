@@ -8,6 +8,7 @@ __pycache__/
 .env
 .pytest_cache/
 
+
 # Local environment and IDE files
 .streamlit/secrets.toml
 .vscode/
@@ -20,3 +21,4 @@ data/vector_db/
 chat_history.json
 eval/evaluation_results/
 judge_results_*.json
+data/bm25_index/
