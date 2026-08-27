@@ -6,9 +6,9 @@ from src.generation.chain import conversation_history
 from src.ingestion import ingestion_pipeline
 from src.retrieval.retriever import (
     get_retriever,
-    delete_file_from_vector_db,
     get_existing_file_names_with_hashes,
 )
+from src.utils import delete_file, save_chat_history
 import tempfile
 import logging
 import hashlib
@@ -48,7 +48,7 @@ def process_uploaded_file(uploaded_file):
             needs_ingestion = True
         # Scenario 2: File has been processed before, but the content has changed
         elif st.session_state.processed_files[uploaded_file.name] != current_hash:
-            delete_file_from_vector_db(uploaded_file.name)
+            delete_file(uploaded_file.name)
             needs_ingestion = True
         # Scenario 3: File has been processed before and the content has not changed
         if needs_ingestion:
@@ -70,7 +70,7 @@ def process_uploaded_file(uploaded_file):
 
 def get_chain(selected_files: list[str] | None = None) -> Runnable | None:
 
-    active_retriever = get_retriever(k=3, selected_files=selected_files)
+    active_retriever = get_retriever(k=15, fetch_k=20, selected_files=selected_files, search_type="hybrid")
     if active_retriever is None:
         logger.warning("No retriever could be created. Returning None for the chain.")
         return None
@@ -111,7 +111,7 @@ with st.sidebar:
 
     if st.button("Delete Selected Files", disabled=not selected_files):
         for file_name in selected_files:
-            if delete_file_from_vector_db(file_name):
+            if delete_file(file_name):
                 st.session_state.processed_files.pop(file_name, None)
         st.success("Selected files deleted successfully.")
         save_chat_history()
