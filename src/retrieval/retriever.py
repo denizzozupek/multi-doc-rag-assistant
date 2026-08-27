@@ -57,6 +57,7 @@ def get_dense_retriever(
     if filter_dict:
         search_kwargs["filter"] = filter_dict
 
+    # Return the retriever with the specified search type and parameters as a BaseRetriever instance. This allows for flexible retrieval strategies (similarity or MMR) based on the provided search_type.
     return vector_db.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
 
 

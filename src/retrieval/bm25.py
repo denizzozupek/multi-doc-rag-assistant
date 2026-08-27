@@ -22,29 +22,34 @@ class BM25Retriever(BaseRetriever):
 
     def _get_relevant_documents(self, query: str) -> list[Document]:
         query_tokens = bm25s.tokenize(query, stemmer=self.stemmer, stopwords="en")
-        fetch_k = len(self.retriever.corpus) if self.selected_files else self.k
 
-        results, _ = self.retriever.retrieve(
-            query_tokens, corpus=self.retriever.corpus, k=fetch_k
+        if not self.retriever.corpus:
+            return []
+
+        fetch_k = max(self.k * 5, 50)
+        results, scores = self.retriever.retrieve(
+            query_tokens, 
+            corpus=self.retriever.corpus, 
+            k=min(fetch_k, len(self.retriever.corpus))
         )
 
         matched_docs: list[Document] = []
-        for item in results[0]:
+        for item, score in zip(results[0], scores[0]):
+            doc_meta = item.get("metadata", {})
+
             if self.selected_files is not None:
-                doc_source = item.get("metadata", {}).get("source")
-                if doc_source not in self.selected_files:
+                if doc_meta.get("source") not in self.selected_files:
                     continue
 
             matched_docs.append(
-                Document(page_content=item["page_content"], metadata=item["metadata"])
+                Document(page_content=item["page_content"], metadata=doc_meta)
             )
 
-            if len(matched_docs) == self.k:
+            if len(matched_docs) >= self.k:
                 break
 
         return matched_docs
-
-
+    
 def get_bm25_retriever(
     bm25_persist_dir: str | None = None,
     stemmer_instance: Stemmer.Stemmer | None = None,

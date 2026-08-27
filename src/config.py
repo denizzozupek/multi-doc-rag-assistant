@@ -18,3 +18,4 @@ BM25_PERSIST_DIRECTORY = "data/bm25_index"
 EMBEDDING_MODEL_NAME = "text-embedding-3-small"
 CHUNK_SIZE = 1000
 OVERLAP_SIZE = 200
+CROSS_ENCODER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
