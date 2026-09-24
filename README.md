@@ -217,7 +217,24 @@ multidoc_rag_assistant/
 ### Prerequisites
 * Python 3.10+
 * OpenAI API Key
-* Redis instance (local or remote)
+* Docker & Docker Compose (recommended for Redis)
+
+### Starting Redis with Docker Compose
+
+The project ships with a [`docker-compose.yml`](docker-compose.yml) that spins up a Redis instance with AOF persistence enabled. This is the recommended way to run Redis locally.
+
+```bash
+# Start Redis in the background
+docker compose up -d
+
+# Verify it's running
+docker compose ps
+
+# Stop when done
+docker compose down
+```
+
+> **Note:** Redis data is persisted in a Docker named volume (`redis_data`), so conversation history survives container restarts.
 
 ### Installation
 ```bash
@@ -239,12 +256,13 @@ pip install -r requirements.txt
 cp .env.example .env
 # Edit .env and add your keys:
 #   OPENAI_API_KEY=your-openai-api-key
-#   REDIS_URL=redis://localhost:6379
+#   REDIS_URL=redis://localhost:6379/0
 ```
 
 ### Running the Application UI
 
 ```bash
+# Make sure Redis is running first (docker compose up -d)
 streamlit run app_gui.py
 ```
 
