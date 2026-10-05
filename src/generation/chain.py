@@ -64,7 +64,7 @@ def history_search_chain(llm: BaseChatModel | None = None) -> Runnable:
 def retrieve_and_rerank(
     query: str, retriever: BaseRetriever, model: Any = None, top_k: int = 3
 ) -> list[Document]:
-    """Arama sorgusunu çalıştırır ve sonuçları Cross-Encoder ile yeniden sıralar."""
+    """Retrieves documents using the provided retriever and reranks them using the specified model."""
     raw_docs = retriever.invoke(query)
     return reranker(
         query=query,
