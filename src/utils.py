@@ -3,6 +3,7 @@ import os
 from langchain_chroma import Chroma
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage
 from langchain_openai import OpenAIEmbeddings
+from langchain_core.documents import Document
 import bm25s
 import shutil
 import Stemmer
@@ -126,3 +127,13 @@ def delete_file(file_name: str) -> bool:
     else:
         logger.error(f"Failed to delete '{file_name}' from either vector db or BM25 index.")
         return False
+
+
+def format_docs_as_context(docs: list[Document] | None) -> str:
+    """Formats a list of Document objects into a single context string separated by double newlines."""
+    if not docs:
+        return ""
+
+    return "\n\n".join(
+        doc.page_content for doc in docs if getattr(doc, "page_content", None)
+    )
