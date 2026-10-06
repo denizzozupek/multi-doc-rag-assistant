@@ -1,16 +1,19 @@
 from typing import Callable, Any
 import logging
 
+from langchain_core.messages import AIMessage
+
+from src.generation.chain import DEFAULT_LLM
 from src.retrieval.reranker import reranker
 from state import State
-from generation.prompt import memory_search_system_prompt
+from generation.prompt import memory_search_system_prompt, system_prompt
+from utils import format_docs_as_context
 
 from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.retrievers import BaseRetriever
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -39,6 +42,10 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
             last_content if isinstance(last_content, str) else str(last_content)
         )
 
+        if human_input is None or not human_input.strip():
+            logger.warning("No user input found in the last message. Returning empty rewrite query.")
+            return {"rewrite_query": ""}
+
         chat_history = state["messages"][:-1]
 
         llm_response = chain.invoke(
@@ -58,16 +65,14 @@ def create_retrieve_and_rerank_node(
 ) -> Callable[[State], dict]:
     """Creates a node that retrieves documents using the provided retriever and reranks them using the specified model."""
 
+    if retriever is None:
+        raise ValueError("Retriever must be provided to create the retrieve and rerank node.")
+
     def retrieve_and_rerank_node(state: State) -> dict:
         """Retrieves documents using the provided retriever and reranks them using the specified model, then returns the top_k documents in a dictionary."""
 
 
         query = state.get("rewrite_query")
-
-        if not query:
-            messages = state.get("messages", [])
-            last_content = messages[-1].content if messages else ""
-            query = last_content if isinstance(last_content, str) else str(last_content)
 
         if not query or not query.strip():
             logger.warning("No query provided. Returning empty document list.")
@@ -93,3 +98,40 @@ def create_retrieve_and_rerank_node(
     logger.info("Retrieve and rerank node created successfully.")
     return retrieve_and_rerank_node
 
+def create_generation_node(
+    llm: BaseChatModel | None = None,
+) -> Callable[[State], dict]:
+    """Creates a node that answers a question using the provided context."""
+
+    if llm is None:
+        llm = DEFAULT_LLM
+
+    prompt = ChatPromptTemplate.from_messages(
+        [
+            ("system", system_prompt),
+            MessagesPlaceholder(variable_name="messages"),
+        ]
+    )
+
+    chain = prompt | llm
+
+    def generation_node(state: State) -> dict:
+        """Answers a question using the provided context and returns the answer in a dictionary."""
+
+        documents = state.get("documents", [])
+        messages = state.get("messages", [])
+
+        if not messages:
+            logger.warning("No messages found in state. Returning empty response.")
+            return {"messages": [AIMessage(content="No messages found to generate a response.")]}
+
+        if documents:
+            context = format_docs_as_context(documents)
+            response = chain.invoke({"context": context, "messages": messages})
+            return {"messages": [response]}
+        else:
+            logger.warning("No documents found in state. Returning default response.")
+            return {"messages": [AIMessage(content="No relevant documents found to answer the question.")]}
+
+    logger.info("Generation node created successfully.")
+    return generation_node

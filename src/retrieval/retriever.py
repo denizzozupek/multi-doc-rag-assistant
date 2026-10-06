@@ -7,12 +7,12 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.retrievers import BaseRetriever
 from langchain_openai import OpenAIEmbeddings
 
-from src.retrieval.bm25 import get_bm25_retriever
 from src.config import (
     BM25_PERSIST_DIRECTORY,
     EMBEDDING_MODEL_NAME,
     PERSIST_DIRECTORY,
 )
+from src.retrieval.bm25 import get_bm25_retriever
 from src.retrieval.hybrid_search import HybridRetriever
 from src.utils import build_filter
 
@@ -37,7 +37,10 @@ def get_dense_retriever(
         persist_directory = PERSIST_DIRECTORY
 
     if not os.path.exists(persist_directory) or not os.listdir(persist_directory):
-        logger.info("Vector database not found on disk.")
+        logger.warning(
+            "Vector database not found or empty on disk at path: %s",
+            persist_directory,
+        )
         return None
 
     try:
@@ -46,7 +49,9 @@ def get_dense_retriever(
             embedding_function=embedding_model,
         )
     except Exception as e:
-        logger.error(f"Error occurred while loading vector database: {e}", exc_info=True)
+        logger.error(
+            "Error occurred while loading vector database: %s", e, exc_info=True
+        )
         raise
 
     search_kwargs: dict[str, Any] = {"k": k}
@@ -57,7 +62,6 @@ def get_dense_retriever(
     if filter_dict:
         search_kwargs["filter"] = filter_dict
 
-    # Return the retriever with the specified search type and parameters as a BaseRetriever instance. This allows for flexible retrieval strategies (similarity or MMR) based on the provided search_type.
     return vector_db.as_retriever(search_type=search_type, search_kwargs=search_kwargs)
 
 
@@ -100,7 +104,6 @@ def get_retriever(
 
         return HybridRetriever(dense_retriever=dense, bm25_retriever=bm25, k=k)
 
-    # Default: Dense search (similarity / mmr)
     return get_dense_retriever(
         k=k,
         fetch_k=fetch_k,
@@ -109,13 +112,3 @@ def get_retriever(
         persist_directory=persist_directory,
         search_type=search_type,
     )
-
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    hybrid = get_retriever(search_type="hybrid", k=2, selected_files=["arxiv1.pdf"])
-    if hybrid:
-        test_docs = hybrid.invoke("Nash equilibrium")
-        print(f"Retrieved {len(test_docs)} hybrid documents.")
-        for d in test_docs:
-            print(f"- Source: {d.metadata.get('source')} | Text: {d.page_content[:80]}...")
