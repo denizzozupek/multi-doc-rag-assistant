@@ -1,18 +1,23 @@
-from typing import Callable, Any
 import logging
-
-from langchain_core.messages import AIMessage
-
-from src.generation.chain import DEFAULT_LLM
-from src.retrieval.reranker import reranker
-from state import State
-from generation.prompt import memory_search_system_prompt, system_prompt
-from utils import format_docs_as_context
+from typing import Any, Callable
 
 from langchain_core.language_models import BaseChatModel
+from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.retrievers import BaseRetriever
+
+from src.config import (
+    DEFAULT_RERANK_TOP_K,
+    RETRIEVAL_FETCH_K,
+    RETRIEVAL_TO_RERANK_TOP_K,
+    RETRIEVER_SEARCH_TYPE,
+)
+from src.generation.chain import DEFAULT_LLM
+from src.generation.prompt import memory_search_system_prompt, system_prompt
+from src.graph.state import State
+from src.retrieval.reranker import reranker
+from src.retrieval.retriever import get_retriever
+from src.utils import format_docs_as_context
 
 logger = logging.getLogger(__name__)
 
@@ -32,8 +37,7 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
     chain = memory_search_prompt | llm | StrOutputParser()
 
     def rewrite_query_node(state: State) -> dict:
-        """Reads the chat history and the latest user message from the state, generates a rewritten query using the LLM, and returns it in a dictionary."""
-
+        """Reads chat history and latest message from state, rewrites the query using LLM, and returns it."""
         if "messages" not in state or not state["messages"]:
             raise ValueError("State must contain 'messages' with at least one message.")
 
@@ -42,7 +46,7 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
             last_content if isinstance(last_content, str) else str(last_content)
         )
 
-        if human_input is None or not human_input.strip():
+        if not human_input or not human_input.strip():
             logger.warning("No user input found in the last message. Returning empty rewrite query.")
             return {"rewrite_query": ""}
 
@@ -61,34 +65,50 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
 
 # 2. Retrieve and Rerank Node
 def create_retrieve_and_rerank_node(
-    retriever: BaseRetriever, model: Any = None, top_k: int = 3
+    model: Any = None,
+    retrieval_fetch_k: int = RETRIEVAL_FETCH_K,
+    top_k: int = DEFAULT_RERANK_TOP_K,
+    retrieval_k: int = RETRIEVAL_TO_RERANK_TOP_K,
+    search_type: str = RETRIEVER_SEARCH_TYPE,
 ) -> Callable[[State], dict]:
-    """Creates a node that retrieves documents using the provided retriever and reranks them using the specified model."""
-
-    if retriever is None:
-        raise ValueError("Retriever must be provided to create the retrieve and rerank node.")
+    """Creates a node that retrieves documents dynamically based on selected files and reranks them."""
 
     def retrieve_and_rerank_node(state: State) -> dict:
-        """Retrieves documents using the provided retriever and reranks them using the specified model, then returns the top_k documents in a dictionary."""
-
-
+        """Retrieves and reranks documents based on runtime state, returning the top_k results."""
         query = state.get("rewrite_query")
+        selected_files = state.get("selected_files")
+
+        if not selected_files:
+            logger.warning("No selected files provided. Using all available documents for retrieval.")
 
         if not query or not query.strip():
             logger.warning("No query provided. Returning empty document list.")
             return {"documents": []}
-           
+
+        retriever = get_retriever(
+            k=retrieval_k,
+            fetch_k=retrieval_fetch_k,
+            selected_files=selected_files,
+            search_type=search_type,
+        )
+        if retriever is None:
+            logger.warning("Retriever could not be created. Returning empty document list.")
+            return {"documents": []}
+
         raw_docs = retriever.invoke(query)
-        logger.info("Retrieved documents: %s", len(raw_docs))
+        logger.info("Retrieved documents count: %s", len(raw_docs))
 
         if not raw_docs:
             logger.warning("No documents retrieved.")
             return {"documents": []}
 
-        # Rerank the documents if a model is provided
+        # Rerank documents if a cross-encoder model is supplied, otherwise slice by top_k
         if model:
             reranked_docs = reranker(
-                query=query, documents=raw_docs, model=model, top_k=top_k
+                query=query,
+                documents=raw_docs,
+                model=model,
+                top_k=top_k,
             )
         else:
             reranked_docs = raw_docs[:top_k]
@@ -98,11 +118,12 @@ def create_retrieve_and_rerank_node(
     logger.info("Retrieve and rerank node created successfully.")
     return retrieve_and_rerank_node
 
+
+# 3. Generation Node
 def create_generation_node(
     llm: BaseChatModel | None = None,
 ) -> Callable[[State], dict]:
     """Creates a node that answers a question using the provided context."""
-
     if llm is None:
         llm = DEFAULT_LLM
 
@@ -117,7 +138,6 @@ def create_generation_node(
 
     def generation_node(state: State) -> dict:
         """Answers a question using the provided context and returns the answer in a dictionary."""
-
         documents = state.get("documents", [])
         messages = state.get("messages", [])
 
@@ -129,9 +149,9 @@ def create_generation_node(
             context = format_docs_as_context(documents)
             response = chain.invoke({"context": context, "messages": messages})
             return {"messages": [response]}
-        else:
-            logger.warning("No documents found in state. Returning default response.")
-            return {"messages": [AIMessage(content="No relevant documents found to answer the question.")]}
+
+        logger.warning("No documents found in state. Returning default response.")
+        return {"messages": [AIMessage(content="No relevant documents found to answer the question.")]}
 
     logger.info("Generation node created successfully.")
     return generation_node
