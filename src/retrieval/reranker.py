@@ -2,7 +2,7 @@ import os
 import logging
 from sentence_transformers import CrossEncoder
 from langchain_core.documents import Document
-from src.config import CROSS_ENCODER_MODEL_NAME
+from src.config import CROSS_ENCODER_MODEL_NAME, DEFAULT_RERANK_TOP_K
 
 logger = logging.getLogger(__name__)
 
@@ -33,7 +33,7 @@ def reranker(
     query: str,
     documents: list[Document],
     model: CrossEncoder | None = None,
-    top_k: int = 2,
+    top_k: int = DEFAULT_RERANK_TOP_K,
 ) -> list[Document]:
     """Reranks documents using a cross-encoder model."""
     if not documents:
@@ -57,4 +57,3 @@ def reranker(
     # Return the top_k documents based on the scores
     top_docs = [doc for doc, _ in scored_docs[:top_k]]
     return top_docs
-

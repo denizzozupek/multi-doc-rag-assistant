@@ -9,8 +9,12 @@ from langchain_openai import OpenAIEmbeddings
 
 from src.config import (
     BM25_PERSIST_DIRECTORY,
+    DEFAULT_RERANK_TOP_K,
     EMBEDDING_MODEL_NAME,
     PERSIST_DIRECTORY,
+    RETRIEVAL_FETCH_K,
+    RETRIEVAL_TO_RERANK_TOP_K,
+    RETRIEVER_SEARCH_TYPE,
 )
 from src.retrieval.bm25 import get_bm25_retriever
 from src.retrieval.hybrid_search import HybridRetriever
@@ -20,12 +24,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_dense_retriever(
-    k: int = 3,
-    fetch_k: int = 20,
+    k: int = DEFAULT_RERANK_TOP_K,
+    fetch_k: int = RETRIEVAL_FETCH_K,
     selected_files: list[str] | None = None,
     embedding_model: Embeddings | None = None,
     persist_directory: str | None = None,
-    search_type: str = "similarity",
+    search_type: str = RETRIEVER_SEARCH_TYPE,
 ) -> BaseRetriever | None:
     """Returns an LCEL Chroma vector store retriever."""
     if embedding_model is None:
@@ -66,13 +70,13 @@ def get_dense_retriever(
 
 
 def get_retriever(
-    k: int = 3,
-    fetch_k: int = 20,
+    k: int = RETRIEVAL_TO_RERANK_TOP_K,
+    fetch_k: int = RETRIEVAL_FETCH_K,
     selected_files: list[str] | None = None,
     embedding_model: Embeddings | None = None,
     persist_directory: str | None = None,
     bm25_persist_dir: str | None = None,
-    search_type: str = "similarity",
+    search_type: str = RETRIEVER_SEARCH_TYPE,
 ) -> BaseRetriever | None:
     """Unified entry point returning Dense, BM25, or Hybrid retriever."""
     if search_type == "bm25":

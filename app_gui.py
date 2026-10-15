@@ -1,30 +1,79 @@
 import os
 import uuid
 import streamlit as st
-from langchain_core.runnables import Runnable
-from src.generation.chain import conversation_history
-from src.ingestion.ingestion import ingestion_pipeline
-from src.retrieval.retriever import get_retriever
-from src.utils import delete_file, get_existing_file_names_with_hashes
 import tempfile
 import logging
 import hashlib
 import json
+from pathlib import Path
+import sqlite3
+from typing import Any
+
+
+from langchain_core.runnables import Runnable
+from langgraph.checkpoint.sqlite import SqliteSaver
+
+from src.graph.main import graph_pipeline
+from src.generation.chain import conversation_history
+from src.ingestion.ingestion import ingestion_pipeline
+from src.retrieval.retriever import get_retriever
+from src.utils import delete_file, get_existing_file_names_with_hashes
+from src.config import (
+    RETRIEVER_SEARCH_TYPE,
+    SQLITE_DB_PATH,
+    DEFAULT_LLM,
+    RETRIEVAL_FETCH_K,
+    DEFAULT_RERANK_TOP_K,
+    RETRIEVAL_TO_RERANK_TOP_K,
+)
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-def load_chat_history() -> dict:
-    chat_history_file = "data/chat_history.json"
-    if os.path.exists(chat_history_file):
-        try:
-            with open(chat_history_file, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except json.JSONDecodeError as e:
-            logger.error(f"Error decoding JSON from chat history file: {e}", exc_info=True)
-            return {}
-    return {}
+SQLITE_DB_PATH = Path(SQLITE_DB_PATH)
+Path(SQLITE_DB_PATH.parent).mkdir(parents=True, exist_ok=True)
 
+
+@st.cache_resource
+def get_compiled_app():
+    """Initializes the SQLite checkpointer, builds the workflow graph, and returns the compiled application."""
+    try:
+        conn = sqlite3.connect(SQLITE_DB_PATH, check_same_thread=False)
+        saver = SqliteSaver(conn)
+
+        workflow = graph_pipeline(
+            llm=DEFAULT_LLM,
+            top_k=DEFAULT_RERANK_TOP_K,
+        )
+
+        app = workflow.compile(checkpointer=saver)
+        logger.info("LangGraph workflow compiled successfully with SQLite checkpointer.")
+        return app
+    except Exception as e:
+        logger.error("Failed to compile LangGraph workflow: %s", e, exc_info=True)
+        raise
+
+def start_chat_session():
+    """Initializes the chat session state in Streamlit."""
+    if "chats" not in st.session_state:
+        st.session_state.chats = []
+        loaded_chat_history = load_chat_history()
+        if loaded_chat_history:
+            pass
+
+        
+def load_chat_history(thread_id: str, app : Any) -> list:
+    config = {"configurable": {"thread_id": thread_id}}
+    try:
+        state_snapshot = app.get_state(config=config)
+        values = getattr(state_snapshot, "values", None) or {}
+        state_data = values.get("messages", [])
+    except Exception as e:
+        logger.error("Error loading chat history for thread_id '%s': %s", thread_id, e, exc_info=True)
+        state_data = []
+    return state_data
+
+    
 def save_chat_history():
     chat_history = st.session_state.chats
     chat_history_file = "data/chat_history.json"
@@ -39,7 +88,7 @@ def process_uploaded_file(uploaded_file):
         file_bytes = uploaded_file.getvalue()
         current_hash = hashlib.sha256(file_bytes).hexdigest()
         needs_ingestion = False
-        
+
         # Scenario 1:  File has not been processed before
         if uploaded_file.name not in st.session_state.processed_files:
             needs_ingestion = True
@@ -54,20 +103,32 @@ def process_uploaded_file(uploaded_file):
                 with open(temp_file_path, "wb") as f:
                     f.write(file_bytes)
                 ingestion_pipeline(pdf_path=temp_file_path)
-            
+
             st.session_state.processed_files[uploaded_file.name] = current_hash
             st.toast(f"'{uploaded_file.name}' processed successfully.")
         else:
-            logger.info(f"'{uploaded_file.name}' has already been processed and is up-to-date.")
-            st.toast(f"'{uploaded_file.name}' has already been processed and is up-to-date.")
+            logger.info(
+                f"'{uploaded_file.name}' has already been processed and is up-to-date."
+            )
+            st.toast(
+                f"'{uploaded_file.name}' has already been processed and is up-to-date."
+            )
 
     except Exception as e:
-        logger.error(f"Error processing uploaded file '{uploaded_file.name}': {e}", exc_info=True)
+        logger.error(
+            f"Error processing uploaded file '{uploaded_file.name}': {e}", exc_info=True
+        )
         st.error(f"'{uploaded_file.name}' could not be processed: {e}")
+
 
 def get_chain(selected_files: list[str] | None = None) -> Runnable | None:
 
-    active_retriever = get_retriever(k=15, fetch_k=20, selected_files=selected_files, search_type="hybrid")
+    active_retriever = get_retriever(
+        k=15,
+        fetch_k=20,
+        selected_files=selected_files,
+        search_type=RETRIEVER_SEARCH_TYPE,
+    )
     if active_retriever is None:
         logger.warning("No retriever could be created. Returning None for the chain.")
         return None
@@ -86,7 +147,9 @@ if "chats" not in st.session_state:
     else:
         default_chat_id = str(uuid.uuid4())
         st.session_state.active_chat = default_chat_id
-        st.session_state.chats = {default_chat_id: {"title": "Default Chat", "messages": []}}
+        st.session_state.chats = {
+            default_chat_id: {"title": "Default Chat", "messages": []}
+        }
 
 if "processed_files" not in st.session_state:
     st.session_state.processed_files = get_existing_file_names_with_hashes()
@@ -103,7 +166,9 @@ with st.sidebar:
             process_uploaded_file(uploaded_file)
 
     selected_files = st.multiselect(
-        "Select files for retrieval", options=list(st.session_state.processed_files), help="If no files are selected, the system will use all processed files for retrieval."
+        "Select files for retrieval",
+        options=list(st.session_state.processed_files),
+        help="If no files are selected, the system will use all processed files for retrieval.",
     )
 
     if st.button("Delete Selected Files", disabled=not selected_files):
@@ -156,12 +221,15 @@ user_prompt = st.chat_input("Type your message here...")
 if user_prompt:
     if chain is None:
         st.warning(
-            "No retriever is available. Please upload and process at least one PDF file to enable the retrieval-based chat functionality.")
+            "No retriever is available. Please upload and process at least one PDF file to enable the retrieval-based chat functionality."
+        )
         st.stop()
 
     is_first_message = len(current_chat["messages"]) == 0
     if is_first_message:
-        current_chat["title"] = user_prompt[:25] + "..." if len(user_prompt) > 25 else user_prompt
+        current_chat["title"] = (
+            user_prompt[:25] + "..." if len(user_prompt) > 25 else user_prompt
+        )
 
     # User message
     with st.chat_message("user"):
