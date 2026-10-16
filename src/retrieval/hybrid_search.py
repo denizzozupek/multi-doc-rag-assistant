@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 def reciprocal_rank_fusion(
     doc_lists: list[list[Document]],
-    k: int = 3,
+    k: int = 20,
     rrf_k: int = 60,
 ) -> list[Document]:
     """Combines multiple document rankings using Reciprocal Rank Fusion (RRF)."""
@@ -38,7 +38,7 @@ class HybridRetriever(BaseRetriever):
 
     dense_retriever: BaseRetriever
     bm25_retriever: BaseRetriever
-    k: int = 3
+    k: int = 20
     rrf_k: int = 60
 
     def _get_relevant_documents(self, query: str) -> list[Document]:

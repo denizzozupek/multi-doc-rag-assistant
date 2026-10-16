@@ -8,12 +8,11 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 
 from src.config import (
     DEFAULT_RERANK_TOP_K,
-    RETRIEVAL_FETCH_K,
-    RETRIEVAL_TO_RERANK_TOP_K,
+    RETRIEVAL_CANDIDATE_K,
     RETRIEVER_SEARCH_TYPE,
 )
-from src.generation.chain import DEFAULT_LLM
-from src.generation.prompt import memory_search_system_prompt, system_prompt
+from src.config import DEFAULT_LLM
+from src.prompt import memory_search_system_prompt, system_prompt
 from src.graph.state import State
 from src.retrieval.reranker import reranker
 from src.retrieval.retriever import get_retriever
@@ -66,9 +65,8 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
 # 2. Retrieve and Rerank Node
 def create_retrieve_and_rerank_node(
     model: Any = None,
-    retrieval_fetch_k: int = RETRIEVAL_FETCH_K,
+    candidate_k: int = RETRIEVAL_CANDIDATE_K,
     top_k: int = DEFAULT_RERANK_TOP_K,
-    retrieval_k: int = RETRIEVAL_TO_RERANK_TOP_K,
     search_type: str = RETRIEVER_SEARCH_TYPE,
 ) -> Callable[[State], dict]:
     """Creates a node that retrieves documents dynamically based on selected files and reranks them."""
@@ -86,8 +84,7 @@ def create_retrieve_and_rerank_node(
             return {"documents": []}
 
         retriever = get_retriever(
-            k=retrieval_k,
-            fetch_k=retrieval_fetch_k,
+            k=candidate_k,
             selected_files=selected_files,
             search_type=search_type,
         )
@@ -102,16 +99,13 @@ def create_retrieve_and_rerank_node(
             logger.warning("No documents retrieved.")
             return {"documents": []}
 
-        # Rerank documents if a cross-encoder model is supplied, otherwise slice by top_k
-        if model:
-            reranked_docs = reranker(
-                query=query,
-                documents=raw_docs,
-                model=model,
-                top_k=top_k,
-            )
-        else:
-            reranked_docs = raw_docs[:top_k]
+        # Rerank retrieved candidate documents using Cross-Encoder model
+        reranked_docs = reranker(
+            query=query,
+            documents=raw_docs,
+            model=model,
+            top_k=top_k,
+        )
 
         return {"documents": reranked_docs}
 
