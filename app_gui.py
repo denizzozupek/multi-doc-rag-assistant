@@ -1,42 +1,37 @@
-import os
-import uuid
-import streamlit as st
-import tempfile
-import logging
 import hashlib
 import json
-from pathlib import Path
+import logging
+import os
 import sqlite3
+import tempfile
+import uuid
+from pathlib import Path
 from typing import Any
 
-
-from langchain_core.runnables import Runnable
+import streamlit as st
 from langgraph.checkpoint.sqlite import SqliteSaver
 
-from src.graph.main import graph_pipeline
-from src.generation.chain import conversation_history
-from src.ingestion.ingestion import ingestion_pipeline
-from src.retrieval.retriever import get_retriever
-from src.utils import delete_file, get_existing_file_names_with_hashes
 from src.config import (
+    DEFAULT_LLM,
+    DEFAULT_RERANK_TOP_K,
+    LOCAL_CHAT_HISTORY_FILE,
+    RETRIEVAL_FETCH_K,
     RETRIEVER_SEARCH_TYPE,
     SQLITE_DB_PATH,
-    DEFAULT_LLM,
-    RETRIEVAL_FETCH_K,
-    DEFAULT_RERANK_TOP_K,
-    RETRIEVAL_TO_RERANK_TOP_K,
 )
+from src.graph.main import graph_pipeline
+from src.ingestion.ingestion import ingestion_pipeline
+from src.utils import delete_file, get_existing_file_names_with_hashes
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
-
-SQLITE_DB_PATH = Path(SQLITE_DB_PATH)
-Path(SQLITE_DB_PATH.parent).mkdir(parents=True, exist_ok=True)
 
 
 @st.cache_resource
 def get_compiled_app():
     """Initializes the SQLite checkpointer, builds the workflow graph, and returns the compiled application."""
+    Path(SQLITE_DB_PATH.parent).mkdir(parents=True, exist_ok=True)
+
     try:
         conn = sqlite3.connect(SQLITE_DB_PATH, check_same_thread=False)
         saver = SqliteSaver(conn)
@@ -47,59 +42,108 @@ def get_compiled_app():
         )
 
         app = workflow.compile(checkpointer=saver)
-        logger.info("LangGraph workflow compiled successfully with SQLite checkpointer.")
+        logger.info(
+            "LangGraph workflow compiled successfully with SQLite checkpointer."
+        )
         return app
     except Exception as e:
-        logger.error("Failed to compile LangGraph workflow: %s", e, exc_info=True)
+        logger.error(
+            "Failed to compile LangGraph workflow: %s", e, exc_info=True
+        )
         raise
 
-def start_chat_session():
-    """Initializes the chat session state in Streamlit."""
-    if "chats" not in st.session_state:
-        st.session_state.chats = []
-        loaded_chat_history = load_chat_history()
-        if loaded_chat_history:
-            pass
 
-        
-def load_chat_history(thread_id: str, app : Any) -> list:
+def start_chat_session():
+    """Initializes chat state lazily without creating dummy conversations on disk."""
+    if "chats" not in st.session_state:
+        st.session_state.chats = load_chat_metadata()
+
+    if "active_chat" not in st.session_state:
+        if st.session_state.chats:
+            st.session_state.active_chat = next(iter(st.session_state.chats))
+        else:
+            st.session_state.active_chat = None
+
+
+def load_chat_history(thread_id: str | None, app: Any) -> list:
+    """Loads previous messages for a specific thread from the LangGraph checkpointer."""
+    if not thread_id:
+        return []
+
     config = {"configurable": {"thread_id": thread_id}}
     try:
         state_snapshot = app.get_state(config=config)
         values = getattr(state_snapshot, "values", None) or {}
-        state_data = values.get("messages", [])
+        return values.get("messages", [])
     except Exception as e:
-        logger.error("Error loading chat history for thread_id '%s': %s", thread_id, e, exc_info=True)
-        state_data = []
-    return state_data
+        logger.error(
+            "Error loading chat history for thread_id '%s': %s",
+            thread_id,
+            e,
+            exc_info=True,
+        )
+        return []
 
-    
+
+def load_chat_metadata() -> dict:
+    """Loads chat sidebar metadata from the local JSON file."""
+    chat_file = Path(LOCAL_CHAT_HISTORY_FILE)
+    if chat_file.exists():
+        try:
+            with open(chat_file, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error("Failed to load chat metadata: %s", e, exc_info=True)
+            return {}
+    return {}
+
+
 def save_chat_history():
-    chat_history = st.session_state.chats
-    chat_history_file = "data/chat_history.json"
-    os.makedirs(os.path.dirname(chat_history_file), exist_ok=True)
-    with open(chat_history_file, "w", encoding="utf-8") as f:
-        json.dump(chat_history, f, ensure_ascii=False, indent=4)
+    """Persists chat metadata dictionary from session state to the JSON file."""
+    chat_history = st.session_state.get("chats", {})
+    chat_file = Path(LOCAL_CHAT_HISTORY_FILE)
+    chat_file.parent.mkdir(parents=True, exist_ok=True)
+
+    try:
+        with open(chat_file, "w", encoding="utf-8") as f:
+            json.dump(chat_history, f, ensure_ascii=False, indent=4)
+            logger.info("Chat history saved successfully.")
+    except Exception as e:
+        logger.error("Failed to save chat history: %s", e, exc_info=True)
+
+
+def delete_chat(chat_id_to_delete: str):
+    """Deletes a chat from state and JSON. Manages active chat pointers cleanly."""
+    if chat_id_to_delete in st.session_state.chats:
+        st.session_state.chats.pop(chat_id_to_delete, None)
+        save_chat_history()
+
+        # If deleted chat was active, switch to another or set to None
+        if st.session_state.active_chat == chat_id_to_delete:
+            if st.session_state.chats:
+                st.session_state.active_chat = next(
+                    iter(st.session_state.chats)
+                )
+            else:
+                st.session_state.active_chat = None
 
 
 def process_uploaded_file(uploaded_file):
+    """Calculates file hash and triggers ingestion only when content is new or changed."""
     try:
-        # 1. Calculate the hash of the uploaded file without saving it to disk
         file_bytes = uploaded_file.getvalue()
         current_hash = hashlib.sha256(file_bytes).hexdigest()
         needs_ingestion = False
 
-        # Scenario 1:  File has not been processed before
         if uploaded_file.name not in st.session_state.processed_files:
             needs_ingestion = True
-        # Scenario 2: File has been processed before, but the content has changed
         elif st.session_state.processed_files[uploaded_file.name] != current_hash:
             delete_file(uploaded_file.name)
             needs_ingestion = True
-        # Scenario 3: File has been processed before and the content has not changed
+
         if needs_ingestion:
             with tempfile.TemporaryDirectory() as temp_dir:
-                temp_file_path = f"{temp_dir}/{uploaded_file.name}"
+                temp_file_path = os.path.join(temp_dir, uploaded_file.name)
                 with open(temp_file_path, "wb") as f:
                     f.write(file_bytes)
                 ingestion_pipeline(pdf_path=temp_file_path)
@@ -116,45 +160,24 @@ def process_uploaded_file(uploaded_file):
 
     except Exception as e:
         logger.error(
-            f"Error processing uploaded file '{uploaded_file.name}': {e}", exc_info=True
+            f"Error processing uploaded file '{uploaded_file.name}': {e}",
+            exc_info=True,
         )
         st.error(f"'{uploaded_file.name}' could not be processed: {e}")
 
 
-def get_chain(selected_files: list[str] | None = None) -> Runnable | None:
-
-    active_retriever = get_retriever(
-        k=15,
-        fetch_k=20,
-        selected_files=selected_files,
-        search_type=RETRIEVER_SEARCH_TYPE,
-    )
-    if active_retriever is None:
-        logger.warning("No retriever could be created. Returning None for the chain.")
-        return None
-    return conversation_history(retriever=active_retriever)
-
-
+# --- Application Setup & Session Initialization ---
+st.set_page_config(page_title="Document Assistant", layout="wide")
 st.title("Conversational Document Assistant")
-st.caption("Conversational RAG with LCEL")
+st.caption("Conversational RAG with LangGraph")
 
-# 1. Initialize session state for chats and active chat
-if "chats" not in st.session_state:
-    loaded_chat_history = load_chat_history()
-    if loaded_chat_history:
-        st.session_state.chats = loaded_chat_history
-        st.session_state.active_chat = next(iter(loaded_chat_history), None)
-    else:
-        default_chat_id = str(uuid.uuid4())
-        st.session_state.active_chat = default_chat_id
-        st.session_state.chats = {
-            default_chat_id: {"title": "Default Chat", "messages": []}
-        }
+start_chat_session()
+app = get_compiled_app()
 
 if "processed_files" not in st.session_state:
     st.session_state.processed_files = get_existing_file_names_with_hashes()
 
-    # 2. Sidebar for chat management
+# --- Sidebar UI ---
 with st.sidebar:
     st.header("Document Management")
     upload_files = st.file_uploader(
@@ -167,7 +190,7 @@ with st.sidebar:
 
     selected_files = st.multiselect(
         "Select files for retrieval",
-        options=list(st.session_state.processed_files),
+        options=list(st.session_state.processed_files.keys()),
         help="If no files are selected, the system will use all processed files for retrieval.",
     )
 
@@ -176,77 +199,79 @@ with st.sidebar:
             if delete_file(file_name):
                 st.session_state.processed_files.pop(file_name, None)
         st.success("Selected files deleted successfully.")
-        save_chat_history()
         st.rerun()
-
-    chain = get_chain(selected_files)
 
     st.title("Chats")
 
     if st.button("+ New Chat", use_container_width=True):
-        new_chat_id = str(uuid.uuid4())
-        st.session_state.active_chat = new_chat_id
-        st.session_state.chats[new_chat_id] = {
-            "title": f"Chat {len(st.session_state.chats) + 1}",
-            "messages": [],
-        }
-        save_chat_history()
+        st.session_state.active_chat = None
         st.rerun()
 
     st.divider()
 
-    for chat_id, chat in st.session_state.chats.items():
+    # List conversations with inline clean delete action
+    for chat_id, chat_data in list(st.session_state.chats.items()):
         is_active = chat_id == st.session_state.active_chat
-        btn_label = f"**{chat['title']}**" if is_active else chat["title"]
-        if st.button(
-            btn_label, key=chat_id, use_container_width=True, disabled=is_active
-        ):
-            st.session_state.active_chat = chat_id
-            st.rerun()
+        col_btn, col_del = st.columns([0.85, 0.15])
 
-# 3. Get the active chat and display its messages
-active_chat_id = st.session_state.active_chat
-current_chat = st.session_state.chats[active_chat_id]
+        with col_btn:
+            btn_label = (
+                f"**{chat_data['title']}**" if is_active else chat_data["title"]
+            )
+            if st.button(
+                btn_label,
+                key=f"chat_{chat_id}",
+                use_container_width=True,
+                disabled=is_active,
+            ):
+                st.session_state.active_chat = chat_id
+                st.rerun()
 
-# 4. Display active chat past messages into the main area
-for message in current_chat["messages"]:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+        with col_del:
+            if st.button("×", key=f"del_{chat_id}", help="Delete chat"):
+                delete_chat(chat_id)
+                st.rerun()
 
+# --- Main Chat Interface ---
+chat_history = load_chat_history(st.session_state.active_chat, app)
 
-# 5. Input area and generate assistant response
-user_prompt = st.chat_input("Type your message here...")
+# Render existing messages
+for message in chat_history:
+    role = "user" if message.type == "human" else "assistant"
+    with st.chat_message(role):
+        st.markdown(message.content)
 
+# Handle user input
+if prompt := st.chat_input("Ask a question about your documents..."):
+    # Lazy creation on the very first prompt
+    if not st.session_state.active_chat:
+        new_chat_id = str(uuid.uuid4())
+        chat_title = prompt[:24] + ("..." if len(prompt) > 24 else "")
+        st.session_state.chats[new_chat_id] = {"title": chat_title}
+        st.session_state.active_chat = new_chat_id
+        save_chat_history()
 
-if user_prompt:
-    if chain is None:
-        st.warning(
-            "No retriever is available. Please upload and process at least one PDF file to enable the retrieval-based chat functionality."
-        )
-        st.stop()
+    active_chat_id = st.session_state.active_chat
 
-    is_first_message = len(current_chat["messages"]) == 0
-    if is_first_message:
-        current_chat["title"] = (
-            user_prompt[:25] + "..." if len(user_prompt) > 25 else user_prompt
-        )
-
-    # User message
     with st.chat_message("user"):
-        st.write(user_prompt)
-    current_chat["messages"].append({"role": "user", "content": user_prompt})
+        st.markdown(prompt)
 
-    # Generate assistant response (Streaming + dynamic session_id)
+    config = {"configurable": {"thread_id": active_chat_id}}
+    inputs = {
+        "messages": [("user", prompt)],
+        "selected_files": selected_files,
+    }
+
     with st.chat_message("assistant"):
-        response = chain.stream(
-            {"input": user_prompt},
-            config={"configurable": {"session_id": active_chat_id}},
-        )
-        assistant_response = st.write_stream(response)
 
-    current_chat["messages"].append(
-        {"role": "assistant", "content": assistant_response}
-    )
-    save_chat_history()
-    if is_first_message:
-        st.rerun()
+        def stream_graph_response():
+            for chunk in app.stream(
+                inputs, config=config, stream_mode="updates"
+            ):
+                for node_name, node_output in chunk.items():
+                    if "messages" in node_output and node_output["messages"]:
+                        yield node_output["messages"][-1].content
+
+        st.write_stream(stream_graph_response)
+
+    st.rerun()

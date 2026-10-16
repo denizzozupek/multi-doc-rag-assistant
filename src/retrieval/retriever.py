@@ -11,9 +11,9 @@ from src.config import (
     BM25_PERSIST_DIRECTORY,
     DEFAULT_RERANK_TOP_K,
     EMBEDDING_MODEL_NAME,
+    MMR_FETCH_K,
     PERSIST_DIRECTORY,
-    RETRIEVAL_FETCH_K,
-    RETRIEVAL_TO_RERANK_TOP_K,
+    RETRIEVAL_CANDIDATE_K,
     RETRIEVER_SEARCH_TYPE,
 )
 from src.retrieval.bm25 import get_bm25_retriever
@@ -24,8 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 def get_dense_retriever(
-    k: int = DEFAULT_RERANK_TOP_K,
-    fetch_k: int = RETRIEVAL_FETCH_K,
+    k: int = RETRIEVAL_CANDIDATE_K,
+    fetch_k: int = MMR_FETCH_K,
     selected_files: list[str] | None = None,
     embedding_model: Embeddings | None = None,
     persist_directory: str | None = None,
@@ -70,13 +70,13 @@ def get_dense_retriever(
 
 
 def get_retriever(
-    k: int = RETRIEVAL_TO_RERANK_TOP_K,
-    fetch_k: int = RETRIEVAL_FETCH_K,
+    k: int = RETRIEVAL_CANDIDATE_K,
     selected_files: list[str] | None = None,
     embedding_model: Embeddings | None = None,
     persist_directory: str | None = None,
     bm25_persist_dir: str | None = None,
     search_type: str = RETRIEVER_SEARCH_TYPE,
+    fetch_k: int = MMR_FETCH_K,
 ) -> BaseRetriever | None:
     """Unified entry point returning Dense, BM25, or Hybrid retriever."""
     if search_type == "bm25":
@@ -88,14 +88,15 @@ def get_retriever(
 
     if search_type == "hybrid":
         dense = get_dense_retriever(
-            k=fetch_k,
+            k=k,
             selected_files=selected_files,
             embedding_model=embedding_model,
             persist_directory=persist_directory,
+            search_type="similarity",
         )
         bm25 = get_bm25_retriever(
             bm25_persist_dir=bm25_persist_dir,
-            k=fetch_k,
+            k=k,
             selected_files=selected_files,
         )
 
