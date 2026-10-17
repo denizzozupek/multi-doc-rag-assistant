@@ -12,7 +12,7 @@ if not OPENAI_API_KEY:
 
 # MODELS
 DEFAULT_LLM = ChatOpenAI(
-    model="gpt-6-luna",
+    model="gpt-4o-mini",
     temperature=1,
     timeout=30,
     max_retries=3,
@@ -41,3 +41,7 @@ RETRIEVAL_FETCH_K = RETRIEVAL_CANDIDATE_K
 HYBRID_CANDIDATE_K = RETRIEVAL_CANDIDATE_K
 FINAL_RERANK_TOP_K = DEFAULT_RERANK_TOP_K
 RETRIEVER_SEARCH_TYPE = "hybrid"  # Options: "hybrid", "similarity", "mmr", "bm25"
+
+
+#Async Semaphore for controlling concurrent access to the LLM
+CONCURRENT_SEMAPHORE = 10
