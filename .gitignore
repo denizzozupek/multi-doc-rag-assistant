@@ -20,5 +20,7 @@ Thumbs.db
 data/vector_db/
 chat_history.json
 eval/evaluation_results/
+eval/results/
+eval/graph_evaluation_results/
 judge_results_*.json
 data/bm25_index/
