@@ -5,7 +5,7 @@ import Stemmer
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
-from src.config import BM25_PERSIST_DIRECTORY
+from src.config import BM25_PERSIST_DIRECTORY, RETRIEVAL_CANDIDATE_K
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ class BM25Retriever(BaseRetriever):
 
     retriever: bm25s.BM25
     stemmer: Stemmer.Stemmer
-    k: int = 3
+    k: int = RETRIEVAL_CANDIDATE_K
     selected_files: list[str] | None = None
 
     def _get_relevant_documents(self, query: str) -> list[Document]:
@@ -53,7 +53,7 @@ class BM25Retriever(BaseRetriever):
 def get_bm25_retriever(
     bm25_persist_dir: str | None = None,
     stemmer_instance: Stemmer.Stemmer | None = None,
-    k: int = 3,
+    k: int = RETRIEVAL_CANDIDATE_K,
     selected_files: list[str] | None = None,
 ) -> BM25Retriever | None:
     """Returns a BM25 retriever if the index exists on disk."""
