@@ -1,6 +1,7 @@
 import datetime
 import json
 import logging
+import asyncio
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -9,6 +10,7 @@ from langchain_openai import ChatOpenAI
 
 from eval.generation.prompts import build_judge_prompt
 from eval.generation.schemas import JudgeEvaluationPrompt
+from src.config import DEFAULT_LLM, CONCURRENT_SEMAPHORE, DEFAULT_RERANK_TOP_K
 from src.graph import graph_pipeline
 from src.ingestion import ingestion_pipeline
 from src.utils import format_docs_as_context, format_history
@@ -18,17 +20,13 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+semaphore = asyncio.Semaphore(CONCURRENT_SEMAPHORE)
 
 # ------- Evaluate Queries and Save Results -------
-def evaluate_queries(
-    judge_llm,
-    ground_truth: list[dict],
-    top_k: int = 3,
-) -> list[dict]:
-    results = []
-    app = graph_pipeline(top_k=top_k).compile()
 
-    for item in ground_truth:
+
+async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
+    async with semaphore:
         query_text = item["query"]
         file_name = item.get("source_doc")
         logger.info(f"Evaluating query: {query_text} (Source: {file_name})")
@@ -41,7 +39,7 @@ def evaluate_queries(
                 "selected_files": [file_name] if file_name else None,
             }
 
-            output = app.invoke(state_input)
+            output = await app.ainvoke(state_input)
             retrieved_docs = output.get("documents", [])
             context = format_docs_as_context(retrieved_docs)
             answer = output["messages"][-1].content
@@ -52,40 +50,51 @@ def evaluate_queries(
                 context=context,
                 response=answer,
             )
-            judge_result = judge_llm.invoke(prompt)
+            judge_result = await judge_llm.ainvoke(prompt)
 
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "query": query_text,
-                    "source_doc": file_name,
-                    "question_type": item.get("question_type"),
-                    "top_k": top_k,
-                    "context": context,
-                    "answer": answer,
-                    "judge_result": judge_result.model_dump(),
-                }
-            )
+            return {
+                "id": item.get("id"),
+                "query": query_text,
+                "source_doc": file_name,
+                "question_type": item.get("question_type"),
+                "top_k": top_k,
+                "context": context,
+                "answer": answer,
+                "judge_result": judge_result.model_dump(),
+            }
         except Exception as e:
             logger.error(f"Error evaluating query '{query_text}': {e}", exc_info=True)
-            results.append(
-                {
-                    "id": item.get("id"),
-                    "query": query_text,
-                    "source_doc": file_name,
-                    "question_type": item.get("question_type"),
-                    "top_k": top_k,
-                    "context": None,
-                    "answer": None,
-                    "judge_result": {
-                        "faithfulness_reason": str(e),
-                        "faithfulness_score": 0,
-                        "relevance_reason": str(e),
-                        "relevance_score": 0,
-                    },
-                }
-            )
+            return {
+                "id": item.get("id"),
+                "query": query_text,
+                "source_doc": file_name,
+                "question_type": item.get("question_type"),
+                "top_k": top_k,
+                "context": None,
+                "answer": None,
+                "judge_result": {
+                    "faithfulness_reason": str(e),
+                    "faithfulness_score": 0,
+                    "relevance_reason": str(e),
+                    "relevance_score": 0,
+                },
+            }
 
+
+async def evaluate_queries(
+    judge_llm,
+    ground_truth: list[dict],
+    top_k: int = DEFAULT_RERANK_TOP_K,
+) -> list[dict]:
+    """Evaluate a list of queries using the graph pipeline and judge LLM."""
+
+    app = graph_pipeline(llm=DEFAULT_LLM, top_k=top_k).compile()
+
+    tasks = [
+        evaluate_query_with_semaphore(app, judge_llm, item, top_k)
+        for item in ground_truth
+    ]
+    results = await asyncio.gather(*tasks)
     return results
 
 
@@ -171,18 +180,9 @@ if __name__ == "__main__":
     with open("data/ground_truth.json", "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
 
-    judge_llm = ChatOpenAI(
-        model="gpt-4o-mini",
-        temperature=0,
-        timeout=30,
-        max_retries=3,
-    ).with_structured_output(JudgeEvaluationPrompt)
+    judge_llm = DEFAULT_LLM.with_structured_output(JudgeEvaluationPrompt)
 
     run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    results = evaluate_queries(
-        judge_llm=judge_llm,
-        ground_truth=ground_truth,
-        top_k=3,
-    )
+    results = asyncio.run(evaluate_queries(judge_llm, ground_truth, top_k=DEFAULT_RERANK_TOP_K))
     save_judge_results(results, run_id)
