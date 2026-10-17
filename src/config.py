@@ -1,4 +1,4 @@
-import os 
+import os
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from pathlib import Path
@@ -12,7 +12,7 @@ if not OPENAI_API_KEY:
 
 DEFAULT_LLM = ChatOpenAI(
     model="gpt-6-luna",
-    temperature=0,
+    temperature=1,
     timeout=30,
     max_retries=3,
 )
@@ -27,9 +27,9 @@ CHUNK_SIZE = 1000
 OVERLAP_SIZE = 200
 CROSS_ENCODER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 
-RETRIEVAL_CANDIDATE_K = 20      # Dense ve BM25'in çekeceği aday havuzu
-DEFAULT_RERANK_TOP_K = 3        # Reranker'ın LLM'e göndereceği son bağlam sayısı
-MMR_FETCH_K = 50                # Yalnızca search_type='mmr' için çeşitlilik havuzu
+RETRIEVAL_CANDIDATE_K = 20  # Candidate pool for BM25 and dense retrievers
+DEFAULT_RERANK_TOP_K = 3  # Last stage re-ranking top K results
+MMR_FETCH_K = 50  # Only used for MMR retriever, fetch K results from dense retriever before MMR re-ranking
 
 # Geriye dönük uyumluluk alias'ları
 RETRIEVAL_FETCH_K = RETRIEVAL_CANDIDATE_K
