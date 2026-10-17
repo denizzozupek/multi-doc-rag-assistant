@@ -2,13 +2,15 @@ import logging
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
 
+from src.config import RETRIEVAL_CANDIDATE_K, RRF_K
+
 logger = logging.getLogger(__name__)
 
 
 def reciprocal_rank_fusion(
     doc_lists: list[list[Document]],
-    k: int = 20,
-    rrf_k: int = 60,
+    k: int = RETRIEVAL_CANDIDATE_K,
+    rrf_k: int = RRF_K,
 ) -> list[Document]:
     """Combines multiple document rankings using Reciprocal Rank Fusion (RRF)."""
     combined_scores: dict[str, float] = {}
@@ -38,8 +40,8 @@ class HybridRetriever(BaseRetriever):
 
     dense_retriever: BaseRetriever
     bm25_retriever: BaseRetriever
-    k: int = 20
-    rrf_k: int = 60
+    k: int = RETRIEVAL_CANDIDATE_K
+    rrf_k: int = RRF_K
 
     def _get_relevant_documents(self, query: str) -> list[Document]:
         dense_docs = self.dense_retriever.invoke(query)

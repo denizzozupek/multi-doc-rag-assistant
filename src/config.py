@@ -35,6 +35,7 @@ OVERLAP_SIZE = 200
 # RETRIEVAL PARAMETERS AND BACKWARD COMPATIBILITY
 RETRIEVAL_CANDIDATE_K = 20  # Candidate pool for BM25 and dense retrievers
 DEFAULT_RERANK_TOP_K = 3  # Last stage re-ranking top K results
+RRF_K = 60  # Smoothing constant for Reciprocal Rank Fusion ranking
 MMR_FETCH_K = 50  # Only used for MMR retriever, fetch K results from dense retriever before MMR re-ranking
 RETRIEVAL_FETCH_K = RETRIEVAL_CANDIDATE_K
 HYBRID_CANDIDATE_K = RETRIEVAL_CANDIDATE_K
