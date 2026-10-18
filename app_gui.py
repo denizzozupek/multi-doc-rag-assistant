@@ -264,8 +264,8 @@ if prompt := st.chat_input("Ask a question about your documents..."):
 
     with st.chat_message("assistant"):
 
-        def stream_graph_response():
-            for chunk in app.stream(
+        async def stream_graph_response():
+            async for chunk in app.astream(
                 inputs, config=config, stream_mode="updates"
             ):
                 for node_name, node_output in chunk.items():

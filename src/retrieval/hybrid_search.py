@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from langchain_core.documents import Document
 from langchain_core.retrievers import BaseRetriever
@@ -22,8 +23,8 @@ def reciprocal_rank_fusion(
             if doc_key not in doc_map:
                 doc_map[doc_key] = doc
 
-            combined_scores[doc_key] = (
-                combined_scores.get(doc_key, 0.0) + 1.0 / (rrf_k + rank + 1)
+            combined_scores[doc_key] = combined_scores.get(doc_key, 0.0) + 1.0 / (
+                rrf_k + rank + 1
             )
 
     sorted_keys = sorted(
@@ -51,4 +52,14 @@ class HybridRetriever(BaseRetriever):
             doc_lists=[dense_docs, bm25_docs],
             k=self.k,
             rrf_k=self.rrf_k,
+        )
+
+    async def _aget_relevant_documents(self, query: str) -> list[Document]:
+        dense_task = self.dense_retriever.ainvoke(query)
+        bm25_task = asyncio.to_thread(self.bm25_retriever.invoke, query)
+
+        dense_docs, bm25_docs = await asyncio.gather(dense_task, bm25_task)
+
+        return reciprocal_rank_fusion(
+            [dense_docs, bm25_docs], k=self.k, rrf_k=self.rrf_k
         )

@@ -5,6 +5,9 @@ class RetrievalResult(BaseModel):
     hit_score: int
     mrr_score: float
     retrieved_docs: list[dict]
+    retriever_time: float | None = None  # Optional field to store retrieval time
+    reranker_time: float | None = None  # Optional field to store reranker time
+    total_time: float | None = None  # Optional field to store total time
 
 
 class EvaluationConfig(BaseModel):
@@ -28,4 +31,8 @@ class EvaluationReport(BaseModel):
     multi_turn_baseline_mrr: float
     multi_turn_history_aware_hit_rate: float
     multi_turn_history_aware_mrr: float
+    avg_retriever_latency_ms: float = 0.0
+    avg_reranker_latency_ms: float = 0.0
+    avg_total_latency_ms: float = 0.0
+    p95_total_latency_ms: float = 0.0
     detailed_results: list[dict]

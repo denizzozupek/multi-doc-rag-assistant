@@ -43,7 +43,40 @@ def save_evaluation_results(
         f"Multi-turn Baseline MRR: {results.multi_turn_baseline_mrr:.4f}\n"
         f"Multi-turn History-Aware Hit Rate: {results.multi_turn_history_aware_hit_rate:.4f}\n"
         f"Multi-turn History-Aware MRR: {results.multi_turn_history_aware_mrr:.4f}\n"
+        f"Average Latency: {results.avg_total_latency_ms:.2f} ms "
+        f"(Retriever: {results.avg_retriever_latency_ms:.2f} ms, Reranker: {results.avg_reranker_latency_ms:.2f} ms)\n"
+        f"P95 Latency: {results.p95_total_latency_ms:.2f} ms\n"
     )
+
+
+def print_experiments_summary(summary_records: list[dict]):
+    """
+    Print a clean, structured table/summary of all completed retrieval experiments.
+    Prevents getting lost in long log streams.
+    """
+    header = (
+        f"\n{'='*110}\n"
+        f"{'EXPERIMENT':<28} | {'HIT RATE':<10} | {'MRR':<8} | {'AVG LAT (ms)':<14} | {'P95 LAT (ms)':<14} | {'RETRIEVER':<12} | {'RERANKER':<10}\n"
+        f"{'-'*110}"
+    )
+    rows = []
+    for s in summary_records:
+        row = (
+            f"{s['name']:<28} | "
+            f"{s['hit_rate']:<10.4f} | "
+            f"{s['mrr']:<8.4f} | "
+            f"{s['avg_latency_ms']:<14.2f} | "
+            f"{s['p95_latency_ms']:<14.2f} | "
+            f"{s['retriever_latency_ms']:<12.2f} | "
+            f"{s['reranker_latency_ms']:<10.2f}"
+        )
+        rows.append(row)
+    footer = f"{'='*110}\n"
+
+    print(header)
+    for r in rows:
+        print(r)
+    print(footer)
 
 
 def get_experiments() -> list[dict]:

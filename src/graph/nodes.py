@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Any, Callable
 
@@ -22,7 +23,7 @@ logger = logging.getLogger(__name__)
 
 
 # 1. Rewrite Query Node
-def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
+def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], Any]:
     """Creates a node that rewrites the user's query based on the chat history and the latest user message."""
 
     memory_search_prompt = ChatPromptTemplate.from_messages(
@@ -35,7 +36,7 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
 
     chain = memory_search_prompt | llm | StrOutputParser()
 
-    def rewrite_query_node(state: State) -> dict:
+    async def rewrite_query_node(state: State) -> dict:
         """Reads chat history and latest message from state, rewrites the query using LLM, and returns it."""
         if "messages" not in state or not state["messages"]:
             raise ValueError("State must contain 'messages' with at least one message.")
@@ -46,12 +47,14 @@ def create_rewrite_query_node(llm: BaseChatModel) -> Callable[[State], dict]:
         )
 
         if not human_input or not human_input.strip():
-            logger.warning("No user input found in the last message. Returning empty rewrite query.")
+            logger.warning(
+                "No user input found in the last message. Returning empty rewrite query."
+            )
             return {"rewrite_query": ""}
 
         chat_history = state["messages"][:-1]
 
-        llm_response = chain.invoke(
+        llm_response = await chain.ainvoke(
             {"chat_history": chat_history, "input": human_input}
         )
         logger.info("Rewritten query generated successfully: %s", llm_response)
@@ -68,16 +71,18 @@ def create_retrieve_and_rerank_node(
     candidate_k: int = RETRIEVAL_CANDIDATE_K,
     top_k: int = DEFAULT_RERANK_TOP_K,
     search_type: str = RETRIEVER_SEARCH_TYPE,
-) -> Callable[[State], dict]:
+) -> Callable[[State], Any]:
     """Creates a node that retrieves documents dynamically based on selected files and reranks them."""
 
-    def retrieve_and_rerank_node(state: State) -> dict:
+    async def retrieve_and_rerank_node(state: State) -> dict:
         """Retrieves and reranks documents based on runtime state, returning the top_k results."""
         query = state.get("rewrite_query")
         selected_files = state.get("selected_files")
 
         if not selected_files:
-            logger.warning("No selected files provided. Using all available documents for retrieval.")
+            logger.warning(
+                "No selected files provided. Using all available documents for retrieval."
+            )
 
         if not query or not query.strip():
             logger.warning("No query provided. Returning empty document list.")
@@ -89,10 +94,12 @@ def create_retrieve_and_rerank_node(
             search_type=search_type,
         )
         if retriever is None:
-            logger.warning("Retriever could not be created. Returning empty document list.")
+            logger.warning(
+                "Retriever could not be created. Returning empty document list."
+            )
             return {"documents": []}
 
-        raw_docs = retriever.invoke(query)
+        raw_docs = await retriever.ainvoke(query)
         logger.info("Retrieved documents count: %s", len(raw_docs))
 
         if not raw_docs:
@@ -100,7 +107,8 @@ def create_retrieve_and_rerank_node(
             return {"documents": []}
 
         # Rerank retrieved candidate documents using Cross-Encoder model
-        reranked_docs = reranker(
+        reranked_docs = await asyncio.to_thread(
+            reranker,
             query=query,
             documents=raw_docs,
             model=model,
@@ -116,7 +124,7 @@ def create_retrieve_and_rerank_node(
 # 3. Generation Node
 def create_generation_node(
     llm: BaseChatModel | None = None,
-) -> Callable[[State], dict]:
+) -> Callable[[State], Any]:
     """Creates a node that answers a question using the provided context."""
     if llm is None:
         llm = DEFAULT_LLM
@@ -130,22 +138,30 @@ def create_generation_node(
 
     chain = prompt | llm
 
-    def generation_node(state: State) -> dict:
+    async def generation_node(state: State) -> dict:
         """Answers a question using the provided context and returns the answer in a dictionary."""
         documents = state.get("documents", [])
         messages = state.get("messages", [])
 
         if not messages:
             logger.warning("No messages found in state. Returning empty response.")
-            return {"messages": [AIMessage(content="No messages found to generate a response.")]}
+            return {
+                "messages": [
+                    AIMessage(content="No messages found to generate a response.")
+                ]
+            }
 
         if documents:
             context = format_docs_as_context(documents)
-            response = chain.invoke({"context": context, "messages": messages})
+            response = await chain.ainvoke({"context": context, "messages": messages})
             return {"messages": [response]}
 
         logger.warning("No documents found in state. Returning default response.")
-        return {"messages": [AIMessage(content="No relevant documents found to answer the question.")]}
+        return {
+            "messages": [
+                AIMessage(content="No relevant documents found to answer the question.")
+            ]
+        }
 
     logger.info("Generation node created successfully.")
     return generation_node
