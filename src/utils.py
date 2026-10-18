@@ -137,3 +137,13 @@ def format_docs_as_context(docs: list[Document] | None) -> str:
     return "\n\n".join(
         doc.page_content for doc in docs if getattr(doc, "page_content", None)
     )
+
+
+def calculate_percentile(values: list[float], percentile: float = 0.95) -> float:
+    """Calculates the specified percentile from a list of float values."""
+    if not values:
+        return 0.0
+    sorted_values = sorted(values)
+    k = int(len(sorted_values) * percentile)
+    index = min(k, len(sorted_values) - 1)
+    return sorted_values[index]

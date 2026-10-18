@@ -12,9 +12,11 @@ from src.config import (
 )
 from src.graph import create_rewrite_query_node
 from src.ingestion import ingestion_pipeline
-from src.retrieval import get_retriever
+from src.retrieval import get_cross_encoder_model, get_retriever
+from src.utils import calculate_percentile
 from eval.retrieval.experiments import (
     get_experiments,
+    print_experiments_summary,
     save_evaluation_results,
 )
 from eval.retrieval.metrics import evaluate_item
@@ -40,6 +42,10 @@ def evaluate_retrieval(
     """
     Run full retrieval and reranking evaluation pipeline across all valid ground truth items.
     """
+    # Warm-up Cross-Encoder model before benchmark to eliminate cold-start timing penalty
+    if use_reranker:
+        get_cross_encoder_model()
+
     with open(filepath, "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
 
@@ -100,6 +106,28 @@ def evaluate_retrieval(
 
     total_questions = len(evaluation_questions)
 
+    # Compute latency statistics (converted to milliseconds)
+    total_latencies = [
+        r["total_time"] for r in detailed_results if r.get("total_time") is not None
+    ]
+    retriever_latencies = [
+        r["retriever_time"] for r in detailed_results if r.get("retriever_time") is not None
+    ]
+    reranker_latencies = [
+        r["reranker_time"] for r in detailed_results if r.get("reranker_time") is not None
+    ]
+
+    avg_total_ms = (
+        (sum(total_latencies) / total_questions * 1000) if total_questions > 0 else 0.0
+    )
+    avg_retriever_ms = (
+        (sum(retriever_latencies) / total_questions * 1000) if total_questions > 0 else 0.0
+    )
+    avg_reranker_ms = (
+        (sum(reranker_latencies) / total_questions * 1000) if total_questions > 0 else 0.0
+    )
+    p95_total_ms = calculate_percentile(total_latencies, 0.95) * 1000
+
     config = EvaluationConfig(
         k=k,
         fetch_k=fetch_k,
@@ -129,6 +157,10 @@ def evaluate_retrieval(
         multi_turn_history_aware_mrr=(
             total_multi_turn_mrr / multi_turn_count if multi_turn_count > 0 else 0.0
         ),
+        avg_retriever_latency_ms=round(avg_retriever_ms, 2),
+        avg_reranker_latency_ms=round(avg_reranker_ms, 2),
+        avg_total_latency_ms=round(avg_total_ms, 2),
+        p95_total_latency_ms=round(p95_total_ms, 2),
         detailed_results=detailed_results,
     )
 
@@ -140,6 +172,8 @@ if __name__ == "__main__":
 
     # Run retrieval benchmark and save results
     experiments = get_experiments()
+    summary_records = []
+
     for exp in experiments:
         logger.info(f"Running retrieval evaluation for experiment: {exp['name']}")
         results = evaluate_retrieval(
@@ -154,6 +188,18 @@ if __name__ == "__main__":
             results, output_path=f"eval/results/retrieval/{exp['name']}_results"
         )
 
+        summary_records.append(
+            {
+                "name": exp["name"],
+                "hit_rate": results.average_hit_rate,
+                "mrr": results.average_mrr,
+                "avg_latency_ms": results.avg_total_latency_ms,
+                "p95_latency_ms": results.p95_total_latency_ms,
+                "retriever_latency_ms": results.avg_retriever_latency_ms,
+                "reranker_latency_ms": results.avg_reranker_latency_ms,
+            }
+        )
+
         logger.info(
             f"Completed evaluation for {exp['name']}. "
             f"Average Hit Rate: {results.average_hit_rate:.4f}, Average MRR: {results.average_mrr:.4f}"
@@ -162,3 +208,6 @@ if __name__ == "__main__":
             f"Completed evaluation for {exp['name']}. "
             f"Average Hit Rate: {results.average_hit_rate:.4f}, Average MRR: {results.average_mrr:.4f}"
         )
+
+    # Print clean comparative leaderboard at the end
+    print_experiments_summary(summary_records)
