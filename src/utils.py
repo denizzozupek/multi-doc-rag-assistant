@@ -146,4 +146,52 @@ def calculate_percentile(values: list[float], percentile: float = 0.95) -> float
     sorted_values = sorted(values)
     k = int(len(sorted_values) * percentile)
     index = min(k, len(sorted_values) - 1)
-    return sorted_values[index]
+    return sorted_values[index]
+
+
+_optimal_device: str | None = None
+
+
+def get_optimal_device(force_reload: bool = False) -> str:
+    """
+    Scans the host system to determine the most performant compute device available.
+    """
+    global _optimal_device
+    if _optimal_device is not None and not force_reload:
+        return _optimal_device
+
+    # 1. Explicit CPU override for debugging/testing
+    if os.environ.get("FORCE_CPU", "false").lower() == "true":
+        logger.info("FORCE_CPU is set. Using 'cpu'.")
+        _optimal_device = "cpu"
+        return _optimal_device
+
+    try:
+        import torch
+
+        # 2. NVIDIA CUDA or AMD ROCm GPU
+        if torch.cuda.is_available():
+            device_name = torch.cuda.get_device_name(0)
+            logger.info(f"CUDA-compatible accelerator detected ({device_name}). Using 'cuda'.")
+            _optimal_device = "cuda"
+            return _optimal_device
+
+        # 3. For Apple Devices
+        if hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+            logger.info("Apple Silicon Metal (MPS) detected. Using 'mps'.")
+            _optimal_device = "mps"
+            return _optimal_device
+
+        # 4. Intel Arc / Data Center GPU (XPU)
+        if hasattr(torch, "xpu") and torch.xpu.is_available():
+            logger.info("Intel XPU detected. Using 'xpu'.")
+            _optimal_device = "xpu"
+            return _optimal_device
+
+    except ImportError:
+        logger.warning("PyTorch is not available. Falling back to 'cpu'.")
+
+    # 5. Default CPU fallback
+    logger.info("No dedicated hardware accelerator found. Falling back to 'cpu'.")
+    _optimal_device = "cpu"
+    return _optimal_device

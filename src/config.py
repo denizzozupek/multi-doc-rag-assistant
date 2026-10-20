@@ -45,3 +45,4 @@ RETRIEVER_SEARCH_TYPE = "hybrid"  # Options: "hybrid", "similarity", "mmr", "bm2
 
 #Async Semaphore for controlling concurrent access to the LLM
 CONCURRENT_SEMAPHORE = 10
+MAX_RERANK_CONCURRENCY = 2 # Maximum number of concurrent reranking tasks

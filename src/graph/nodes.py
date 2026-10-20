@@ -15,7 +15,7 @@ from src.config import (
 from src.config import DEFAULT_LLM
 from src.prompt import memory_search_system_prompt, system_prompt
 from src.graph.state import State
-from src.retrieval.reranker import reranker
+from src.retrieval.reranker import get_rerank_semaphore, reranker
 from src.retrieval.retriever import get_retriever
 from src.utils import format_docs_as_context
 
@@ -106,14 +106,15 @@ def create_retrieve_and_rerank_node(
             logger.warning("No documents retrieved.")
             return {"documents": []}
 
-        # Rerank retrieved candidate documents using Cross-Encoder model
-        reranked_docs = await asyncio.to_thread(
-            reranker,
-            query=query,
-            documents=raw_docs,
-            model=model,
-            top_k=top_k,
-        )
+        # Rerank retrieved candidate documents using Cross-Encoder model (throttled to protect CPU)
+        async with get_rerank_semaphore():
+            reranked_docs = await asyncio.to_thread(
+                reranker,
+                query=query,
+                documents=raw_docs,
+                model=model,
+                top_k=top_k,
+            )
 
         return {"documents": reranked_docs}
 
