@@ -6,7 +6,7 @@ from time import perf_counter
 from langchain_core.messages import HumanMessage
 
 from src.config import CONCURRENT_SEMAPHORE, DEFAULT_RERANK_TOP_K
-from src.retrieval import get_cross_encoder_model, reranker
+from src.retrieval import get_cross_encoder_model, get_rerank_semaphore, reranker
 from src.utils import format_history
 from eval.retrieval.schemas import RetrievalResult
 
@@ -62,15 +62,17 @@ async def evaluate_retrieval_single(
         retriever_time = perf_counter() - retriever_start
 
         if use_reranker and retrieved_docs:
-            rerank_start = perf_counter()
-            reranked_docs = await asyncio.to_thread(
-                reranker,
-                query=query,
-                documents=retrieved_docs,
-                model=get_cross_encoder_model(),
-                top_k=top_k,
-            )
-            reranker_time = perf_counter() - rerank_start
+            rerank_sem = get_rerank_semaphore()
+            async with rerank_sem:
+                rerank_start = perf_counter()
+                reranked_docs = await asyncio.to_thread(
+                    reranker,
+                    query=query,
+                    documents=retrieved_docs,
+                    model=get_cross_encoder_model(),
+                    top_k=top_k,
+                )
+                reranker_time = perf_counter() - rerank_start
         else:
             reranked_docs = retrieved_docs
 

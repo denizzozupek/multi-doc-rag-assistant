@@ -24,3 +24,5 @@ eval/results/
 eval/graph_evaluation_results/
 judge_results_*.json
 data/bm25_index/
+
+tests/
