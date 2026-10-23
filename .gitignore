@@ -26,3 +26,11 @@ judge_results_*.json
 data/bm25_index/
 
 tests/
+
+# Synthetic ground truth generation & audit scripts
+data/generate_gt_dataset.py
+data/ground_truth.py
+data/ground_truth_prompt.py
+data/audit_ground_truth.py
+data/audit_report.json
+

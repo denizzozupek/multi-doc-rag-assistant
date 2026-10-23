@@ -130,21 +130,13 @@
   {
     "id": "tc_017",
     "source_doc": "arxiv2.pdf",
-    "query": "What is the total number of trainable parameters in the fine-tuned RAG models?",
-    "expected_text_match": "626M trainable parameters",
-    "ground_truth_answer": "RAG models have a total of 626M trainable parameters: 110M from the DPR BERT-base query encoder and 406M from the BART-large sequence-to-sequence generator (the document encoder is not trained).",
-    "question_type": "factual"
-  },
-  {
-    "id": "tc_018",
-    "source_doc": "arxiv2.pdf",
     "query": "What was demonstrated by the index hot-swapping experiment using 2016 and 2018 Wikipedia dumps?",
     "expected_text_match": "2016 world leaders",
     "ground_truth_answer": "The experiment demonstrated that RAG's world knowledge can be updated dynamically at test time without any retraining simply by replacing the non-parametric index: RAG answered 70% correctly for 2016 world leaders using the 2016 index and 68% for 2018 world leaders using the 2018 index.",
     "question_type": "direct"
   },
   {
-    "id": "tc_019",
+    "id": "tc_018",
     "source_doc": "arxiv2.pdf",
     "query": "How does the Thorough Decoding procedure operate for RAG-Sequence models?",
     "expected_text_match": "additional forward pass for each document",
@@ -152,7 +144,7 @@
     "question_type": "direct"
   },
   {
-    "id": "tc_020",
+    "id": "tc_019",
     "source_doc": "arxiv2.pdf",
     "query": "What is retrieval collapse and how does it manifest during training?",
     "expected_text_match": "learn to retrieve the same documents",
@@ -160,7 +152,7 @@
     "question_type": "direct"
   },
   {
-    "id": "tc_021",
+    "id": "tc_020",
     "source_doc": "arxiv1.pdf",
     "query": "How does the Raft consensus algorithm handle leader election timeouts?",
     "expected_text_match": null,
@@ -168,7 +160,7 @@
     "question_type": "out_of_scope"
   },
   {
-    "id": "tc_022",
+    "id": "tc_021",
     "source_doc": "arxiv2.pdf",
     "query": "What is the optimal learning rate and batch size for training the LoRA adapter on LLaMA-2?",
     "expected_text_match": null,
@@ -176,7 +168,7 @@
     "question_type": "out_of_scope"
   },
   {
-    "id": "tc_023",
+    "id": "tc_022",
     "source_doc": "arxiv1.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -194,7 +186,7 @@
     "ground_truth_answer": "The winner determination problem in combinatorial auctions is NP-complete in general (even with only two bidders making restricted bids) and is not polynomial-time approximable."
   },
   {
-    "id": "tc_024",
+    "id": "tc_023",
     "source_doc": "arxiv1.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -212,7 +204,7 @@
     "ground_truth_answer": "In the presence of Byzantine (malicious) failures, agreement can be reached if and only if fewer than a third of the agents are faulty (t < n/3)."
   },
   {
-    "id": "tc_025",
+    "id": "tc_024",
     "source_doc": "arxiv1.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -230,7 +222,7 @@
     "ground_truth_answer": "The price of anarchy is unbounded if the travel time is a nonlinear function of congestion, but is at most 4/3 if the travel time is a linear function."
   },
   {
-    "id": "tc_026",
+    "id": "tc_025",
     "source_doc": "arxiv2.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -248,7 +240,7 @@
     "ground_truth_answer": "For RAG-Sequence, beam search is run per retrieved document to obtain candidate hypotheses Y. In Thorough Decoding, additional forward passes score hypotheses across documents where they did not appear in the beam before summing marginal probabilities; Fast Decoding approximates ungenerated hypotheses as zero probability to avoid extra passes."
   },
   {
-    "id": "tc_027",
+    "id": "tc_026",
     "source_doc": "arxiv2.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -266,7 +258,7 @@
     "ground_truth_answer": "Index hot-swapping was validated using 82 world leaders that changed between 2016 and 2018: RAG achieved 70% accuracy for 2016 leaders with the 2016 index and 68% for 2018 leaders with the 2018 index, while mismatched index-query pairs dropped significantly (to 4%-12%)."
   },
   {
-    "id": "tc_028",
+    "id": "tc_027",
     "source_doc": "arxiv2.pdf",
     "question_type": "multi_turn_followup",
     "conversation_history": [
@@ -282,5 +274,409 @@
     "query": "Why does it perform particularly well on these questions that combine multiple pieces of information?",
     "expected_text_match": "combine content from several documents",
     "ground_truth_answer": "RAG-Token performs well on multi-fact questions because it can draw and combine information from several retrieved documents for different tokens within the same generated output, while leveraging parametric memory to complete known entity names."
+  },
+  {
+    "id": "tc_028",
+    "source_doc": "arxiv3.pdf",
+    "query": "Who wrote the screenplay for Death of a Batman?",
+    "expected_text_match": "When Hamm's script was rewritten",
+    "ground_truth_answer": "Hamm.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_029",
+    "source_doc": "arxiv3.pdf",
+    "query": "What method was proposed to improve automatic self-correction and efficient utilization of retrieved documents?",
+    "expected_text_match": "A plug-and-play method named CRAG",
+    "ground_truth_answer": "CRAG, a plug-and-play method, was proposed to improve automatic self-correction and efficient utilization of retrieved documents.",
+    "question_type": "factual"
+  },
+  {
+    "id": "tc_030",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What does the context say about bounded rationality in the repeated prisoners dilemma?"
+      },
+      {
+        "role": "assistant",
+        "content": "It models bounded rationality by limiting the number of states in the players’ finite automata. Neyman showed that, for a suitable range of state counts, collaboration can be approximated in equilibrium. When mutual cooperation pays (3,3), an equilibrium can give each player an average payoff per round greater than 3−1/k."
+      }
+    ],
+    "query": "What range of state counts does this result require for the players?",
+    "expected_text_match": "in the interval [n1/k, nk]",
+    "ground_truth_answer": "The number of states is in the interval [n1/k, nk] for some k."
+  },
+  {
+    "id": "tc_031",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What result do Gilboa and Zemel show about correlated equilibria?"
+      },
+      {
+        "role": "assistant",
+        "content": "They show that determining whether there exists a correlated equilibrium in which each player gets a payoff of at least r is computable in polynomial time."
+      }
+    ],
+    "query": "For that concept, what payoff-threshold existence question can be solved efficiently?",
+    "expected_text_match": "computable in polynomial time",
+    "ground_truth_answer": "It is computable in polynomial time to determine whether there exists a correlated equilibrium where each player gets a payoff of at least r."
+  },
+  {
+    "id": "tc_032",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "Why might the Vickrey-Groves-Clarke procedure be impractical in large systems?"
+      },
+      {
+        "role": "assistant",
+        "content": "The relevant optimization problem is NP-hard, making the VCG procedure difficult to compute in large systems. Although an approximation might seem useful, replacing VCG with an approximation does not generally preserve truthfulness."
+      }
+    ],
+    "query": "What property may be lost when it is replaced by an approximation?",
+    "expected_text_match": "does not preserve truthfulness",
+    "ground_truth_answer": "Truthfulness may not be preserved: truthfully revealing one’s type may no longer be an optimal strategy."
+  },
+  {
+    "id": "tc_033",
+    "source_doc": "arxiv1.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is the winner determination problem in a combinatorial auction?"
+      },
+      {
+        "role": "assistant",
+        "content": "It is the problem of allocating the auction’s items to maximize the auctioneer’s revenue."
+      }
+    ],
+    "query": "Besides being NP-complete, what stronger limitation does it have regarding approximation?",
+    "expected_text_match": "not even polynomial-time approximable",
+    "ground_truth_answer": "It is not even polynomial-time approximable: there is no constant d and polynomial-time algorithm that guarantees an allocation with revenue at least 1/d of the optimal revenue."
+  },
+  {
+    "id": "tc_034",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "How does RAG combine retrieval and text generation?"
+      },
+      {
+        "role": "assistant",
+        "content": "RAG combines a retriever that provides latent documents conditioned on the input with a seq2seq generator that uses those documents together with the input to generate the output. It marginalizes the latent documents using a top-K approximation, either per output or per token."
+      }
+    ],
+    "query": "In the per-token option, how are the documents assigned across the output?",
+    "expected_text_match": "different documents are responsible for different tokens",
+    "ground_truth_answer": "In the per-token option, different documents are responsible for different tokens."
+  },
+  {
+    "id": "tc_035",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What retrieval architecture does DPR use, and how does it score documents against a query?"
+      },
+      {
+        "role": "assistant",
+        "content": "DPR uses a bi-encoder architecture. It represents documents and queries with separate BERTBASE encoders, then scores them using the exponential of the inner product between the document and query representations."
+      }
+    ],
+    "query": "How is its document representation produced?",
+    "expected_text_match": "BERTBASE document encoder",
+    "ground_truth_answer": "Each document is represented by a dense vector produced by a BERTBASE document encoder."
+  },
+  {
+    "id": "tc_036",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "In the open-domain QA experiments, what approaches are compared, and how is the generative system trained?"
+      },
+      {
+        "role": "assistant",
+        "content": "The experiments compare RAG with extractive QA, where answers are extracted from retrieved documents, and with Closed-Book QA. RAG is trained by directly minimizing the negative log-likelihood of answers."
+      }
+    ],
+    "query": "How does the answer-generating alternative differ from the retrieval-based approach in its use of retrieved information?",
+    "expected_text_match": "do not exploit retrieval",
+    "ground_truth_answer": "The answer-generating alternative does not exploit retrieval."
+  },
+  {
+    "id": "tc_037",
+    "source_doc": "arxiv2.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is FEVER, and what task does it involve?"
+      },
+      {
+        "role": "assistant",
+        "content": "FEVER is a task that uses evidence retrieved from Wikipedia to classify claims as true, false, or unverifiable from Wikipedia alone. It combines information retrieval with entailment reasoning."
+      }
+    ],
+    "query": "What kind of evidence supervision does this approach avoid using?",
+    "expected_text_match": "supervision on retrieved evidence",
+    "ground_truth_answer": "It does not use supervision on retrieved evidence."
+  },
+  {
+    "id": "tc_038",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "How does RAG use external knowledge, and what concern does the passage raise about its performance?"
+      },
+      {
+        "role": "assistant",
+        "content": "RAG prepends relevant documents retrieved from an external knowledge corpus. Its effectiveness depends on the relevance and accuracy of those retrieved documents, and the passage raises concerns about its behavior and performance when retrieval fails or returns inaccurate results."
+      }
+    ],
+    "query": "What does its effectiveness depend on?",
+    "expected_text_match": "relevance and accuracy of",
+    "ground_truth_answer": "Its effectiveness depends on the relevance and accuracy of the retrieved documents."
+  },
+  {
+    "id": "tc_039",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is Corrective Retrieval-Augmented Generation, and what is it designed to do?"
+      },
+      {
+        "role": "assistant",
+        "content": "Corrective Retrieval-Augmented Generation (CRAG) is a method proposed to self-correct retriever results and improve the utilization of documents for augmenting generation. It uses a lightweight retrieval evaluator to assess the overall quality of retrieved documents for a query."
+      }
+    ],
+    "query": "When does it integrate large-scale web searches as a strategic extension?",
+    "expected_text_match": "the latter two actions",
+    "ground_truth_answer": "It integrates large-scale web searches for the latter two actions: Incorrect and Ambiguous."
+  },
+  {
+    "id": "tc_040",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What does CRAG contribute, according to this passage?"
+      },
+      {
+        "role": "assistant",
+        "content": "CRAG is proposed to improve automatic self-correction and the efficient utilization of retrieved documents. The passage also says experiments demonstrate its adaptability to RAG-based approaches and its generalizability across short- and long-form generation tasks."
+      }
+    ],
+    "query": "What kinds of tasks did it generalize across?",
+    "expected_text_match": "short- and long-form generation tasks",
+    "ground_truth_answer": "It generalized across short- and long-form generation tasks."
+  },
+  {
+    "id": "tc_041",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What concern motivates reconsidering standard retrieval-augmented methods?"
+      },
+      {
+        "role": "assistant",
+        "content": "Retrieval is not always necessary: responses without retrieval can be more accurate in many situations. Also, if the retrieved documents are irrelevant, retrieval can worsen factual errors made by language models."
+      }
+    ],
+    "query": "What can happen if it goes wrong and supplies irrelevant material?",
+    "expected_text_match": "exacerbate the factual error",
+    "ground_truth_answer": "If retrieval supplies irrelevant documents, it can exacerbate the factual errors that language models make."
+  },
+  {
+    "id": "tc_042",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What does CRAG do during inference?"
+      },
+      {
+        "role": "assistant",
+        "content": "CRAG designs corrective strategies to improve the robustness of generation."
+      }
+    ],
+    "query": "What does it design at inference to address the weakness described?",
+    "expected_text_match": "corrective strategies to improve",
+    "ground_truth_answer": "It designs corrective strategies to improve the robustness of generation."
+  },
+  {
+    "id": "tc_043",
+    "source_doc": "arxiv3.pdf",
+    "question_type": "multi_turn_followup",
+    "conversation_history": [
+      {
+        "role": "user",
+        "content": "What is the role of the retrieval evaluator?"
+      },
+      {
+        "role": "assistant",
+        "content": "The retrieval evaluator helps determine whether retrieved documents are accurate, so irrelevant or misleading messages can be identified before they are used. Its accuracy plays a pivotal role in overall system performance because it influences the outcomes of subsequent processes."
+      }
+    ],
+    "query": "What does its accuracy influence in the stages that follow?",
+    "expected_text_match": "outcomes of subsequent processes",
+    "ground_truth_answer": "Its accuracy influences the outcomes of subsequent processes."
+  },
+  {
+    "id": "tc_044",
+    "source_doc": "arxiv1.pdf",
+    "query": "What is the computational complexity of finding a correlated equilibrium in an extensive-form game?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document discusses the influence of computer science on game theory and introduces complexity-theory topics such as NP-completeness and finite automata. It does not contain information about the computational complexity of finding correlated equilibria in extensive-form games.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_045",
+    "source_doc": "arxiv1.pdf",
+    "query": "What is the computational complexity of the winner-determination problem in combinatorial auctions, and which algorithms are used to solve it?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document discusses mechanism-design applications such as task allocation and cost sharing, and introduces combinatorial auctions with bundle values. It does not contain information about the computational complexity of winner determination or algorithms for solving it.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_046",
+    "source_doc": "arxiv2.pdf",
+    "query": "What contrastive loss and hard-negative mining strategy are used to train the neural retriever in the RAG model?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document covers retrieval-augmented generation with a pre-trained seq2seq generator and a dense Wikipedia index accessed by a pre-trained neural retriever. It does not contain information about the retriever’s contrastive loss or hard-negative mining strategy.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_047",
+    "source_doc": "arxiv2.pdf",
+    "query": "What is the impact of using FlashAttention and speculative decoding on RAG inference latency?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document evaluates RAG models using BART and DPR with standard beam search decoding on Wikipedia dumps. It does not contain any analysis or benchmarks regarding FlashAttention, speculative decoding, or modern GPU kernel optimizations.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_048",
+    "source_doc": "arxiv2.pdf",
+    "query": "What beam-search width and decoding settings were used when generating Jeopardy questions with the BART model?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document covers Jeopardy question generation and its evaluation using SearchQA splits, Q-BLEU, and human evaluations, but it does not contain information about the BART model’s beam-search width or decoding settings.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_049",
+    "source_doc": "arxiv3.pdf",
+    "query": "How does CRAG calculate its retrieval-confidence score, and what thresholds does it use to decide whether to retain, refine, or replace retrieved documents?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document discusses conventional RAG’s problems with irrelevant or inaccurate retrieved information and introduces CRAG as a method to self-correct retrieval results and improve document utilization. It does not contain information about how CRAG calculates retrieval-confidence scores or the thresholds it uses to select actions.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_050",
+    "source_doc": "arxiv3.pdf",
+    "query": "How does ColBERT’s late-interaction scoring mechanism rank documents in a retrieval-augmented generation pipeline?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document covers selective retrieval strategies and deciding when and what to retrieve during long-form generation, but it does not contain information about ColBERT’s late-interaction scoring mechanism.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_051",
+    "source_doc": "arxiv3.pdf",
+    "query": "What numerical latency overhead does CRAG’s retrieval evaluator introduce compared with standard RAG?",
+    "expected_text_match": null,
+    "ground_truth_answer": "The document covers evaluating retrieved documents for relevance and confidence, and correcting or searching for knowledge when needed. It does NOT contain information about the retrieval evaluator’s numerical latency overhead compared with standard RAG.",
+    "question_type": "out_of_scope"
+  },
+  {
+    "id": "tc_052",
+    "source_doc": "arxiv2.pdf, arxiv3.pdf",
+    "query": "How do the reported contributions of RAG and CRAG differ in addressing generation quality, and how is CRAG’s improvement positioned relative to RAG?",
+    "expected_text_match": "significantly improve the performance",
+    "ground_truth_answer": "RAG is reported to outperform parametric-only seq2seq models on three open-domain QA tasks and to generate more specific, diverse, and factual language than a parametric-only baseline. CRAG is positioned as a further improvement to RAG-based approaches, significantly improving their performance on short- and long-form generation tasks.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_053",
+    "source_doc": "arxiv2.pdf, arxiv3.pdf",
+    "query": "How does an end-to-end RAG system use retrieved documents to produce an answer, and why can retrieval quality still limit its performance despite jointly fine-tuning the retriever and generator?",
+    "expected_text_match": "relevance and accuracy",
+    "ground_truth_answer": "The system uses MIPS to retrieve the top-K documents from its index for a query, then uses the generator with those documents to produce a prediction; the retriever and generator are fine-tuned end-to-end. However, RAG augments generation with retrieved external documents, so performance still depends on their relevance and accuracy: retrieval failure or inaccurate documents can undermine the model’s behavior and performance even when the components are jointly fine-tuned.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_054",
+    "source_doc": "arxiv2.pdf, arxiv3.pdf",
+    "query": "How do the two approaches differ in keeping RAG useful as knowledge changes versus improving the quality of retrieved information?",
+    "expected_text_match": "decompose-then-recompose algorithm",
+    "ground_truth_answer": "The RAG approach described in arxiv2.pdf keeps its knowledge current by allowing its non-parametric memory to be replaced as the world changes. CRAG, in arxiv3.pdf, instead improves the usefulness of retrieved information by broadening its scope and diversity and using a decompose-then-recompose algorithm to remove redundant or non-essential context. Thus, one addresses updating stored knowledge, while the other refines what retrieval supplies to the model.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_055",
+    "source_doc": "arxiv2.pdf, arxiv3.pdf",
+    "query": "How does a RAG system’s jointly trained retriever and BART generator complement one another in addressing the knowledge limitations of a language model, compared with relying on the generator’s learned parameters alone?",
+    "expected_text_match": "extra knowledge source",
+    "ground_truth_answer": "BART’s parameters serve as the generator’s parametric memory, while joint training lets the retriever and generator learn together without direct supervision about which document to retrieve. The retrieved documents provide an extra knowledge source from a specific corpus, supplementing the generator’s learned parameters and helping address missing or inaccurate specific knowledge, particularly for knowledge-intensive tasks.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_056",
+    "source_doc": "arxiv2.pdf, arxiv3.pdf",
+    "query": "When evaluating CRAG on MSMARCO NLG v2.1 while omitting the benchmark’s supplied gold passages and retaining only its questions and answers, what documents should CRAG assess, and how should it handle relevant versus irrelevant results?",
+    "expected_text_match": "retrieved documents will be discarded",
+    "ground_truth_answer": "Because the MSMARCO setup omits its supplied passages, CRAG must assess documents returned by a retriever for each retained question, rather than those gold passages. Its evaluator estimates document relevance: for relevant results, CRAG refines them into more precise knowledge strips; for irrelevant results, the retrieved documents will be discarded and web searches used as complementary sources.",
+    "question_type": "reasoning"
+  },
+  {
+    "id": "tc_057",
+    "source_doc": "arxiv1.pdf, arxiv2.pdf",
+    "query": "How do finite-automaton strategies for boundedly rational players and hybrid retrieval-based language models address different limitations, and what distinct capability does each provide?",
+    "expected_text_match": "directly revised and expanded",
+    "ground_truth_answer": "Finite automata capture the simple heuristics boundedly rational players use when they cannot feasibly compute best responses across the many possible strategies in a repeated prisoner’s dilemma. Hybrid language models address limitations of parametric memory by adding non-parametric, retrieval-based memory, so their knowledge can be directly revised and expanded and accessed knowledge can be inspected. Thus, finite automata simplify decision-making, whereas retrieval-based memory makes stored knowledge more maintainable and inspectable.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_058",
+    "source_doc": "arxiv1.pdf, arxiv2.pdf",
+    "query": "Compare the guarantee that every normal-form game has a Nash equilibrium with RAG-Sequence’s treatment of retrieved evidence: why doesn’t equilibrium existence establish that finding one is computationally easy, and how does RAG-Sequence’s document choice differ from RAG-Token’s?",
+    "expected_text_match": "same retrieved document",
+    "ground_truth_answer": "The existence of a Nash equilibrium guarantees that a solution is present, but not that it can be found efficiently: finding one is PPAD-complete and is believed not to be solvable in polynomial time. In RAG-Sequence, one retrieved document is used to predict every token in the output sequence, whereas RAG-Token may use a different retrieved document for each target token.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_059",
+    "source_doc": "arxiv1.pdf, arxiv3.pdf",
+    "query": "How do computational constraints in repeated prisoner’s dilemma differ from retrieval-quality constraints in RAG in their effects on outcomes, and what does this contrast suggest about the role of limitations in each setting?",
+    "expected_text_match": "amount of irrelevant information",
+    "ground_truth_answer": "In repeated prisoner’s dilemma, limited computational capacity can foster cooperation: under the stated condition on a player’s number of states, an equilibrium can give each player an average payoff above 3−ε. In RAG, by contrast, a low-quality retriever can supply irrelevant material that impedes accurate knowledge acquisition and misleads the generator. Thus, computational limitations can promote cooperative behavior in the game, whereas retrieval failures undermine answer accuracy in RAG; the effects of limitations depend on the system they constrain.",
+    "question_type": "comparative"
+  },
+  {
+    "id": "tc_060",
+    "source_doc": "arxiv1.pdf, arxiv3.pdf",
+    "query": "How do the main technical challenges in algorithmic mechanism design and retrieval-augmented generation differ, and what role does CRAG play in addressing the latter compared with the difficulty of applying VCG in the former?",
+    "expected_text_match": "corrective strategies for RAG",
+    "ground_truth_answer": "In algorithmic mechanism design, optimizing social welfare can be NP-hard even in simple settings, which can make the commonly used Vickrey-Groves-Clarke (VCG) procedure impractical. In RAG, the challenge addressed is inaccurate retrieved information: CRAG is a plug-and-play method that adds automatic self-correction and improves the use of retrieved documents, with reported gains over standard RAG and Self-RAG. Thus, the former is a computational-hardness problem in optimization, while CRAG addresses robustness to retrieval errors.",
+    "question_type": "comparative"
   }
 ]

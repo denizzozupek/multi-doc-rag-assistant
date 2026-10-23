@@ -237,6 +237,7 @@ def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluation
 if __name__ == "__main__":
     ingestion_pipeline(pdf_path="data/arxiv1.pdf")
     ingestion_pipeline(pdf_path="data/arxiv2.pdf")
+    ingestion_pipeline(pdf_path="data/arxiv3.pdf")
 
     with open("data/ground_truth.json", "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
