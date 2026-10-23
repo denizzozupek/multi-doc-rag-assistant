@@ -200,6 +200,7 @@ if __name__ == "__main__":
     # Ensure vector store contains ingested documents before evaluating
     ingestion_pipeline(pdf_path="data/arxiv1.pdf")
     ingestion_pipeline(pdf_path="data/arxiv2.pdf")
+    ingestion_pipeline(pdf_path="data/arxiv3.pdf")
 
     # Run retrieval benchmark and save results
     experiments = get_experiments()
