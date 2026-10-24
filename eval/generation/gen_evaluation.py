@@ -43,9 +43,10 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
         try:
             raw_history = item.get("conversation_history", [])
             raw_history_formatted = format_history(raw_history)
+            selected_files = [s.strip() for s in file_name.split(",")] if file_name else None
             state_input = {
                 "messages": raw_history_formatted + [HumanMessage(content=query_text)],
-                "selected_files": [file_name] if file_name else None,
+                "selected_files": selected_files,
             }
 
             gen_start = perf_counter()
