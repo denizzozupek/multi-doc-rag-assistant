@@ -9,3 +9,4 @@ class State(TypedDict):
     rewrite_query: str
     documents: list[Document]
     selected_files: list[str] | None = None
+    web_search_needed: bool | None = None
