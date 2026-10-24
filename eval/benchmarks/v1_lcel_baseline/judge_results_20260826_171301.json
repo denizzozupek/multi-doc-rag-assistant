@@ -1,0 +1,433 @@
+{
+    "total_questions": 28,
+    "total_valid": 0,
+    "total_multiturn": 0,
+    "summary": {
+        "avg_faithfulness": 0.0,
+        "avg_relevance": 0.0,
+        "avg_multiturn_faithfulness": null,
+        "avg_multiturn_relevance": null
+    },
+    "detailed_results": [
+        {
+            "id": "tc_001",
+            "query": "How is the price of anarchy defined and measured in game theory?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "definition",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_002",
+            "query": "Why does replacing an exact VCG mechanism with an approximation create issues according to Nisan and Ronen?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_003",
+            "query": "What is the computational complexity of the winner determination problem in combinatorial auctions?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_004",
+            "query": "In traffic routing, what is the maximum price of anarchy when travel time is a linear function of congestion?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_005",
+            "query": "Under what condition regarding the number of faulty nodes t and total nodes n can Byzantine agreement be reached?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_006",
+            "query": "Is deterministic consensus possible in an asynchronous system with crash failures?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_007",
+            "query": "What is the computational complexity class of finding a Nash equilibrium in normal-form games?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_008",
+            "query": "What does the Gibbard-Satterthwaite theorem state regarding strategic voting in nondictatorial voting schemes?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_009",
+            "query": "What file sharing patterns were observed in empirical studies of the Gnutella P2P network?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_010",
+            "query": "What can be achieved when implementing mediators using cheap talk if n > 3k + 3t holds?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "reasoning",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_011",
+            "query": "What are the parametric and non-parametric memory components of RAG models?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_012",
+            "query": "How do RAG-Sequence and RAG-Token differ in their use of retrieved passages during text generation?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "comparative",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_013",
+            "query": "Why is the document encoder kept fixed during RAG model fine-tuning?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "reasoning",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_014",
+            "query": "How is the Wikipedia knowledge source chunked and indexed in the RAG experiments?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_015",
+            "query": "What advantage does generative answer formulation offer over extractive QA approaches in open-domain QA?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "reasoning",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_016",
+            "query": "What were the results of human evaluations regarding factuality when comparing BART and RAG on Jeopardy question generation?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_017",
+            "query": "What is the total number of trainable parameters in the fine-tuned RAG models?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "factual",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_018",
+            "query": "What was demonstrated by the index hot-swapping experiment using 2016 and 2018 Wikipedia dumps?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_019",
+            "query": "How does the Thorough Decoding procedure operate for RAG-Sequence models?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_020",
+            "query": "What is retrieval collapse and how does it manifest during training?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "direct",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_021",
+            "query": "How does the Raft consensus algorithm handle leader election timeouts?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "out_of_scope",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_022",
+            "query": "What is the optimal learning rate and batch size for training the LoRA adapter on LLaMA-2?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "out_of_scope",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_023",
+            "query": "What is the computational complexity of solving its winner determination problem?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_024",
+            "query": "Under what condition can it be solved if faulty agents exhibit malicious behavior?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_025",
+            "query": "How does this metric behave when the travel latency function is nonlinear versus linear?",
+            "source_doc": "arxiv1.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_026",
+            "query": "How does the decoding procedure work for the first model during test time?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_027",
+            "query": "How was this capability validated using world leader queries from different years?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        },
+        {
+            "id": "tc_028",
+            "query": "Why does it perform particularly well on these questions that combine multiple pieces of information?",
+            "source_doc": "arxiv2.pdf",
+            "question_type": "multi_turn_followup",
+            "use_reranker": true,
+            "context": null,
+            "answer": null,
+            "judge_result": {
+                "faithfulness_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "faithfulness_score": 0,
+                "relevance_reason": "qa_chain() got an unexpected keyword argument 'use_reranker'",
+                "relevance_score": 0
+            }
+        }
+    ]
+}
