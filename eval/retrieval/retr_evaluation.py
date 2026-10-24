@@ -72,14 +72,16 @@ async def evaluate_retrieval(
         """
         Evaluate a single retrieval item, returning detailed metrics.
         """
-        file_name = item["source_doc"]
+        source_doc = item.get("source_doc")
+        file_name = source_doc
+        selected_files = [s.strip() for s in source_doc.split(",")] if source_doc else None
 
         # Instantiate document-filtered retriever
         try:
             retriever = get_retriever(
                 k=k,
                 fetch_k=fetch_k,
-                selected_files=[file_name],
+                selected_files=selected_files,
                 search_type=search_type,
             )
 
