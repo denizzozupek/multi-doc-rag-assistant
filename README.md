@@ -27,7 +27,7 @@ Hybrid retrieval RAG pipeline (Dense + BM25 + Cross-Encoder Reranker) with conve
 | Layer / Component | Technology | Role & Justification |
 | :--- | :--- | :--- |
 | **Orchestration** | LangChain (LCEL) | Composable, pipeline-driven orchestration for query rewriting, retrieval scoping, and synthesis. |
-| **LLM Engine** | OpenAI `gpt-4o-mini` | Cost-effective, high-reasoning model for query rewriting, response generation, and evaluation judging. |
+| **LLM Engine** | OpenAI | Cost-effective, high-reasoning model for query rewriting, response generation, and evaluation judging. |
 | **Embeddings** | OpenAI `text-embedding-3-small` | 1536-dimensional dense vector embeddings for semantic chunk representation. |
 | **Vector Database** | ChromaDB | Persistent local vector store with native metadata filtering (`source_doc` scoping). |
 | **Sparse Retrieval** | BM25s (`bm25s`) | Lexical keyword retriever for exact term matching, fused with dense results via RRF. |
