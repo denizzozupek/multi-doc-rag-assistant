@@ -6,6 +6,8 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_core.documents import Document
+from langchain_tavily import TavilySearch
 
 from src.config import (
     DEFAULT_RERANK_TOP_K,
@@ -13,11 +15,19 @@ from src.config import (
     RETRIEVER_SEARCH_TYPE,
 )
 from src.config import DEFAULT_LLM
-from src.prompt import memory_search_system_prompt, system_prompt
+from src.prompt import (
+    RetrievalEvaluator,
+    memory_search_system_prompt,
+    system_prompt,
+    corrective_rag_prompt,
+    rewrite_for_web_search_prompt,
+)
 from src.graph.state import State
 from src.retrieval.reranker import get_rerank_semaphore, reranker
 from src.retrieval.retriever import get_retriever
 from src.utils import format_docs_as_context
+
+web_search_tool = TavilySearch(k=3)
 
 logger = logging.getLogger(__name__)
 
@@ -166,3 +176,71 @@ def create_generation_node(
 
     logger.info("Generation node created successfully.")
     return generation_node
+
+
+def create_grade_documents_node(
+    llm: BaseChatModel = DEFAULT_LLM,
+) -> Callable[[State], Any]:
+    """Creates a node that evaluates the relevancy of retrieved documents to the user's question."""
+
+    evaluator_chain = corrective_rag_prompt | llm.with_structured_output(
+        RetrievalEvaluator
+    )
+
+    async def grade_documents_node(state: State) -> dict:
+        documents = state.get("documents", [])
+        query = state.get("rewrite_query") or state.get("messages", [])[-1].content
+
+        if not documents:
+            logger.warning("No documents found in state. Directed to web search.")
+            return {"documents": [], "web_search_needed": True}
+
+        tasks = [
+            evaluator_chain.ainvoke({"source_doc": doc.page_content, "query": query})
+            for doc in documents
+        ]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+        filtered_docs = [
+            doc
+            for doc, result in zip(documents, results)
+            if result.binary_score.lower() == "yes"
+        ]
+
+        web_search_needed = len(filtered_docs) == 0
+
+        return {"documents": filtered_docs, "web_search_needed": web_search_needed}
+
+    return grade_documents_node
+
+
+def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State], Any]:
+    """Creates a node that reformulates user questions for web search."""
+
+    chain = rewrite_for_web_search_prompt | llm | StrOutputParser()
+
+    async def web_search_node(state: State) -> dict:
+        query = state.get("rewrite_query") or state.get("messages", [])[-1].content
+        documents = state.get("documents", [])
+
+        if not query or not query.strip():
+            logger.warning("No query found in state. Returning empty rewrite query.")
+            return {"rewrite_query": ""}
+
+        rewritten_query = await chain.ainvoke({"user_question": query})
+        logger.info(
+            "Rewritten web search query generated successfully: %s", rewritten_query
+        )
+
+        web_results = await web_search_tool.ainvoke(rewritten_query)
+        results = web_results.get("results", [])
+        for result in results:
+            source = result.get("url") or "Web Search"
+            content = result.get("content", "").strip()
+            if content:
+                documents.append(
+                    Document(page_content=content, metadata={"source": source})
+                )
+        return {"documents": documents}
+    
+    return web_search_node
