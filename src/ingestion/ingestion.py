@@ -3,6 +3,7 @@ import logging
 import os
 import bm25s
 import Stemmer
+import asyncio
 
 from langchain_chroma import Chroma
 from langchain_community.document_loaders import PyMuPDFLoader
@@ -11,15 +12,19 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.vectorstores import VectorStore
 from langchain_openai import OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.language_models import BaseChatModel
+from langchain_core.output_parsers import StrOutputParser
 
 from src.config import (
     BM25_PERSIST_DIRECTORY,
+    CONTEXTUAL_LLM,
     EMBEDDING_MODEL_NAME,
     PDF_PATH,
     PERSIST_DIRECTORY,
     CHUNK_SIZE,
     OVERLAP_SIZE,
 )
+from src.prompt import contextual_retriever_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +101,7 @@ def load_and_split_pdf(
         loader = PyMuPDFLoader(pdf_path)
         raw_documents = loader.load()
         documents = [doc for doc in raw_documents if doc.page_content.strip()]
+        entire_document_text = "\n\n".join(doc.page_content for doc in documents)
         logger.info(f"Loaded {len(documents)} pages from {pdf_path}")
     except FileNotFoundError:
         logger.error(f"PDF file not found at path: {pdf_path}")
@@ -120,7 +126,7 @@ def load_and_split_pdf(
         chunk.metadata["source"] = file_name
 
     logger.info(f"Created {len(chunks)} chunks with metadata from {file_name}")
-    return chunks
+    return chunks, entire_document_text
 
 
 
@@ -141,6 +147,28 @@ def combine_indexed_records(chunks: list[Document], pdf_hash: str, bm25_persist_
             )
 
     return new_records + old_records
+
+# STEP 3.5: Contextualization of Chunks
+async def contextualize_single_chunk(chain, chunk: Document, entire_doc_text: str, semaphore: asyncio.Semaphore) -> Document:
+    async with semaphore:
+        context = await chain.ainvoke({
+            "chunk_text": chunk.page_content,
+            "entire_document_text": entire_doc_text
+        })
+        return Document(
+            page_content=f"{context}\n\n{chunk.page_content}",
+            metadata=chunk.metadata
+        )
+
+def contextual_chunks(chunks: list[Document], entire_doc_text: str, llm: BaseChatModel = CONTEXTUAL_LLM) -> list[Document]:
+    """Generates contextual summaries for each chunk using the provided LLM in parallel."""
+    chain = contextual_retriever_prompt | llm | StrOutputParser()
+    semaphore = asyncio.Semaphore(5)  
+    async def contextualize_all():
+        tasks = [contextualize_single_chunk(chain, chunk, entire_doc_text, semaphore) for chunk in chunks]
+        return await asyncio.gather(*tasks)
+
+    return asyncio.run(contextualize_all())
 
 # STEP 4: BM25 Indexing (Merge & Persist)
 def index_to_bm25(
@@ -222,10 +250,16 @@ def ingestion_pipeline(
         )
 
     # 1. Load and Chunk
-    chunks = load_and_split_pdf(pdf_path=pdf_path, pdf_hash=pdf_hash)
+    chunks, entire_document_text = load_and_split_pdf(pdf_path=pdf_path, pdf_hash=pdf_hash)
+    logger.info(f"Loaded and split PDF into {len(chunks)} chunks.")
+
+    # 1.5. Contextualize Chunks
+    chunks = contextual_chunks(chunks=chunks, entire_doc_text=entire_document_text ,llm=CONTEXTUAL_LLM)
+    logger.info(f"Contextualized {len(chunks)} chunks for improved retrieval.")
 
     # 2. Update BM25 Index
     index_to_bm25(chunks=chunks, bm25_persist_dir=bm25_persist_dir, pdf_hash=pdf_hash)
+    logger.info(f"BM25 index updated with {len(chunks)} chunks for PDF hash {pdf_hash[:8]}...")
 
     # 3. Update Vector Store
     vector_db = index_to_chroma(
@@ -233,9 +267,9 @@ def ingestion_pipeline(
         persist_dir=persist_directory,
         embedding_model=embedding_model,
     )
+    logger.info(f"Added {len(chunks)} chunks successfully to ChromaDB at {persist_directory}")
 
     return vector_db
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

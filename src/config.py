@@ -1,4 +1,9 @@
 import os
+try:
+    import truststore
+    truststore.inject_into_ssl()
+except ImportError:
+    pass
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
 from pathlib import Path
@@ -21,6 +26,14 @@ DEFAULT_LLM = ChatOpenAI(
     timeout=30,
     max_retries=3,
 )
+
+CONTEXTUAL_LLM = ChatOpenAI(
+    model="gpt-4o-mini",
+    temperature=0,
+    timeout=30,
+    max_retries=6,
+)
+
 EMBEDDING_MODEL_NAME = "text-embedding-3-small"
 CROSS_ENCODER_MODEL_NAME = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 

@@ -43,3 +43,21 @@ rewrite_for_web_search_prompt = ChatPromptTemplate.from_messages(
         ),("human", "{user_question}")
     ]
 )
+
+contextual_retriever_prompt = ChatPromptTemplate.from_messages(
+    [
+        (
+            "system",
+            "Help me for improve to search retrieval of document chunks.\n"
+            "Given the entire document and a specific chunk from it, provide a short, succinct context "
+            "to situate this chunk within the overall document for improving search retrieval.\n"
+            "Answer ONLY with the succinct context to situate this chunk and nothing else.",
+        ),
+        (
+            "human",
+            "<document>\n{entire_document_text}\n</document>\n\n"
+            "Here is the chunk we want to situate within the whole document:\n"
+            "<chunk>\n{chunk_text}\n</chunk>",
+        ),
+    ]
+)
