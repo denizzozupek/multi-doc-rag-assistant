@@ -1,7 +1,10 @@
 import asyncio
+import json
 import logging
+import os
 from typing import Any, Callable
 
+from langchain_community.callbacks import get_openai_callback
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
@@ -30,6 +33,27 @@ from src.utils import format_docs_as_context
 web_search_tool = TavilySearch(k=3)
 
 logger = logging.getLogger(__name__)
+
+TAVILY_CACHE_PATH = "data/tavily_search_results.json"
+
+
+def _load_tavily_cache() -> dict:
+    if os.path.exists(TAVILY_CACHE_PATH):
+        try:
+            with open(TAVILY_CACHE_PATH, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.warning(
+                "Error loading Tavily cache: %s. Starting with empty cache.", e
+            )
+            return {}
+    return {}
+
+
+def _save_tavily_cache(cache: dict) -> None:
+    os.makedirs(os.path.dirname(TAVILY_CACHE_PATH), exist_ok=True)
+    with open(TAVILY_CACHE_PATH, "w", encoding="utf-8") as f:
+        json.dump(cache, f, ensure_ascii=False, indent=4)
 
 
 # 1. Rewrite Query Node
@@ -178,6 +202,7 @@ def create_generation_node(
     return generation_node
 
 
+# 4. Grade Documents Node
 def create_grade_documents_node(
     llm: BaseChatModel = DEFAULT_LLM,
 ) -> Callable[[State], Any]:
@@ -193,29 +218,52 @@ def create_grade_documents_node(
 
         if not documents:
             logger.warning("No documents found in state. Directed to web search.")
-            return {"documents": [], "web_search_needed": True}
+            return {
+                "documents": [],
+                "web_search_needed": True,
+                "grader_tokens": 0,
+                "grader_cost_usd": 0.0,
+            }
 
         tasks = [
             evaluator_chain.ainvoke({"source_doc": doc.page_content, "query": query})
             for doc in documents
         ]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        with get_openai_callback() as cb:
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            grader_tokens = cb.total_tokens
+            grader_cost_usd = round(cb.total_cost, 6)
 
         filtered_docs = [
             doc
             for doc, result in zip(documents, results)
-            if result.binary_score.lower() == "yes"
+            if not isinstance(result, Exception)
+            and getattr(result, "binary_score", "").lower() == "yes"
         ]
 
         web_search_needed = len(filtered_docs) == 0
+        if web_search_needed:
+            logger.info("No relevant documents found after grading. Web search needed.")
+        else:
+            logger.info(
+                "Grading complete: %d of %d documents retained.",
+                len(filtered_docs),
+                len(documents),
+            )
 
-        return {"documents": filtered_docs, "web_search_needed": web_search_needed}
+        return {
+            "documents": filtered_docs,
+            "web_search_needed": web_search_needed,
+            "grader_tokens": grader_tokens,
+            "grader_cost_usd": grader_cost_usd,
+        }
 
     return grade_documents_node
 
 
+# 5. Web Search Node
 def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State], Any]:
-    """Creates a node that reformulates user questions for web search."""
+    """Creates a node that reformulates user questions for web search and retrieves web results with caching."""
 
     chain = rewrite_for_web_search_prompt | llm | StrOutputParser()
 
@@ -232,8 +280,24 @@ def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State]
             "Rewritten web search query generated successfully: %s", rewritten_query
         )
 
-        web_results = await web_search_tool.ainvoke(rewritten_query)
-        results = web_results.get("results", [])
+        tavily_cache = _load_tavily_cache()
+
+        if rewritten_query in tavily_cache:
+            logger.info(
+                "Search results found for query in tavily_search_results: %s",
+                rewritten_query,
+            )
+            results = tavily_cache[rewritten_query]
+        else:
+            logger.warning(
+                "No search results found in cache, starting web search for: %s",
+                rewritten_query,
+            )
+            web_results = await web_search_tool.ainvoke(rewritten_query)
+            results = web_results.get("results", [])
+            tavily_cache[rewritten_query] = results
+            _save_tavily_cache(tavily_cache)
+
         for result in results:
             source = result.get("url") or "Web Search"
             content = result.get("content", "").strip()
@@ -242,5 +306,5 @@ def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State]
                     Document(page_content=content, metadata={"source": source})
                 )
         return {"documents": documents}
-    
+
     return web_search_node

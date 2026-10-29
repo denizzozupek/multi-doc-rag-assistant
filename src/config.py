@@ -21,8 +21,8 @@ if not OPENAI_API_KEY:
 
 # MODELS
 DEFAULT_LLM = ChatOpenAI(
-    model="gpt-6-luna",
-    temperature=1,
+    model="gpt-4o-mini",
+    temperature=0,
     timeout=30,
     max_retries=3,
 )
