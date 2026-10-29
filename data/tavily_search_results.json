@@ -1,0 +1,986 @@
+{
+    "Why is the document encoder not modified during the fine-tuning process of a Retrieval-Augmented Generation (RAG) model?": [
+        {
+            "url": "https://www.scifiniti.com/3104-4719/3/2026.0031",
+            "title": "Fine-Tuning vs. RAG: A Position Paper from the Perspective of LLM-Based Cybersecurity Modeling | Scifiniti",
+            "content": "Computational Resources: RAG has lower training costs because it leverages the base or pre-trained language model and does not require any modifications during the training phase. However, computational resources are needed for retrieval during inference. Consequently, due to its resource demands and the need for extensive dataset preparation, fine-tuning during the training phase requires substantial memory, significant time, and multiple high-performance GPUs. [...] Adaptability and Flexibility: Fine-tuning adjusts the model’s parameters by retraining on domain-specific data, which incurs an additional cost for organizations. RAG offers superior flexibility by retrieving relevant data from an external knowledge base without changing the model’s internal parameters, though this increases complexity because it relies on retrieval quality. [...] Retrieval-Augmented Generation (RAG)  is an emerging paradigm that augments LLMs with knowledge retrieval and generation capabilities. Although LLMs demonstrate remarkable performance, they face issues such as hallucinations and outdated information, especially with Out-of-Distribution (OoD) questions. The hallucination issue arises when a model produces information that appears to be correct and real but is factually incorrect or fabricated. RAG overcomes these challenges by dynamically",
+            "score": 0.5385227,
+            "raw_content": null,
+            "id": "4452d6-00"
+        },
+        {
+            "url": "https://www.linkedin.com/posts/satyamallick_rag-basics-retrieval-augmented-generation-activity-7495906781307625472-yp_p",
+            "title": "RAG Makes AI Check Source Before Answering",
+            "content": "Fine tuning and retrieval augmented generation solve different problems. Fine tuning changes the model. RAG changes the information you give",
+            "score": 0.47738418,
+            "raw_content": null,
+            "id": "c8bee6-01"
+        },
+        {
+            "url": "https://www.superannotate.com/blog/rag-fine-tuning",
+            "title": "Optimizing RAG systems with fine-tuning techniques",
+            "content": "If the document relevance score is low, your model isn’t returning the documents that contain the answer to the question, or it produces a lot of non-relevant data. An embedding model transforms a piece of text into a vector. In the rag system, we generally chunk our dataset into smaller segments, encode them all to vectors using our model, and then store them in a vector database. We then encode our question and hope that the resulting vector is close to the vector of the document with the [...] RAG lets the model search in relevant documents to answer questions; that’s why it’s called ‘retrieval.’ Fine-tuning, on the other hand, is about ‘feeding’ the pre-trained model a smaller, specific dataset to adapt it for a particular task. People often use the phrase ‘RAG or fine-tuning’ or ‘RAG vs. fine-tuning’ until researchers discovered that RAG combined with fine-tuning is a much more versatile approach. [...] One answer here is that embeddings create a vector that is essentially a compressed version of the text. When comparing the similarity between the compressed question and the document, some information will unfortunately be lost. The reranker, on the other hand, computes a similarity score based on the uncompressed versions of the question and answer. By this, it achieves a higher quality similarity calculation but at higher computational costs.",
+            "score": 0.47489962,
+            "raw_content": null,
+            "id": "2a0e59-02"
+        },
+        {
+            "url": "https://theaiengineer.substack.com/p/rag-vs-fine-tuning",
+            "title": "RAG vs Fine-Tuning - When to Use Each in Production",
+            "content": "The payoff is that the knowledge lives outside the model, in an index you own. A price changed? Edit the document. A claim needs a source? The retrieved passage is the citation. None of the model’s weights move, so there is no training run.\n\n### Fine-Tuning Makes the Model Study [...] 1. Change rate: facts that move, that are private to your company, or that must be cited belong in RAG. OpenAI’s own guidance agrees: fine-tuning adjusts behavior, style, and format, and retrieval is the better tool once the model needs current or proprietary facts1.\n2. The data you have: fine-tuning needs a few hundred to a few thousand labeled examples of the output you want. Without them, RAG over your existing documents is what you can build today. [...] Is fine-tuning a good way to add new knowledge to a model?  \nUsually not. OpenAI’s guidance is that fine-tuning adjusts behavior, style, and format, while retrieval is the better tool for giving a model current or proprietary facts. Knowledge baked into weights freezes at training time and goes stale, and the only fix is another training run. For facts that change, RAG keeps the knowledge editable without retraining.\n\n1\n\nOptimizing LLM Accuracy, OpenAI (June 2024)\n\n2",
+            "score": 0.40613216,
+            "raw_content": null,
+            "id": "1b0371-03"
+        },
+        {
+            "url": "https://www.oracle.com/bz/artificial-intelligence/generative-ai/retrieval-augmented-generation-rag/rag-fine-tuning",
+            "title": "RAG vs. Fine-Tuning: How to Choose | Oracle Belize",
+            "content": "responses. This approach, unlike AI model fine-tuning, works without modifying the underlying model itself. [...] ### RAG\n\nRAG also alters the responses of LLMs, but it doesn’t change the underlying model. Instead, a RAG system uses a local database or curated collection of documents to inform an LLM’s responses, often with up-to-the-minute details.\n\n### Comparison of Skill Sets and Costs\n\n### Hybrid Approach: RAFT\n\nThe limitations—and benefits—of these two approaches have, quite naturally, led to a growing trend to combine their strengths. The result is the hybrid approach called RAFT. [...] RAG, short for retrieval-augmented generation, is an architectural framework developed by researchers at Meta to help general-purpose AI models deliver outputs that are relevant and useful to organizations. RAG does this by giving a large language model, or LLM, access to an internal knowledge base that it can use to augment its original training data. The result is an AI system that combines the language fluency of an LLM with local data to deliver targeted, contextually appropriate responses.",
+            "score": 0.38221118,
+            "raw_content": null,
+            "id": "03d59d-04"
+        },
+        {
+            "url": "https://montecarlo.ai/blog-rag-vs-fine-tuning",
+            "title": "RAG Vs. Fine Tuning: Which One Should You Choose?",
+            "content": "### Security\n\nRAG’s approach keeps sensitive information within secured databases or knowledge repositories. The LLM only sees information at query time without storing it permanently in its weights. This enables easier enforcement of data access controls, requiring user permissions for certain document retrieval. Data never leaves company storage, aiding compliance with regulations like GDPR or HIPAA. [...] From a long-term perspective, RAG requires ongoing effort in curating and monitoring the knowledge base, ensuring document relevance and search quality. Fine-tuned models require periodic retraining as data evolves, representing bigger but less frequent efforts. Resource availability often determines which approach proves more sustainable.\n\n### Security [...] Retrieval-Augmented Generation is an approach that connects a large language model to an external knowledge source or database. Traditional language models rely solely on the text they were trained on, which means their knowledge is frozen at a specific point in time. Once training ends, they cannot update their information or access new data, similar to someone trying to answer current events questions using only an old encyclopedia. This limitation led Meta AI researchers to introduce RAG in",
+            "score": 0.3684062,
+            "raw_content": null,
+            "id": "7d9b7e-05"
+        },
+        {
+            "url": "https://www.ibm.com/think/topics/rag-vs-fine-tuning",
+            "title": "RAG vs. Fine-tuning | IBM",
+            "content": "Retrieval augmented generation works by locating information in internal data sources that is relevant to the user’s query, then using that data to generate more accurate responses. A data \"retrieval\" mechanism is added to \"augment\" the LLM by helping it \"generate\" more relevant responses.\n\nRAG models generate answers via a four-stage process: [...] When searching through internal documents, RAG systems use semantic search. Vector databases organize data by similarity, thus enabling searches by meaning, rather than by keyword. Semantic search techniques enable RAG algorithms to reach past keywords to the intent of a query and return the most relevant data. [...] To conceptualize RAG, imagine a gen AI model as an amateur home cook. They know the basics of cooking, but lack the expert knowledge—an organization’s proprietary database—of a chef trained in a particular cuisine. RAG is like giving the home cook a cookbook for that cuisine. By combining their general knowledge of cooking with the recipes in the cookbook, the home cook can create their favorite cuisine-specific dishes with ease.\n\n### The RAG data retrieval process",
+            "score": 0.2981801,
+            "raw_content": null,
+            "id": "8c2863-06"
+        },
+        {
+            "url": "https://www.researchgate.net/post/What_exactly_is_RAG-LLM_doing_Isnt_it_data_engineering",
+            "title": "What exactly is RAG-LLM doing? Isn't it data engineering?",
+            "content": "What exactly is Retrieval Augmented Generation for Large Language Model doing? Isn’t it data engineering?",
+            "score": 0.12086384,
+            "raw_content": null,
+            "id": "631e29-07"
+        },
+        {
+            "url": "https://www.reddit.com/r/LocalLLaMA/comments/1itkgwf/rag_vs_fine_tuning_for_creating_llm_domain",
+            "title": "RAG vs. Fine Tuning for creating LLM domain specific experts. ...",
+            "content": "Fine tuning def makes for a better agent but you still need RAG for facts and real world knowledge.. best practice for AI agents is both not one",
+            "score": 0.11870165,
+            "raw_content": null,
+            "id": "14c455-08"
+        },
+        {
+            "url": "https://www.reddit.com/r/LocalLLaMA/comments/1dp9fgu/a_common_misconception_about_ragframeworks",
+            "title": "A Common Misconception about RAG-Frameworks",
+            "content": "That RAG is not Vector DB tech, but instead it's a loosely defined concept describing the process of automated systems assisting in LLM",
+            "score": 0.085411474,
+            "raw_content": null,
+            "id": "0273ce-09"
+        }
+    ],
+    "How does the Raft consensus algorithm handle timeouts in leader election?": [
+        {
+            "url": "https://medium.com/@mayilb77/distributed-consensus-the-power-of-raft-in-leader-election-072489737423",
+            "title": "Distributed Consensus: The Power of RAFT in Leader Election",
+            "content": "Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g. 150–300ms) by each server. This spreads out the servers so that in most cases only a single server will time out; it wins the election and sends heartbeats before any other servers time out. The same mechanism is used to handle split votes. Each candidate resets its randomized [...] Raft uses a heartbeat mechanism to maintain leader status and trigger leader elections when necessary. Each server starts in the followerstate at startup. A server remains in the follower state as long as it receives valid heartbeat requests from the leader. The cluster has an `electionTimeout` interval, typically set between 150-300ms. During this interval, each follower expects a heartbeat request from the leader. If a follower does not receive a heartbeat request within the election timeout [...] its randomized election timeout at the start of an election, and it waits for that timeout to elapse before starting the next election; this reduces the likelihood of another split vote in the new election. This method is effective in selecting the leader node rapidly.",
+            "score": 0.92620385,
+            "raw_content": null,
+            "id": "c305e3-00"
+        },
+        {
+            "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)",
+            "title": "Raft (algorithm) - Wikipedia",
+            "content": "Raft achieves consensus via an elected leader. A server in a raft cluster is either a leader or a follower, and can be a candidate in the precise case of an election (leader unavailable). The leader is responsible for log replication to the followers. It regularly informs the followers of its existence by sending a heartbeat message. Each follower has a timeout (typically between 150 and 300 ms) in which it expects the heartbeat from the leader. The timeout is reset on receiving the heartbeat. [...] A leader election is started by a candidate server. A server becomes a candidate if it receives no communication by the leader over a period called the election timeout, so it assumes there is no acting leader anymore. It starts the election by increasing the term counter, voting for itself as new leader, and sending a message to all other servers requesting their vote. A server will vote only once per term, on a first-come-first-served basis. If a candidate receives a message from another [...] Timing is critical in Raft to elect and maintain a steady leader over time, in order to have a perfect availability of the cluster. Stability is ensured by respecting the timing requirement of the algorithm:\n\n> broadcastTime << electionTimeout << MTBF",
+            "score": 0.91118777,
+            "raw_content": null,
+            "id": "ca1f18-01"
+        },
+        {
+            "url": "https://blog.42yeah.is/distributed/2023/04/29/raft-leader-election.html",
+            "title": "The Consensus Algorithm: Raft (I) - Leader Election | Of Shaders & Triangles",
+            "content": "Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly.\n To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300 ms)\n Each candidate restarts its randomized election timeout at the start of an election, and it waits for that timeout to elapse before starting the next election;\n\n## Practical Problem\n\n### Livelocks [...] When a candidate receives a majority of votes, it becomes the new leader and immediately sends heartbeats to all servers in the cluster in parallel. If it does not receive a majority of votes, it updates its term and becomes a follower. If an election timeout occurs, a new round of elections will begin. [...] For the leader, it regularly sends heartbeats to followers and candidates to let them know that there is already a leader in the system, thereby maintaining its authority. As for followers and candidates, they have an election timeout. Once the set election timeout is exceeded, they will initiate a new round of elections.\n\n#### Term\n\nRaft divides time into terms of arbitrary length, as shown in the Figure 4.",
+            "score": 0.90810597,
+            "raw_content": null,
+            "id": "4be4ea-02"
+        },
+        {
+            "url": "https://microraft.io/blog/2021-09-08-today-a-raft-follower-tomorrow-a-raft-leader",
+            "title": "Today a Raft follower, tomorrow a Raft leader | MicroRaft",
+            "content": "The Raft dissertation sketches out a solution to this problem, and Henrik Ingo details the solution in his Four modifications of the Raft consensus algorithm work. The idea is to add a pre-voting step before triggering leader election. MicroRaft implements this. When the leader heartbeat timeout elapses, a follower Raft node sends `PreVoteRequest` to other Raft nodes for the next term without actually incrementing its local term. Other Raft nodes respond as if it was an actual RequestVote RPC. [...] MicroRaft chooses a more verbose approach and uses 2 timeout values for leader election: leader heartbeat timeout and leader election timeout. Leader heartbeat timeout is the duration for a follower to detect failure of the current leader and trigger leader election. Leader election timeout is the duration candidates wait before giving up a leader election round and move to the next term for a new round. These 2 timeout values allow the 2 steps of Raft's leader election logic to be tuned [...] MicroRaft realizes leader election logic with 2 configuration parameters, leader heartbeat timeout and leader election timeout. Leader heartbeat timeout is the duration for a follower to detect failure of the current leader and trigger leader election. Leader election timeout is the duration candidates wait before giving up a leader election round and move to the next term for a new round. These 2 timeout values can be tuned separately to minimize unnecessary leader elections and delays caused",
+            "score": 0.9039154,
+            "raw_content": null,
+            "id": "1fbb62-03"
+        },
+        {
+            "url": "https://quizlet.com/study-guides/raft-consensus-algorithm-leader-election-and-log-replication-97e22612-fe8d-4b67-8f8c-22fac7c1836f",
+            "title": "Raft Consensus Algorithm: Leader Election and Log ...",
+            "content": "Randomized election timeouts prevent simultaneous timeouts among nodes, reducing the chance of split votes. · In case of a split vote, nodes wait for another",
+            "score": 0.8660535,
+            "raw_content": null,
+            "id": "e193b3-04"
+        },
+        {
+            "url": "https://aws.plainenglish.io/raft-consensus-algorithm-explained-making-distributed-systems-understandable-de032f13b372",
+            "title": "🛶 Raft Consensus Algorithm Explained: Making Distributed Systems Understandable",
+            "content": "Image 6\n\nIn Raft, only the leader can handle writes. So when the current leader crashes, restarts, or gets disconnected, the system must elect a new leader quickly to keep things moving.\n\nThis process ensures there’s only one source of truth — no split-brain, no conflict.\n\n### ⏳ 1. Election Timeout Triggers a Vote [...] Every follower expects regular heartbeats from the leader.\n   If a follower doesn’t hear from the leader within a random timeout (e.g., 150–300ms), it assumes the leader is down.\n   It transitions into a candidate state and begins an election.\n   📌 _Why randomized timeout >>>_ To reduce the chance of multiple nodes starting an election at the exact same time (which causes vote splits).\n\n### 🔢 2. Term Is Incremented + Self-Vote\n\nThe candidates does the following things: [...] If two nodes start elections at the same time:\n   They may split votes.\n   Neither gets a majority.\n   Each waits for a new randomized timeout and then retries with a new term.\n\nEventually, one node will win due to staggered timeouts.\n\n### 🔌 What Happens When an Old Leader Comes Back?\n\n   If the old leader reconnects but sees that a new term has started:\n   It steps down and becomes a follower.\n   This prevents conflicting leaders and ensures the latest term is respected.",
+            "score": 0.8559598,
+            "raw_content": null,
+            "id": "12d4fb-05"
+        },
+        {
+            "url": "https://arorashu.github.io/posts/raft.html",
+            "title": "Understanding Raft - Shubham Arora",
+            "content": "4. If a follower receives no communication over a period of time called the election timeout, then it assumes there is no viable leader and begins an election to choose a new leader.\n5. To begin an election, a follower increments its current term and transitions to candidate state. It then votes for itself and issues RequestVote RPCs in parallel to each of the other servers in the cluster. [...] 9. Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms) [...] 1. This spreads out the servers so that in most cases only a single server will time out; it wins the election and sends heartbeats before any other servers time out\n   2. The same mechanism is used to handle split votes. Each candidate restarts its randomized election timeout at the start of an election, and it waits for that timeout to elapse before starting the next election; this reduces the likelihood of another split vote in the new election",
+            "score": 0.8335554,
+            "raw_content": null,
+            "id": "8c4126-06"
+        },
+        {
+            "url": "https://web.stanford.edu/~ouster/cgi-bin/cs190-winter19/lecture.php?topic=raft",
+            "title": "The Raft Consensus Algorithm",
+            "content": "Election Safety: only one server can be elected leader in a given term\n Availability: randomized election timeouts to reduce split votes [...] All servers start as followers\n No heartbeat (AppendEntries)? Start election:\n  + Increment current term\n  + Vote for self\n  + Send RequestVote requests to all other servers\n Election outcomes:\n  + Receive votes from majority of cluster: become leader, start sending heartbeats to prevent additional elections\n  + Receive AppendEntries from some other server in the new term: revert back to follower\n  + Timeout: start a new election\n Each server votes for at most one candidate in a given term [...] Leader based:\n  + Pick one server to be leader\n  + It accepts client requests, manages replication\n  + Pick a new leader if the current one fails\n Server states:\n  + Leader\n  + Follower: totally passive\n  + Candidate: used for electing new leaders\n Time divided into terms:\n  + Terms have numbers that increase monotonically\n  + Each term starts with an election\n    - One or more candidates attempting to become leader\n  + Winning candidate (if any) serves as leader for the rest of the term",
+            "score": 0.81875163,
+            "raw_content": null,
+            "id": "e50970-07"
+        },
+        {
+            "url": "https://www.linkedin.com/pulse/raft-consensus-explained-farshid-ashouri-yhvne",
+            "title": "RAFT Consensus Explained",
+            "content": "- Answer: If the current leader fails or becomes disconnected, the follower nodes will eventually timeout due to not receiving heartbeats. These",
+            "score": 0.8029425,
+            "raw_content": null,
+            "id": "c931b8-08"
+        },
+        {
+            "url": "https://stackoverflow.com/questions/45871855/paxos-vs-raft-for-leader-election",
+            "title": "paxos vs raft for leader election",
+            "content": "Your blog github.com/trex-paxos/trex/wiki/Leader-Elections describes the leader election mechanism. If you may, please clarify the two questions : (1) Just need to verify that you are using random timeout + heartbeat (not single decree paxos) to do the leader election (same as raft), since you mention possibility of using single decree to elect leader in the previous comments. Which technique is more common for leader election? (2) You are doing additional check to prevent infinite loop of [...] After reading paxos and raft paper, I have following confusion: paxos paper only describe consensus on single log entry, which is equivalent the leader election part of the raft algorithm. What's the advantage of paxos's approach over the simple random timeout approach in raft's leader election?\n\n   distributed-system\n   consensus\n   paxos\n   raft\n\nShare\n\nShare a link to this question \n\nCopy linkCC BY-SA 3.0\n\nShort permalink to this question\n\nImprove this question\n\n Follow [...] Where you ask \"What's the advantage of Paxos's approach over the simple random timeout approach in raft's leader election?\" I am not sure what approach you are referring to? With Paxos, you can just randomise the timeouts and issue Prepare messages. The Paxos Made Simple paper indicates that you are free to use timeouts else some other faster mechanism long as you follow the Paxos protocol to “ensure safety”:",
+            "score": 0.7213709,
+            "raw_content": null,
+            "id": "f8683a-09"
+        }
+    ],
+    "What are the optimal learning rate and batch size for training a LoRA adapter on the LLaMA-2 model?": [
+        {
+            "url": "https://www.anyscale.com/blog/fine-tuning-llms-lora-or-full-parameter-an-in-depth-analysis-with-llama-2",
+            "title": "Fine-Tuning LLMs: In-Depth Analysis with LLAMA-2 | Anyscale",
+            "content": "For instance, while fine-tuning a Llama-7B model on a p4de.24xlarge node, a full-parameter approach would require a batch size of 8 to make the most out of the available GRAM memory. With LoRA, on the other hand, you can crank the batch size up to 64 and still stay within the memory constraints, thus optimizing the training speed.\n\nLora Blog 9\n\nLora Blog 9 [...] #### LinkBase learning rate: 1e-4\n\nA learning rate of 1e-4 has become the standard when fine-tuning LLMs with LoRA. Although we occasionally encountered training loss instabilities, reducing the learning rate to lower values like 3e-5 proved effective in stabilizing the process—more on this will follow.\n\n## LinkModel quality results [...] Lora Blog 9\n\nA comparison of training throughput (tokens per second) for the 7B model with a context length of 512 on a p4de.24xlarge node. The lower memory footprint of LoRA allows for substantially larger batch sizes, resulting in an approximate 30% boost in throughput.",
+            "score": 0.7927375,
+            "raw_content": null,
+            "id": "0ddc5f-00"
+        },
+        {
+            "url": "https://arxiv.org/html/2602.09492v1",
+            "title": "Beware of the Batch Size: Hyperparameter Bias in Evaluating LoRA",
+            "content": "For each batch size selected, we conduct a hyperparameter sweep to find the optimal learning rate. This is mainly due to the prior observations in the full-parameter training literature which indicates that the batch size closely interact with the learning rate Smith et al. (2018). We select learning rates in the range of 1×10−51\\times 10^{-5} to 3×10−33\\times 10^{-3}; see Appendix E for details.\n\n#### Fixed sample protocol. [...] As detailed in Section 2, we determine the optimal learning rate (lr) independently for each batch size configuration to ensure a fair comparison. Specifically, we conduct a grid search across an lr range of [1×10−5,3×10−3][1\\times 10^{-5},3\\times 10^{-3}]. To ensure a precise identification of the optimal point, we employ a refined logarithmic grid consisting of {1,2,5}×10n\\{1,2,5\\}\\times 10^{n}, with additional points such as 3×10−43\\times 10^{-4} to provide higher granularity in the high [...] in the high performance region where the optimal lr frequently appears. We also include 3×10−33\\times 10^{-3} as the learning rate approaches the stability boundary. Figure E illustrates the resulting optimal lr trajectory for each batch size in our default setup with a single seed.",
+            "score": 0.7797419,
+            "raw_content": null,
+            "id": "006ada-01"
+        },
+        {
+            "url": "https://www.reddit.com/r/StableDiffusion/comments/15tokzi/fear_of_high_learning_rates_in_lora_training",
+            "title": "Fear of High Learning Rates in LoRA Training",
+            "content": "This means that if you are using 2e-4 with a batch size of 1, then with a batch size of 8, you'd use a learning rate of 8 times that, or 1.6e-3.",
+            "score": 0.74385756,
+            "raw_content": null,
+            "id": "d3b774-02"
+        },
+        {
+            "url": "https://thinkingmachines.ai/blog/lora",
+            "title": "LoRA Without Regret - Thinking Machines Lab",
+            "content": "The optimal LR seems to be similar for all the LoRA runs across different ranks; we give a theoretical explanation for this finding below. However, there does seem to be some rank dependence, with lower optimal LR for rank=1 than for higher-rank LoRAs. The optimal LR changes by a factor of less than 2 between rank=4 and rank=512.\n\n### Batch size effects [...] Our experiments showed that the optimal LR for LoRA is consistently 10x the one used for FullFT in the same application, for both supervised learning and reinforcement learning. This shows up in every U-shaped plot of performance (loss or reward) charted against learning rate. This observation should make it more straightforward to transfer learning hyperparameters from FullFT to LoRA. [...] This implies that the optimal LR should be set higher for shorter training runs. Preliminary evidence suggests an optimal multiplier around 15x over the FullFT for short runsBased on anecdotal evidence, the higher multiplier is effective under ~100 steps or so., converging to the aforementioned 10x multiplier for longer runs.\n\n## Discussion",
+            "score": 0.68191797,
+            "raw_content": null,
+            "id": "ace0f4-03"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=S1Ezy99fM_A",
+            "title": "How to pick LoRA fine-tuning parameters?",
+            "content": "[56:36] accumulation. So instead of just having 32 for your training batch size, you'll have a virtual batch size of 32 by doing a gradient accumulation of four and then a training batch size of eight.\n[56:48] And all the gradient accumulation does is it says to the training loop, okay, go forward on a batch of eight and instead of going backward, just do the next batch of eight [...] [57:20] I'm doing evaluation, which is why I set the eval batch size. I'm going to come to the questions just in a sec. Learning rate scheduler, I've got constant. So I've just got a constant learning\n[57:30] rate, one E minus four in this case. My evaluation strategy is going to be defined in terms of total\n[57:36] steps. And that means here, every 0.2, so every 20% of the steps. So if I've got 10 steps of training, [...] [55:10] one, two or three are kind of the values of epochs I'm thinking of. My train size and my eval batch\n[55:17] size. So you want this to be as high as possible from an efficiency standpoint because it means\n[55:23] you're using the parallel capabilities of the GPU. So you want to increase this until you run out of\n[55:28] GPU VRAM. I probably won't run out because this is a small model. But yeah, I like to have a batch",
+            "score": 0.650934,
+            "raw_content": null,
+            "id": "4e754a-04"
+        },
+        {
+            "url": "https://magazine.sebastianraschka.com/p/practical-tips-for-finetuning-llms",
+            "title": "Practical Tips for Finetuning LLMs Using LoRA (Low-Rank Adaptation)",
+            "content": "Besides precision and quantization settings, the model size, the batch size, and the number of trainable LoRA parameters, the dataset can also influence memory usage.\n\nNote that Llama 2 has a block size of 4048. For instance, if an LLM has a block size of 4048 tokens, it can process sequences of up to 4048 tokens at once. However, shorter training sequences can result in substantial memory savings due to the masking of future tokens. [...] If we enable LoRA for all these additional layers, we increase the number of trainable parameters by a factor of 5, from 4,194,304 to 20,277,248, for a 7B Llama 2 model. This also comes with a larger memory requirement (16.62 GB instead of 14.18 GB) but can increase the modeling performance noticeably. [...] Default LoRA with 16-bit brain floating point precision:\n\n Training time: 1.85 h\n Memory used: 21.33 GB\n\nQLoRA with 4-bit Normal Floats:\n\n Training time: 2.79 h\n Memory used: 14.18 GB\n\nMoreover, I found that the modeling performance was barely affected, which makes QLoRA a feasible alternative to regular LoRA training to work around the common GPU memory bottleneck.\n\n# 3. Learning Rate Schedulers",
+            "score": 0.64746445,
+            "raw_content": null,
+            "id": "019dbe-05"
+        },
+        {
+            "url": "https://pub.towardsai.net/the-lora-hyperparameters-no-one-explains-how-to-fine-tune-correctly-part-4-a58268050766",
+            "title": "The LoRA Hyperparameters No One Explains | How to Fine-Tune Correctly, Part 4 | by Suchitra Malimbada | Towards AI",
+            "content": "The practical consequence is specific. The recommended starting point for learning rate in a standard LoRA or QLoRA fine-tuning run is `2e-4`, with the full workable range extending down to `5e-6` depending on the task and dataset. Exceeding `2e-4` by a meaningful margin does not produce a gradual performance penalty. It pushes the adapter weights out of the viable region of the loss landscape before the model has had any real opportunity to learn the target task. The updates are too violent [...] An adapter pushed into an unusable region by an oversized learning rate in the first 300 steps cannot be rescued by better batch configuration or a well-tuned scheduler. Learning rate is the precondition everything else depends on.\n\n## Chapter 2: Effective Batch Size Is a Compound Variable\n\nPress enter or click to view image in full size\n\nGenerated using notebookLM [...] Effective batch size is the product of both: `per_device_train_batch_size  gradient_accumulation_steps`. A configuration of batch size 2 with 8 accumulation steps produces an effective batch of 16. A configuration of batch size 16 with 1 accumulation step also produces an effective batch of 16. The optimizer sees identical gradient signal in both cases. The GPU sees very different memory pressure.\n\n### Why real batch size is forced to 1 or 2 on 16–24GB VRAM",
+            "score": 0.599087,
+            "raw_content": null,
+            "id": "56a500-06"
+        },
+        {
+            "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide/lora-hyperparameters-guide",
+            "title": "LoRA fine-tuning Hyperparameters Guide | Unsloth Documentation",
+            "content": "A larger Effective Batch Size generally leads to smoother, more stable training.\n A smaller Effective Batch Size may introduce more variance.\n\nWhile every task is different, the following configuration provides a great starting point for achieving a stable Effective Batch Size of 16, which works well for most fine-tuning tasks on modern GPUs.\n\nParameter\n\nDescription\n\nRecommended Setting\n\nBatch Size (`batch_size`) [...] Typical Range: `2e-4` (0.0002) to `5e-6` (0.000005). 🟩 For normal LoRA/QLoRA Fine-tuning, we recommend `2e-4` as a starting point. 🟦 For Reinforcement Learning (DPO, GRPO etc.), we recommend `5e-6` . ⬜ For Full Fine-tuning, lower learning rates are generally more appropriate. [...] 8\n\nEffective Batch Size (Calculated)\n\nThe true batch size used for each gradient update. It directly influences training stability, quality, and final model performance.\n\n4 to 16 Recommended: 16 (from 2 \\ 8)\n\n### The VRAM & Performance Trade-off\n\nAssume you want 32 samples of data per training step. Then you can use any of the following configurations:",
+            "score": 0.598524,
+            "raw_content": null,
+            "id": "ed006f-07"
+        },
+        {
+            "url": "https://infohub.delltechnologies.com/p/llama-2-efficient-fine-tuning-using-low-rank-adaptation-lora-on-single-gpu",
+            "title": "Llama 2: Efficient Fine-tuning Using Low-Rank Adaptation ...",
+            "content": "We recommend using a lower batch size to minimize automatic memory allocation, which could be utilized in the case of a larger dataset. We have",
+            "score": 0.55998856,
+            "raw_content": null,
+            "id": "c0b3fe-08"
+        },
+        {
+            "url": "https://medium.com/@bnjmn_marie/lora-done-right-recommendations-for-near-full-fine-tuning-performance-311e7be5d4be",
+            "title": "LoRA Done Right: Recommendations for Near Full Fine-Tuning Performance",
+            "content": "The first takeaway is about scale and capacity. LoRA performs very well on small- to medium-sized post-training datasets, such as single-epoch passes over blends like Tülu-3 SFT (about one million examples) or subsets of OpenThoughts3. In that setting, and when adapters are placed in high-capacity components such as the MLP and MoE blocks, LoRA’s learning curves match full fine-tuning. At larger, pretraining-like scales, the difference shows up as reduced training efficiency: the adapter [...] the adapter capacity becomes the limiting factor before the base model does. I observed the same pattern in my own replication of Tülu-3 SFT with LoRA, which I… [...] Sitemap\n\nOpen in app\n\nSign up\n\nSign in\n\n?\n\nA new post from ThinkingMachines, _LoRA Without Regret__,_ provides a clear answer: yes, LoRA can match FFT when you set it up correctly.\n\nWhat stood out in this post was the thoroughness. The authors test LoRA ranks across orders of magnitude, retune learning rates for every setting, and show mathematically why some hyperparameters matter less under the standard LoRA parametrization. The presentation is systematic and easy to follow.",
+            "score": 0.3935487,
+            "raw_content": null,
+            "id": "05b977-09"
+        }
+    ],
+    "Who wrote the screenplay for the film \"Death of a Batman\"?": [
+        {
+            "url": "https://tranquiltirades.fandom.com/wiki/The_Death_of_Batman",
+            "title": "The Death of Batman | Tranquil Tirades Wiki - Fandom",
+            "content": "The Death of Batman is a fan film created by Donald Flaherty. This 28-minute film was the subject of one of James' written Tirades. In it, Batman is",
+            "score": 0.7434107,
+            "raw_content": null,
+            "id": "c15780-00"
+        },
+        {
+            "url": "https://filmthreat.com/uncategorized/the-death-of-batman",
+            "title": "THE DEATH OF BATMAN",
+            "content": "Fans of Batman know that Denny O'Neil was one of the best writers of the Dark Knight Detective. He wrote dark and emotional tales that often",
+            "score": 0.650934,
+            "raw_content": null,
+            "id": "ce763e-01"
+        },
+        {
+            "url": "http://scottalanmendelson.blogspot.com/2010/08/tom-mankiewicz-1942-2010-want-to-read.html",
+            "title": "RIP: Tom Mankiewicz (1942-2010) Want to read a 27-year ...",
+            "content": "Yes, Tom Mankiewicz wrote a screenplay for the first proposed Batman feature back in 1983. ... screenplay feels far more like a Richard Donner",
+            "score": 0.60386235,
+            "raw_content": null,
+            "id": "8a729d-02"
+        },
+        {
+            "url": "http://www.jackasscritics.com/movie.php?movie_key=259",
+            "title": "Jackass Critics - The Death of Batman",
+            "content": "when they are left alone with the script and though the acting does slide into melodrama from time to time, never does this become a parody or even bad. Director Donald Lawrence Flaherty does a fine job keeping the film visually interesting and that, coupled with some very unique editing trickery, give this film a nice look. [...] I was very impressed by The Death of Batman and have to hand it to all involved for creating a very interesting and original piece of fan-fiction. It’s my hope that a lot of people get to see their film and that it leads to much bigger projects for all involved.\n\nAnyone interested in seeing or learning about The Death of Batman can contact director Donald Flaherty here –\n\n  \nDonald Flaherty   \n415th St. E   \nHermosa Beach, CA   \n90254\n\nor you can email him at\n\n  \nmrdlf@aol.com\n\n…c… [...] Where Batman – Dead End is made using a visual style much like Frank Miller used in his comics, the story is straight up action and, great as it is, has no real story so to speak (which I imagine would be hard to do with seven minutes of film). On the other hand we have The Death of Batman which looks, at least as far as Batman’s costume, like the early Tim Burton films, yet plays out like a Frank Miller piece in that it is very dark and has very little action. But where we can judge both films",
+            "score": 0.512376,
+            "raw_content": null,
+            "id": "4ea313-03"
+        },
+        {
+            "url": "https://en.wikipedia.org/wiki/The_Dark_Knight",
+            "title": "The Dark Knight - Wikipedia",
+            "content": "Warner Bros. Pictures prioritized a sequel following the successful reinvention of the Batman film series with Batman Begins. Christopher Nolan and Batman Begins co-writer David S. Goyer developed the story elements, making Dent the central protagonist caught up in the battle between Batman and the Joker. In writing the screenplay, the Nolans were influenced by 1980s Batman comics and crime drama films, and sought to continue Batman Begins' heightened sense of realism. From April to November [...] The Dark Knight is a 2008 superhero film directed by Christopher Nolan, who co-wrote the screenplay with his brother Jonathan. Based on the DC Comics superhero Batman, it is the sequel to Batman Begins (2005), and the second installment in The Dark Knight trilogy. The plot follows the vigilante Batman \"Bruce Wayne (Dark Knight trilogy)\"), police lieutenant James Gordon, and district attorney Harvey Dent, who form an alliance to dismantle organized crime in Gotham City. Their efforts are [...] With the help of his brother Christopher, Jonathan Nolan spent six months developing the story into a draft screenplay. After submitting the draft to Warner Bros., Jonathan spent a further two months refining it until Christopher had finished directing The Prestige. The brothers collaborated on the final script over the next six months during pre-production for The Dark Knight. Jonathan found the \"poignant\" ending to be the script's most interesting aspect; it had always depicted Batman fleeing",
+            "score": 0.29888564,
+            "raw_content": null,
+            "id": "2d8f41-04"
+        },
+        {
+            "url": "https://www.reddit.com/r/TheBatmanFilm/comments/tazeoa/just_who_wrote_the_batman",
+            "title": "Just who WROTE The Batman? : r/TheBatmanFilm",
+            "content": "The finished film shows Peter Craig in the credits, a writer I haven't heard of before but who's been doing work for big studio pictures (Hunger",
+            "score": 0.28658882,
+            "raw_content": null,
+            "id": "10cbbc-05"
+        },
+        {
+            "url": "https://www.hollywoodreporter.com/news/general-news/lorenzo-semple-jr-dead-creator-675354",
+            "title": "Lorenzo Semple Jr. Dead: Creator of TV's 'Batman' Was 91",
+            "content": "Semple wrote a screenplay on spec for Alan J. Pakula’s The Parallax View (1974), a thriller that starred Warren Beatty as an ambitious reporter who investigates a senator’s assassination. Semple’s lead character was a baseball player; he wasn’t interested in how the story was changing and quit to work on Papillon.\n\nBut soon after Hoffman joined the cast of that Franklin J. Schaffner film, Semple was replaced by the Oscar-winning Dalton Trumbo. [...] He moved to the movies and wrote screenplays for \"The Parallax View,\" \"Three Days of the Condor,\" \"Papillon,\" \"Flash Gordon\" and \"Never Say Never Again.\"\n\nBy\nMike Barnes\n\n### Mike Barnes\n\nSenior Editor\n\n### More Stories by Mike\n\nLorenzo Semple Jr. [...] “I was quite relieved; I really didn’t want to go on with it,” he said. “I also agree a human sacrifice is required when a project goes wrong; it makes all the survivors feel very good.”\n\nSTORY: MGM, Danjaq Settle 50-Plus Year Legal Fight Over James Bond Rights\n\nSemple later wrote the screenplays for the silly Flash Gordon (1980), the Tanya Roberts-starring Sheena (1984) and several telefilms.",
+            "score": 0.25325152,
+            "raw_content": null,
+            "id": "464cea-06"
+        },
+        {
+            "url": "https://www.imdb.com/list/ls061349014",
+            "title": "My Batman movie writers",
+            "content": "Phillip Bradley \"Brad\" Bird is an American director, screenwriter, animator, producer and occasional voice actor, known for both animated and live-action films.",
+            "score": 0.19479668,
+            "raw_content": null,
+            "id": "821a54-07"
+        },
+        {
+            "url": "https://www.facebook.com/TheMichaelUslan/posts/denny-oneils-script-for-the-dc-comic-book-movie-adaptation-of-our-1989-batman-mo/1412096610743120",
+            "title": "Denny O'Neil's script for the DC comic book movie ...",
+            "content": "Denny O'Neil's script for the DC comic book movie adaptation uses the original introductory line from the 1988 shooting script. Michael Keaton",
+            "score": 0.1594139,
+            "raw_content": null,
+            "id": "5fd64f-08"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=-vkNOfl7uMo",
+            "title": "Batman Year One by Darren Aronofsky & Frank Miller",
+            "content": "We run through Aronofsky's and Frank Miller's Batman script. Year One by Darren Aronofsky & Frank Miller. Script (Lee Shapiro & Stephen Wise) .",
+            "score": 0.14074938,
+            "raw_content": null,
+            "id": "54b07f-09"
+        }
+    ],
+    "How do FlashAttention and speculative decoding impact the latency of RAG inference?": [
+        {
+            "url": "https://jamwithai.substack.com/p/ml-and-llm-inference-latency-10-techniques",
+            "title": "ML and LLM Inference Latency: 10 techniques every AI/ML engineer should know",
+            "content": "This split is the single most important thing to internalize about LLM latency. Optimizations that target prefill don’t help decode, and vice versa. FlashAttention helps both because it touches the attention computation in both phases. Speculative decoding only helps decode. Prompt caching only helps prefill (more on this below) If you don’t know which phase your bottleneck lives in, you can’t pick the right tool.\n\nThis phase split also dictates how latency is measured. Two numbers matter: [...] The most famous example for transformers is FlashAttention, which restructures the attention computation to work on small tiles that fit in the GPU’s fast SRAM rather than constantly shuttling data to and from slower high-bandwidth memory. For most modern GPUs, FlashAttention delivers 2 to 4x faster attention with no accuracy loss, with the biggest wins in prefill where sequences are long. Modern variants (FlashDecoding and FlashAttention v3) extend the same ideas to the decode phase. It’s used [...] The model is one component in a longer chain. Network round trips, request serialization, queueing, preprocessing, and result formatting all sit between the user and the GPU. None of them get optimized by FlashAttention or quantization. They get optimized by paying attention to the serving path itself.\n\n### 10. Optimize the Serving Path",
+            "score": 0.81595254,
+            "raw_content": null,
+            "id": "84b159-00"
+        },
+        {
+            "url": "https://www.nutanix.com/tech-center/blog/speeding-up-llm-inference-with-n-gram-speculative-decoding-in-nutanix-enterprise-ai",
+            "title": "Speeding Up LLM Inference with N-gram Speculative Decoding in Nutanix Enterprise AI | Nutanix / tech center",
+            "content": "### When to Use Speculative Decoding?\n\n## When to Use Speculative Decoding?\n\nSpeculative decoding primarily improves inter-token latency, i.e., time between generation of consecutive tokens. So, it is useful when reducing this time is advantageous.\n\nFor example, it may be beneficial for latency sensitive applications like RAG, chatbots, and agents. [...] draft models. By bypassing memory bottlenecks, NAI provides a highly efficient way to reduce inter-token latency for structured tasks like code generation or RAG applications. [...] A box plot analysis of ITL distribution at 5.32 RPS with (red) and without (blue) speculative decoding in the above graph highlights that while speculative decoding reduces the average latency, it introduces higher overall variability. Interestingly, the distribution between the p50 and p90 metrics is actually tighter in the non-speculative baseline. This suggests that while speculative decoding offers significant macro-gains, the consistency of token delivery can fluctuate more than standard",
+            "score": 0.71496695,
+            "raw_content": null,
+            "id": "7cd63c-01"
+        },
+        {
+            "url": "https://research.google/blog/speculative-rag-enhancing-retrieval-augmented-generation-through-drafting",
+            "title": "Speculative RAG: Enhancing retrieval augmented generation through drafting",
+            "content": "Speculative RAG follows the drafting approach described in speculative decoding, a method that accelerates auto-regressive LM inference by using a smaller model to concurrently and rapidly generate multiple subsequent tokens (e.g., words or word segments) verified in parallel with a base model, to improve the effectiveness and efficiency of RAG systems. We demonstrate that Speculative RAG yields significant improvements and achieves state-of-the-art performance in both accuracy and latency on [...] generation. We demonstrate the effectiveness of Speculative RAG with accuracy gains up to 12.97% while reducing latency by 51% compared to standard RAG systems. Speculative RAG sheds new light on the potential of collaborative architectures for enhancing RAG performance through task decomposition. [...] Due to the large volume of documents retrieved, latency presents a significant challenge for RAG systems. We analyze the latency of the standard RAG with Mixtral-Instruct-8x7B and Speculative RAG using TriviaQA, MuSiQue, PubHealth, and ARC-Challenge. We randomly sample 100 cases from each dataset and report the average time cost for each case. We use tensor parallelism (i.e., dividing tensors across multiple GPUs) to fit Mixtral-Instruct-8x7B into the GPU memory. We report the latency of",
+            "score": 0.7067782,
+            "raw_content": null,
+            "id": "3668ed-02"
+        },
+        {
+            "url": "https://developer.nvidia.com/blog/an-introduction-to-speculative-decoding-for-reducing-latency-in-ai-inference",
+            "title": "An Introduction to Speculative Decoding for Reducing Latency in AI Inference | NVIDIA Technical Blog",
+            "content": "Speculative decoding is an inference optimization technique that pairs a target model with a lightweight draft mechanism that quickly proposes several next tokens. The target model verifies those proposals in a single forward pass, accepts the longest prefix that matches its own predictions, and continues from there. Compared with standard autoregressive decoding, which produces one token per pass, this technique lets the system generate multiple tokens at once, cutting latency and boosting [...] With speculative decoding, the lightweight assistant model proposes multiple possible continuations and the larger model verifies them in batches. The ultimate benefit is reducing the number of sequential steps, alleviating memory bandwidth bottlenecks. Critically, this acceleration occurs while preserving output quality, as verification mechanisms will discard any results divergent from what the baseline model itself might generate. [...] Speculative decoding can collapse these multiple waiting periods into one. By using a fast draft mechanism to speculate two candidate tokens then verifying them all in a single 250 ms forward pass, the model can generate three tokens (two speculations plus one base model generation) in 250 ms versus 600 ms. This concept is illustrated in Figure 4.",
+            "score": 0.6227582,
+            "raw_content": null,
+            "id": "ad243d-03"
+        },
+        {
+            "url": "https://arxiv.org/html/2412.11854v1",
+            "title": "Towards Understanding Systems Trade-offs in Retrieval-Augmented Generation Model Inference",
+            "content": "Takeaway 1: Compared to baseline LLM inference, RAG-based LLMs introduce additional overheads that prolong TTFT inference latency.\nFigure 2 shows the TTFT latency of RAG-based LLMs using two different retrieval indices that achieve comparable retrieval accuracy: HNSW and IVF with scalar quantization (SQ).\nWhile prefill and decoding stages are standard in LLM inference, RAG introduces three additional stages: encoding, retrieval, and additional prefill steps for retrieved contexts. [...] With an extremely aggressive stride length of 4, the end-to-end latency increases to nearly 30 seconds.\nIn this case, RAG unique components account for nearly 97% of the end-to-end latency; retrieval and additional prefill overheads (due to added contexts and additional retrievals) account for 36% and 45% of the latency respectively.\nFigure 2(e) shows that this latency overhead also grows with the number of output tokens generated, due to the additional prefill stages from re-retrieval. [...] While prior work highlights how frequent retrievals can optimize accuracy, we find that naively re-retrieving can increase the end-to-end latency to nearly 30 seconds, precluding production deployment.",
+            "score": 0.5354634,
+            "raw_content": null,
+            "id": "7b3040-04"
+        },
+        {
+            "url": "https://mbrenndoerfer.com/writing/latency-optimization-batching-streaming-monitoring-llm-serving",
+            "title": "Latency Optimization: TTFT, Batching, Speculative Decoding - Interactive",
+            "content": "The core latency bottleneck during decode is that each token requires a full forward pass through the model. Speculative decoding breaks this constraint by using a small, fast draft model to generate candidate tokens cheaply, then verifying multiple candidates with the large target model in parallel. [...] This guarantee distinguishes speculative decoding from approximations like quantization or pruning. Speculative decoding never degrades output quality, only output speed. This is a remarkable property: you get a latency reduction for free, with no quality-speed trade-off. The only cost is compute efficiency at the system level: the draft model consumes resources, and rejected draft tokens represent wasted compute. This is why speculative decoding is most attractive when a single request [...] Speculative decoding introduces a different trade-off. It reduces latency per token but increases total compute because the draft model runs on tokens that may be rejected. Under heavy load, this extra compute can reduce throughput. Speculative decoding is most beneficial when the system is compute-light (a single user chatting with a deployed model) and least beneficial when the system is fully saturated (a batch processing job at maximum throughput). Measuring both metrics before and after",
+            "score": 0.5015387,
+            "raw_content": null,
+            "id": "f3b7fa-05"
+        },
+        {
+            "url": "https://www.linkedin.com/pulse/how-does-retrieval-based-speculative-decoding-improve-daniel-chen-ksv3c",
+            "title": "How does Retrieval-Based Speculative Decoding Improve ...",
+            "content": "In short, speculative decoding is a way to speed up inference by running a small language model (LM) alongside a large model. The small model",
+            "score": 0.5012457,
+            "raw_content": null,
+            "id": "1ea609-06"
+        },
+        {
+            "url": "https://redis.io/blog/prefill-vs-decode",
+            "title": "Prefill vs Decode: LLM Inference Phases Explained",
+            "content": "A class of optimizations called efficient attention (FlashAttention is the best-known) reorganizes how the model processes long prompts to make prefill faster. The model produces the same output, just faster. Many modern inference frameworks ship FlashAttention by default, so you may already have it.\n\n### Semantic caching: bypassing inference entirely [...] RAG apps tend to be prefill-heavy. You're processing thousands of retrieved context tokens but generating relatively short answers. TTFT is usually the pain point.\n Code generation & long-form writing tend to be decode-heavy. Short prompts, long outputs. ITL and total generation time matter more.\n Chatbots & interactive apps need both phases performing well, with tail latency especially important for responsiveness. [...] Prefill has to finish before the model can emit anything, so TTFT mostly reflects prefill runtime plus queuing and network overhead. For short prompts, that's usually near-instant. But for retrieval-augmented generation (RAG) workflows that prepend thousands of context tokens, or long-context chats that include the full conversation history, users can wait multiple seconds before the response starts.\n\n## Decode: token-by-token generation that users feel",
+            "score": 0.48850358,
+            "raw_content": null,
+            "id": "3466f3-07"
+        },
+        {
+            "url": "https://www.reddit.com/r/LocalLLM/comments/1uwf1zj/speculative_decoding_can_slow_models_down_solution",
+            "title": "Speculative decoding can slow models down. Solution",
+            "content": "Speculative decoding (SD) speeds up LLM inference by exploiting idle GPU compute to verify extra draft tokens when inference is memory bandwidth",
+            "score": 0.46657884,
+            "raw_content": null,
+            "id": "bf9e4c-08"
+        },
+        {
+            "url": "https://sagar-parmar.medium.com/llm-inference-deep-dive-prefill-decode-kv-cache-flashattention-and-speculative-decoding-89c3f7d4bcb9",
+            "title": "LLM Inference Deep Dive: Prefill, Decode, KV Cache ...",
+            "content": "A practical guide to latency, throughput, continuous batching, PagedAttention, speculative decoding, and modern GPU inference systems.",
+            "score": 0.36391866,
+            "raw_content": null,
+            "id": "c4cffb-09"
+        }
+    ],
+    "What is the late-interaction scoring mechanism of ColBERT and how does it rank documents in a retrieval-augmented generation pipeline?": [
+        {
+            "url": "https://developer.ibm.com/articles/how-colbert-works",
+            "title": "How the ColBERT re-ranker model in a RAG system works",
+            "content": "Sep 3, 2026 — ColBERT uses late interaction and MaxSim scoring to rank documents by relevance, making it especially effective in retrieval-augmented ...Read more",
+            "score": 0.8455478,
+            "raw_content": null,
+            "id": "9d6781-00"
+        },
+        {
+            "url": "https://www.techinterview.net/blog/colbert-late-interaction-search-systems",
+            "title": "ColBERT System Design: Late Interaction RAG [2026]",
+            "content": "The \"Late Interaction\" Mechanism The magic of ColBERT is when the interaction between query and document happens. In a Cross-Encoder",
+            "score": 0.7420672,
+            "raw_content": null,
+            "id": "5acfa7-01"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=lpud2FF6Dcs",
+            "title": "What is Late-Interaction Retrieval?",
+            "content": "[3:57] Alright, four things worth carrying away. Late interaction, from the ColBERT line of work, keeps one vector per token instead of collapsing a document into a single point. Scoring uses MaxSim. Each query token takes its best match against the document tokens, and those best matches are summed. Because the document vectors are precomputed and indexed, it stays far cheaper than a cross encoder while catching detail a single vector blurs. Think of it as the middle ground between [...] # What is Late-Interaction Retrieval?\n## Channel: Standarity\n785 subscribers\n1 likes\n\n### Description\n50 views\nPosted: 2026-07-12\nWhat is Late-Interaction Retrieval?\nLate interaction (ColBERT) keeps a vector per token and scores with MaxSim — more accurate than single-vector search, far cheaper than a cross-encoder. [...] to run over the documents. Now comes the late interaction step itself. For each query token, the engine scans the document tokens and grabs the single highest similarity. This is the MaxSim operation, and it is where a rare matching term finally gets to shine instead of being averaged out. Finally the engine sums those best matches into one relevance score, and the documents come back ranked from most relevant to least. Sharp term-level matching, but powered by a precomputed index, so it stays",
+            "score": 0.73023266,
+            "raw_content": null,
+            "id": "0c118c-02"
+        },
+        {
+            "url": "https://softwaredoug.com/blog/2026/02/11/what-is-a-late-interaction-model",
+            "title": "What is a late interaction model?",
+            "content": "back home\n\n# What is a late interaction model?\n\n February 11th, 2026\n\nLate interaction models, like ColBERT, give you fine-grained passage scoring.\n\nIn normal vector search, every document has exactly one vector. You score it against the query’s vector. You get a similarity. You rank the document. Done.\n\nWe call this a single vector representation\n\nLate interaction works with multi-vector representations\n\n### Setup: [...] ### Setup:\n\n We’re scoring a passage “susan loved her baby sheep”\n For the query “mary had a little lamb”\n Every token in the document has a vector\n\n### Scoring the passage:\n\n1. We encode our first query token [mary]\n2. We find the passage token with highest similarity. In this case, probably [susan]\n    (This is the max sim operation)\n3. We continue with [had], finding the max sim token, summing it in\n4. Continuing with every query token, until we have our final score [...] How does one train a ColBERT to produce a multi vector representation? Learn more in the Colbert paper​\n\n1 - using words here for simplicity, but we’d use a BERTy tokenizer like WordPiece\n\n-Doug\n\n​\n\nThis is part of Doug’s Daily Search tips - subscribe here\n\n### Enjoy softwaredoug in training course form!\n\n#### Starting in October!\n\nSignup here -   Cheat at Search with Agents",
+            "score": 0.7213709,
+            "raw_content": null,
+            "id": "794604-03"
+        },
+        {
+            "url": "https://weaviate.io/blog/late-interaction-overview",
+            "title": "An Overview of Late Interaction Retrieval Models: ColBERT, ColPali, and ColQwen | Weaviate",
+            "content": "The late interaction mechanism calculates the maximum similarity score between the query tokens and the document tokens. It requires lower-level representations of input documents or images, such as their tokens (word parts) or image patches (small image/document sections), and uses these for comparison instead of a global document representation. Late interaction was first introduced in the ColBERT paper.\n\nLate Interaction Formula\n\nLate Interaction Formula [...] Late interaction models can be used across various retrieval tasks, helping researchers and practitioners find relevant documents in large document collections, such as financial documents or legal contracts. These models are particularly helpful in downstream tasks requiring efficient retrieval processes, such as search engines or Generative AI applications, such as Retrieval-Augmented Generation (RAG) pipelines, where semantic precision can improve information extraction and understanding. [...] The ColBERT paper, released in 2020, introduced both the original ColBERT model and the late interaction mechanism. ColBERT stands for “Contextualized Late Interaction over BERT”. It is a model fine-tuned on the BERT language model, which was one of the first big transformer models in NLP. ColBERT however uses the late interaction mechanism instead of the typical all-to-all interaction that BERT uses, and is specialized towards generating contextualized embeddings for queries and documents.",
+            "score": 0.69399214,
+            "raw_content": null,
+            "id": "0a1f78-04"
+        },
+        {
+            "url": "https://www.emergentmind.com/topics/late-interaction-mechanism",
+            "title": "Late Interaction Mechanism in Retrieval",
+            "content": "The canonical late interaction framework encodes queries q={q1​,…,qn​} and documents d={d1​,…,dm​} as sets of d-dimensional token embeddings via independent application of a transformer or vision-LLM. The semantics of their interaction are governed by the score function: Score(q,d)=i=1∑n​1≤j≤mmax​⟨qi​,dj​⟩ as introduced in ColBERT and widely adopted across text, image, vision, and multimodal retrieval tasks (Khattab et al., 2020, Santhanam et al., 2021). Each query token qi​ \"fires\" on its most [...] A late interaction mechanism is an information retrieval paradigm in which queries and documents are independently encoded as sequences of token-level (or patch-level) embeddings, with their mutual relevance evaluated through a fine-grained, token-to-token (or multi-vector) interaction in a dedicated scoring step following the initial encoding. This mechanism contrasts sharply with both early interaction (cross-encoder) models, which fuse query and document representations early via joint [...] Late interaction mechanisms are methods that independently encode tokens and later align them via max or top-K similarity scoring to capture fine-grained relevance.\n They integrate into dual-encoder pipelines by leveraging offline indexing, candidate generation, and re-ranking strategies like TopKSim and PLAID.\n Empirical studies show these methods balance detailed matching and computational efficiency across text, vision, and multimodal retrieval applications.",
+            "score": 0.68723184,
+            "raw_content": null,
+            "id": "a755a4-05"
+        },
+        {
+            "url": "https://outcomeschool.com/blog/decoding-colbert",
+            "title": "What is ColBERT? Late Interaction Retrieval Explained",
+            "content": "Inside RAG systems. Late-interaction retrievers are now a common first stage in Retrieval-Augmented Generation, where the quality of what we retrieve decides the quality of what the model answers. [...] ColBERT encodes query and document into per-token vectors separately, then scores with a cheap MaxSim.\n The two old extremes: cross-encoders are accurate but unscalably slow, and single-vector models are fast but blunt.\n Late interaction: keep word-level matching, but run it late and cheaply so documents are precomputed offline.\n Encoding: a shared BERT with `[Q]` and `[D]` markers, projected to 128-number unit vectors (so cosine equals dot product). [...] Since `1.76 > 1.08`, ColBERT ranks document A above document B. The summed maxima turn directly into a ranking. Notice why B lost: neither of its tokens is a strong home for `q2`, the best it can offer is `0.48`, while document A had `d2` sitting at `0.80`.\n\n## Training: positives and negatives",
+            "score": 0.68420124,
+            "raw_content": null,
+            "id": "f2a9d1-06"
+        },
+        {
+            "url": "https://qdrant.tech/course/multi-vector-search/module-1/late-interaction-basics",
+            "title": "Late Interaction Basics - Qdrant",
+            "content": "1. Encode: Pass the document through an encoder (like ColBERT) to generate one embedding vector per token\n2. Store multi-vector representations: Keep all token vectors instead of aggregating them into a single vector\n3. Defer comparison: At search time, compare query token vectors against document token vectors\n4. Late interaction: The actual “interaction” between query and document happens late - only when computing relevance scores [...] Scalability: While requiring more storage than single vectors, the deferred comparison enables searching large collections efficiently.\n\n### The ColBERT Approach\n\nThe canonical implementation of late interaction is ColBERT (Contextualized Late Interaction over BERT), developed at Stanford. ColBERT popularized this paradigm and demonstrated that you can achieve cross-encoder-level effectiveness with single-vector-level efficiency. [...] indicating the relevance of the document for # the score indicating the relevance of the document for# the provided query. # the provided query. # the provided query.cross_encoder.rerank(query, documents) cross_encoder.rerank(query, documents) cross_encoder. rerank(query, documents)",
+            "score": 0.49992734,
+            "raw_content": null,
+            "id": "6789ae-07"
+        },
+        {
+            "url": "https://arxiv.org/html/2609.38473v1",
+            "title": "Re-ranking and Late Interaction Drive Retrieval Quality: A Controlled Comparison of RAG Strategies for Scientific Question Answering",
+            "content": "(iii) query rephrasing followed by LLM-based reranking, (iv) multi-query fusion via Reciprocal Rank Fusion (RRF), (v) an agentic tool-call pipeline in which the generator decides for itself whether to retrieve, and (vi) late-interaction retrieval with ColBERTv2. All six pipelines share the same generator (Meta-Llama/Llama-3.1-8B-Instruct), prompt, and evaluation protocol; the five single-vector pipelines additionally share SPECTER2 embeddings and a Chroma vector store; and all six retrieve from [...] ### 4.7 Summary of findings\n\nLate-interaction retrieval is the best pipeline in these\nexperiments (ColBERT, overall 3.94/5), leading on both answer quality\nand gold-paper retrieval (Hit@3 >> 92% for both query types) with\nthe highest answer rate (99.9%).\n\nQuery Rewriting + LLM Re-ranking is the best single-vector\npipeline (3.77/5), beating the classic baseline on every metric for\nboth query types (pooled paired delta +0.18+0.18 vs. Classic). [...] Keywords— LLM, RAG, Retrieval-Augmented Generation,\nDense Retrieval, Query Rewriting, Reciprocal Rank Fusion, Agentic AI,\nLate-Interaction Retrieval, ColBERT, Scientific Question Answering\n\n## 1 Introduction and Motivation",
+            "score": 0.40726325,
+            "raw_content": null,
+            "id": "fd2bc5-08"
+        },
+        {
+            "url": "https://ritvik19.medium.com/papers-explained-89-colbertv2-7d921ee6e0d9",
+            "title": "Papers Explained 89: ColBERTv2 - Ritvik Rastogi",
+            "content": "Late interaction models produce multi-vector representations at the granularity of each token and decompose relevance modeling into scalable ...Read more",
+            "score": 0.3269485,
+            "raw_content": null,
+            "id": "4f8d95-09"
+        }
+    ],
+    "What is the relationship between the guarantee of Nash equilibrium existence in normal-form games and the computational challenges of finding these equilibria? Additionally, what are the differences between RAG-Sequence and RAG-Token in document selection?": [
+        {
+            "url": "https://www.comet.com/site/blog/retrieval-augmented-generation",
+            "title": "Retrieval-Augmented Generation (RAG): The AI Developer's Guide",
+            "content": "One technical distinction from the original paper is the difference between RAG-Sequence and RAG-Token models. In the RAG-Sequence approach, the model retrieves a set of documents and uses the same document to condition the entire output sequence. This maintains document-level consistency and works well for tasks that need a single coherent narrative source, like summarization. In the RAG-Token approach, the model can draw on different retrieved documents for each individual token it generates. [...] Fixed-size chunking splits documents at a hard character or token limit (e.g., every 512 tokens). It’s computationally trivial and produces uniform chunk sizes, which simplifies vector storage. The trade-off is that it has no awareness of document structure. It will happily sever a table, split a sentence, or separate a definition from the term it defines. [...] token it generates. This enables synthesis across multiple sources and tends to perform better on complex question-answering tasks that require bridging facts from different documents.",
+            "score": 0.60694176,
+            "raw_content": null,
+            "id": "b2d3ba-00"
+        },
+        {
+            "url": "http://ai.stanford.edu/~eugnud/papers/computing-nash-eq.pdf",
+            "title": "Simple Search Methods for Finding a Nash Equilibrium",
+            "content": "Deﬁnition 1 A strategy proﬁle p∗∈P is a Nash equilib-rium if: ∀i ∈N, ai ∈Ai : ui(ai, p∗ −i) ≤ui(p∗ i , p∗ −i) Every ﬁnite, normal form game is guaranteed to have at least one Nash equilibrium (Nash 1950). [...] Introduction Game theory has had a profound impact on multi-agent sys-tems research, and indeed on computer science in general.\nNash equilibrium (NE) is arguably the most important con-cept in game theory, and yet remarkably little is known about the problem of computing a sample NE in a normal-form game. All evidence points to this being a hard problem, but its precise complexity is unknown (Papadimitriou 2001). [...] Simple Search Methods for Finding a Nash Equilibrium Ryan Porter and Eugene Nudelman and Yoav Shoham Computer Science Department Stanford University Stanford, CA 94305 {rwporter,eugnud,shoham}@cs.stanford.edu Abstract We present two simple search methods for computing a sam-ple Nash equilibrium in a normal-form game: one for 2-player games and one for n-player games. We test these al-gorithms on many classes of games, and show that they per-form well against the state of the art– the",
+            "score": 0.49655825,
+            "raw_content": null,
+            "id": "b6917f-01"
+        },
+        {
+            "url": "https://arxiv.org/pdf/2604.16944",
+            "title": "Selecting Normal-Form Nash Equilibria in Extensive- ...",
+            "content": "by Y Hou · 2026 — Nash equilibrium is one of the most fundamental solution concepts, describing a strategy profile in which no player can improve its payoff",
+            "score": 0.4600226,
+            "raw_content": null,
+            "id": "802144-02"
+        },
+        {
+            "url": "https://proceedings.mlr.press/v216/cisneros-velarde23a/cisneros-velarde23a.pdf",
+            "title": "Finite-sample Guarantees for Nash Q-learning with Linear ...",
+            "content": "Remark 3.1 (Computational aspects). Though a (mixed) Nash equilibrium (NE) is always guaranteed to exist for the static game deﬁned by the optimistic Q-value function in lines 14 and 16 of Algorithm 1, solving for an (exact) NE is in general computationally intractable (Chen et al., 2009; Daskalakis et al., 2009). [...] Comparison with (Hu and Wellman, 2003). The origi-nal Nash Q-learning proposed by Hu and Wellman (2003) has as its performance metric the convergence to a Nash equilibrium of the underlying discounted MG. In order to en-sure such convergence, they assumed the existence of either global optimal or saddle Nash equilibria uniformly on every stage game – see Deﬁnition 2.2. In contrast, since we use re-gret in the context of episodic MGs, we are interested in the average performance of the computed [...] of (i) the optimism bonus at each episode – the factor starting with β in line 10 of NQOVI – and (ii) the selection of Nash equilibria across all stage games.",
+            "score": 0.35884774,
+            "raw_content": null,
+            "id": "1a056e-03"
+        },
+        {
+            "url": "https://www.researchgate.net/publication/415269325_Nash_Equilibrium_Text_A_Game-Theoretic_Decoding_Framework_for_Text_Generation",
+            "title": "A Game-Theoretic Decoding Framework for Text Generation",
+            "content": "Oct 9, 2026 — Nash equilibria can have exponentially higher likelihood than autoregressive outputs as the sequence length grows.",
+            "score": 0.34727195,
+            "raw_content": null,
+            "id": "9826a4-04"
+        },
+        {
+            "url": "https://proceedings.neurips.cc/paper_files/paper/2024/file/b6e271e596574f2b2dfadec6b3ba22a4-Paper-Conference.pdf",
+            "title": "[PDF] Paths to Equilibrium in Games - NIPS papers",
+            "content": "Definition 1. A mixed strategy xi ∗∈X i is called an ϵ-best response to the strategy x−i ∈X−i if Ri(xi ∗, x−i) ≥Ri(xi, x−i) −ϵ ∀xi ∈X i.\n3 The standard solution concept for n-player normal form games is that of (ϵ-) Nash equilibrium, which entails a situation in which all players are simultaneously (ϵ-) best responding to one another.\nDefinition 2. For ϵ ≥0, a strategy profile x∗= (xi ∗, xi ∗) ∈X is called an ϵ-Nash equilibrium if, for every player i ∈[n], xi ∗is an ϵ-best response to x−i ∗. [...] updates. A sequence (xt)t≥1 of strategy profiles is called a satisficing path if, for each player i and time t, one has that xi t+1 = xi t whenever xi t is a best response to x−i t . The central research question of this paper is such: For a normal-form game Γ and an initial strategy profile x1, is it always possible to construct a satisficing path from x1 to a Nash equilibrium of the game Γ? [...] 2 Normal-form games A finite, n-player normal-form game Γ is described by a list Γ = (n, A, r), where n is the number of players, A = A1 × · · · × An is a finite set of action profiles, and r = (ri)i∈[n] is a collection of reward functions, where ri : A →R describes the reward of player i as a function of the action profile. The ith component of A is player i’s action set Ai.",
+            "score": 0.33613545,
+            "raw_content": null,
+            "id": "9150bd-05"
+        },
+        {
+            "url": "https://ojs.aaai.org/index.php/AAAI/article/view/28848/29613",
+            "title": "Computing Nash Equilibria in Potential Games with Private ...",
+            "content": "by N Patris · 2024 · Cited by 2 — Our paper focuses on the problem of computing approximate Nash equilibrium in normal form potential games with private convex constraints.",
+            "score": 0.23317379,
+            "raw_content": null,
+            "id": "b54da4-06"
+        },
+        {
+            "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7637178",
+            "title": "When Do Language Models Reach Nash? Heterogeneous ...",
+            "content": "by A Bernadotte · 2026 — We find a consistent pattern: agents reproduce the exact Nash equilibrium only when the decision reduces to selecting the lowest of a set of ...Read more",
+            "score": 0.12407521,
+            "raw_content": null,
+            "id": "e22db7-07"
+        },
+        {
+            "url": "https://openreview.net/forum?id=n9xeGcI4Yg",
+            "title": "The Consensus Game: Language Model Generation via ...",
+            "content": "by AP Jacob · Cited by 54 — We develop computational procedures for finding approximate equilibria of this game, resulting in a decoding algorithm we call equilibrium-ranking. Applied to a ...Read more",
+            "score": 0.081381105,
+            "raw_content": null,
+            "id": "70a3c2-08"
+        },
+        {
+            "url": "https://www.meilisearch.com/blog/rag-types",
+            "title": "14 types of RAG (Retrieval-Augmented Generation) | Meilisearch",
+            "content": "## 4. Graph RAG\n\nGraph RAG uses a knowledge graph to understand how different pieces of information are connected. It finds relationships and patterns between pieces of data rather than just searching for matching words.\n\nGraph RAG works by mapping out how different entities in your knowledge base are interconnected. It then uses these relationships to find relevant data. Even if a document does not have your exact search terms, it might still be helpful if it is conceptually related. [...] ## 14. HyDE (hypothetical document embedding)\n\nHyDE is a unique approach in RAG in which the AI model starts by generating a guess as to what a good answer might look like and then uses that guess to search for real documents that match it.\n\nHyDE works by generating a hypothetical answer first, converting it into a search query, and then retrieving real documents similar to the imagined one. This is the opposite of how you expect searches to work. [...] Share the article\n\nRAG (retrieval-augmented generation) represents a way for AI systems to retrieve and use relevant information from external knowledge sources to generate more accurate responses.\n\nInstead of relying only on training data, RAG uses real-time data (from documents or databases) before generating responses.\n\nDifferent types of RAG architecture handle various tasks, depending on the level of complexity.\n\nSome RAG types are simple; they retrieve once and generate an answer.",
+            "score": 0.07217119,
+            "raw_content": null,
+            "id": "a5f9d7-09"
+        }
+    ],
+    "What are the key technical challenges in algorithmic mechanism design versus retrieval-augmented generation, and how does CRAG address these challenges compared to the application of VCG in mechanism design?": [
+        {
+            "url": "https://medium.com/@sahin.samia/crag-corrective-retrieval-augmented-generation-in-llm-what-it-is-and-how-it-works-ce24db3343a7",
+            "title": "CRAG (Corrective Retrieval-Augmented Generation) in LLM: What It Is and How It Works",
+            "content": "Overall, CRAG enhances the robustness, accuracy, and efficiency of AI-generated content by incorporating advanced retrieval and self-correction mechanisms, making it a valuable improvement over traditional RAG methods.\n\n## Key Limitations and challenges\n\nDetection and Correction of Wrong Knowledge:\n\nWhile CRAG aims to improve the RAG framework through corrective mechanisms, detecting and accurately correcting erroneous knowledge still requires further research and development. [...] Despite its advantages, RAG is not without its challenges. One of the main issues is retrieval errors, where the retriever selects documents that are irrelevant or incorrect. These errors can lead to the propagation of misinformation in the generated content. Another significant challenge is hallucination, where the AI model generates content that is factually incorrect or misleading, even when based on retrieved documents.\n\nImage 4 [...] ### What is CRAG?\n\nSelf-Corrective Retrieval-Augmented Generation (CRAG) is an advanced framework designed to improve the accuracy and robustness of AI-generated content. Building on the foundation of traditional retrieval-augmented generation (RAG), CRAG introduces a self-correction mechanism to address the limitations of RAG, particularly the issues of retrieval errors and hallucinations.",
+            "score": 0.65940565,
+            "raw_content": null,
+            "id": "fdde2c-00"
+        },
+        {
+            "url": "https://www.meilisearch.com/blog/corrective-rag",
+            "title": "Corrective RAG (CRAG): Workflow, implementation, and more | Meilisearch",
+            "content": "Despite these challenges, CRAG is still a powerful approach for domains where accuracy outweighs latency or cost.\n\nLet’s see how corrective RAG differs from speculative RAG.\n\n## How does corrective RAG differ from speculative RAG?\n\nThe main difference between corrective RAG and speculative RAG is when and how corrections or predictions occur during the retrieval–generation process. [...] Computational cost: More detailed steps mean more computational costs. If we want to run retrieval, evaluation, and correction, the latency infrastructure requirements go up. For applications needing real-time responses, this can be a challenge.\n Dependency on feedback mechanisms: CRAG relies heavily on evaluators or human-in-the-loop feedback to refine outputs. If feedback quality is poor or inconsistent, the corrections can be less effective. [...] Corrective retrieval-augmented generation, or CRAG, is a type of RAG-based approach used to improve the reliability of AI-generated answers.\n\nInstead of simply passing retrieved documents to a language model without any adjustments, CRAG introduces an additional step – it evaluates, filters, and refines the retrieved information before an answer is generated.\n\nThis dramatically reduces the risk of AI hallucinations and boosts confidence in the generated response.",
+            "score": 0.44825777,
+            "raw_content": null,
+            "id": "1eb4f5-01"
+        },
+        {
+            "url": "https://faith.futuretechsci.org/index.php/FAITH/article/download/297/75/1689",
+            "title": "A Review on Retrieval-Augmented Generation: Architectures ...",
+            "content": "by P Sharma · 2026 · Cited by 14 — This review addresses these limitations by explicitly focusing on the coupling between retrieval mechanisms and architectural evolution in RAG",
+            "score": 0.43669468,
+            "raw_content": null,
+            "id": "8a38e8-02"
+        },
+        {
+            "url": "https://arxiv.org/html/2507.18910v1",
+            "title": "A Systematic Review of Key Retrieval-Augmented Generation (RAG) Systems:Progress, Gaps, and Future Directions",
+            "content": "In high-performing RAG systems, retrieval fidelity correlates strongly with factual answer quality. Thus, optimizing these architectural stages is essential for achieving competitive results on QA and generation benchmarks.\n\n## 7 Challenges of RAG\n\nThis section discusses the challenges of RAG, cases of manifestation of such challenges in the selected domain of RAG application, and outlines existing solutions and the way forward.\n\n### 7.1 Technical Challenges in RAG [...] Effective integration between retrieval and generation models remains essential. Methods include joint end-to-end training of retrievers and generators, enhancing mutual compatibility and performance (52). Architectural integration techniques, such as RETRO’s cross-attention mechanism, dynamically incorporate retrieved facts during generation (10). Alternatively, prompt-based integration treats LLMs as black-boxes, conditioning on retrieved documents without architectural modifications. Future [...] Rapid growth and forward outlook:\nA bibliometric snapshot counted more than 1,200 RAG-related papers on arXiv in 2024 alone (106), compared with fewer than 100 the previous year, underscoring the field’s rapid maturation.\nLooking ahead, challenges include ultra-fast retrieval over trillion-token corpora, faithfulness verification for multi-hop reasoning, and energy-efficient multimodal indexing.",
+            "score": 0.41037872,
+            "raw_content": null,
+            "id": "9d70be-03"
+        },
+        {
+            "url": "https://www.merge.dev/blog/rag-challenges",
+            "title": "5 challenges of using retrieval-augmented generation (RAG)",
+            "content": "The size of the data source\n Network delays\n The number of data sources that need to be accessed\n The number of queries a retrieval system needs to perform\n\nRegardless of the cause, the retrieval operation can ultimately fail to work quickly enough to meet your needs and that of your end users (e.g., customers).\n\n### Configuring the output to include the source [...] Whatever the case might be, the process of implementing and maintaining these connections requires significant technical resources. You might end up having to reallocate several engineers to this, which can prevent them from focusing on your core product.\n\n### Failing to perform retrieval operations quickly\n\nSeveral factors can prevent your retrieval operations from working quickly (which, in turn, delays response generations).\n\nThis can come down to a number of factors, such as: [...] Contain false information\n Don’t address a topic comprehensively\n Fail to get updated over time\n Include biased information\n Experience extensive and lengthy outages\n\nTraining an LLM with data sources that have any of these flaws can lead the model to hallucinate (as the training data doesn’t cover the input) or generate false output through inaccurate training data.\n\nRelated: The top benefits of using RAG\n\n### Leverage RAG effectively with Merge",
+            "score": 0.36854258,
+            "raw_content": null,
+            "id": "7cdc1d-04"
+        },
+        {
+            "url": "https://atlan.com/know/what-is-rag",
+            "title": "What Is RAG? How Retrieval-Augmented Generation Works in 2026",
+            "content": "## What are the most common challenges with RAG?\n\n### Why RAG alone isn’t enough?\n\n  \n\nDespite its strengths, “RAG 1.0” patterns built on naive vector retrieval consistently fail at enterprise scale. The most common failure modes are: [...] Knowledge graphs and context graphs address the core limitations of naive RAG by adding structured, relational reasoning to what is otherwise a flat retrieval process.\n\nWhere standard RAG retrieves isolated text chunks, GraphRAG retrieves subgraphs: entities, relationships, and the context attached to both. This enables: [...] But the industry has also learned what early RAG implementations got wrong. Treating retrieval as a simple function, relying on flat vector stores without governance, and ignoring the quality of the underlying knowledge source produce confident but unreliable AI systems. The enterprise deployments succeeding in 2026 are the ones that treat the knowledge source, not the model, as the primary investment.",
+            "score": 0.35140064,
+            "raw_content": null,
+            "id": "271645-05"
+        },
+        {
+            "url": "https://labelstud.io/blog/rag-fundamentals-challenges-and-advanced-techniques",
+            "title": "RAG: Fundamentals, Challenges, and Advanced Techniques | Label Studio",
+            "content": "A recent paper, “Seven Failure Points When Engineering a Retrieval Augmented Generation System,” outlines some of the most common pitfalls when designing and tuning RAG architectures. We’ll explore these challenges—and how to address them—in a future blog.\n\n## Beyond Text: Expanding RAG’s Capabilities [...] NewVideo Object Segmentation and Tracking for SAM 2 \n\nQuick Start\n\n# RAG: Fundamentals, Challenges, and Advanced Techniques\n\nRAG\n\n \n\nRetrieval-Augmented Generation (RAG) has become a go-to method for improving Large Language Models (LLMs). RAG helps mitigate issues like outdated information, high performance costs, and hallucinations, making it ideal for many real world applications. [...] In the next section, we’ll explore how to enhance retrieval accuracy, improve response quality, and address common RAG challenges.\n\n# Challenges and Advanced Techniques",
+            "score": 0.26771453,
+            "raw_content": null,
+            "id": "db73dd-06"
+        },
+        {
+            "url": "https://www.puppygraph.com/blog/rag-techniques",
+            "title": "7 Types of RAG Techniques Explained",
+            "content": "Retrieval-Augmented Generation has evolved from simple vector search pipelines into a diverse ecosystem of architectures, each designed to address different challenges in reasoning, context management, and scalability. From naïve and advanced RAG to hybrid, multi-hop, agentic, and adaptive pipelines, the core principle remains the same: grounding language models in reliable external knowledge. The choice of architecture depends on data complexity, performance requirements, and operational [...] Retrieval-Augmented Generation is a framework that combines information retrieval with generative language models. Instead of generating responses solely from pre-trained knowledge, a RAG pipeline retrieves relevant documents, passages, or structured data from external sources. The retrieved context is then inserted into the model’s prompt, allowing the model to produce answers grounded in real information. This process enables systems to respond using up-to-date knowledge, domain-specific [...] Get Started with PuppyGraph for FREE\n\n## What Is Retrieval-Augmented Generation (RAG)?\n\nFigure: A typical retrieval-augmented generation framework (Source)",
+            "score": 0.24705566,
+            "raw_content": null,
+            "id": "661d89-07"
+        },
+        {
+            "url": "https://cloud.google.com/use-cases/retrieval-augmented-generation",
+            "title": "What is Retrieval-Augmented Generation (RAG)? | Google Cloud",
+            "content": "The retrieval mechanism in RAG is critically important. You need the best semantic search on top of a curated knowledge base to ensure that the retrieved information is relevant to the input query or context. If your retrieved information is irrelevant, your generation could be grounded but off-topic or incorrect. [...] RAG, which stands for Retrieval-Augmented Generation, is an AI framework that combines the strengths of traditional information retrieval systems (such as search and databases) with the capabilities of generative large language models (LLMs). By combining your data and world knowledge with LLM language skills, grounded generation is more accurate, up-to-date, and relevant to your specific needs. Check out this ebook to unlock your “Enterprise Truth.”\n\nimage of what is RAG [...] ## How does Retrieval-Augmented Generation work?\n\nRAGs operate with a few main steps to help enhance generative AI outputs:\n\n## Why use RAG?\n\nRAG offers several advantages augmenting traditional methods of text generation, especially when dealing with factual information or data-driven responses. Here are some key reasons why using RAG can be beneficial:\n\n### Access to fresh information",
+            "score": 0.19383352,
+            "raw_content": null,
+            "id": "28ae4a-08"
+        },
+        {
+            "url": "https://pub.towardsai.net/retrieval-augmented-generation-rag-vs-0b4bc63c1653",
+            "title": "Retrieval-Augmented Generation (RAG) vs. Cache-Augmented Generation (CAG): A Deep Dive into Faster, Smarter Knowledge Integration | by Isuru Lakshan Ekanayaka | Towards AI",
+            "content": "Isuru Lakshan Ekanayaka\n\n11 min read\n\n·\n\nJan 20, 2025\n\nimage source [...] a comprehensive implementation guide for CAG with detailed explanations of every component. [...] The author made this story available to Medium members only.  \nIf you’re new to Medium, create a new account to read this story on us.\n\nContinue in app\n\nOr, continue in mobile web\n\nSign up with Google\n\nSign up with Facebook\n\nAlready have an account? Sign in\n\nIsuru Lakshan Ekanayaka\n\nIsuru Lakshan Ekanayaka\n\n## Written by Isuru Lakshan Ekanayaka\n\n246 followers\n\n·12 following",
+            "score": 0.13239136,
+            "raw_content": null,
+            "id": "3f38d5-09"
+        }
+    ],
+    "Recommended learning rate and batch size for fine-tuning a LoRA adapter on LLaMA 2?": [
+        {
+            "url": "https://www.anyscale.com/blog/fine-tuning-llms-lora-or-full-parameter-an-in-depth-analysis-with-llama-2",
+            "title": "Fine-Tuning LLMs: In-Depth Analysis with LLAMA-2 | Anyscale",
+            "content": "#### LinkBase learning rate: 1e-4\n\nA learning rate of 1e-4 has become the standard when fine-tuning LLMs with LoRA. Although we occasionally encountered training loss instabilities, reducing the learning rate to lower values like 3e-5 proved effective in stabilizing the process—more on this will follow.\n\n## LinkModel quality results [...] For instance, while fine-tuning a Llama-7B model on a p4de.24xlarge node, a full-parameter approach would require a batch size of 8 to make the most out of the available GRAM memory. With LoRA, on the other hand, you can crank the batch size up to 64 and still stay within the memory constraints, thus optimizing the training speed.\n\nLora Blog 9\n\nLora Blog 9 [...] Lora Blog 11\n\nIllustration of differences in total required memory when fine-tuning the Llama 2 model series with a context length of 512 tokens and a batch size of 8 on a single p4de.24xlarge node. For the 7B and 13B models, LoRA consumes much less memory and can, therefore, be run on fewer or cheaper instances. The “missing” graph for the full-parameter fine-tuning underlines the fact that the memory requirements exceeded the specs of the p4de.24xlarge instance.",
+            "score": 0.8364614,
+            "raw_content": null,
+            "id": "63c9a5-00"
+        },
+        {
+            "url": "https://pub.towardsai.net/the-lora-hyperparameters-no-one-explains-how-to-fine-tune-correctly-part-4-a58268050766",
+            "title": "The LoRA Hyperparameters No One Explains | How to Fine-Tune Correctly, Part 4 | by Suchitra Malimbada | Towards AI",
+            "content": "Six chapters have covered the full lifecycle of hyperparameter decisions in a LoRA fine-tuning run. Learning rate sets the update magnitude relative to the concentrated gradient pressure of a small adapter, with `2e-4` as the recommended starting point for standard LoRA and QLoRA. Effective batch size and gradient accumulation trade memory for signal quality on constrained hardware. The cosine scheduler and warmup period control how the learning rate evolves from fragile early steps to [...] The practical consequence is specific. The recommended starting point for learning rate in a standard LoRA or QLoRA fine-tuning run is `2e-4`, with the full workable range extending down to `5e-6` depending on the task and dataset. Exceeding `2e-4` by a meaningful margin does not produce a gradual performance penalty. It pushes the adapter weights out of the viable region of the loss landscape before the model has had any real opportunity to learn the target task. The updates are too violent [...] An adapter pushed into an unusable region by an oversized learning rate in the first 300 steps cannot be rescued by better batch configuration or a well-tuned scheduler. Learning rate is the precondition everything else depends on.\n\n## Chapter 2: Effective Batch Size Is a Compound Variable\n\nPress enter or click to view image in full size\n\nGenerated using notebookLM",
+            "score": 0.79958355,
+            "raw_content": null,
+            "id": "95e242-01"
+        },
+        {
+            "url": "https://unsloth.ai/docs/get-started/fine-tuning-llms-guide/lora-hyperparameters-guide",
+            "title": "LoRA fine-tuning Hyperparameters Guide | Unsloth Documentation",
+            "content": "Typical Range: `2e-4` (0.0002) to `5e-6` (0.000005). 🟩 For normal LoRA/QLoRA Fine-tuning, we recommend `2e-4` as a starting point. 🟦 For Reinforcement Learning (DPO, GRPO etc.), we recommend `5e-6` . ⬜ For Full Fine-tuning, lower learning rates are generally more appropriate. [...] 8\n\nEffective Batch Size (Calculated)\n\nThe true batch size used for each gradient update. It directly influences training stability, quality, and final model performance.\n\n4 to 16 Recommended: 16 (from 2 \\ 8)\n\n### The VRAM & Performance Trade-off\n\nAssume you want 32 samples of data per training step. Then you can use any of the following configurations: [...] A larger Effective Batch Size generally leads to smoother, more stable training.\n A smaller Effective Batch Size may introduce more variance.\n\nWhile every task is different, the following configuration provides a great starting point for achieving a stable Effective Batch Size of 16, which works well for most fine-tuning tasks on modern GPUs.\n\nParameter\n\nDescription\n\nRecommended Setting\n\nBatch Size (`batch_size`)",
+            "score": 0.7969415,
+            "raw_content": null,
+            "id": "7ddc13-02"
+        },
+        {
+            "url": "https://magazine.sebastianraschka.com/p/practical-tips-for-finetuning-llms",
+            "title": "Practical Tips for Finetuning LLMs Using LoRA (Low-Rank Adaptation)",
+            "content": "Besides precision and quantization settings, the model size, the batch size, and the number of trainable LoRA parameters, the dataset can also influence memory usage.\n\nNote that Llama 2 has a block size of 4048. For instance, if an LLM has a block size of 4048 tokens, it can process sequences of up to 4048 tokens at once. However, shorter training sequences can result in substantial memory savings due to the masking of future tokens. [...] If we enable LoRA for all these additional layers, we increase the number of trainable parameters by a factor of 5, from 4,194,304 to 20,277,248, for a 7B Llama 2 model. This also comes with a larger memory requirement (16.62 GB instead of 14.18 GB) but can increase the modeling performance noticeably. [...] Default LoRA with 16-bit brain floating point precision:\n\n Training time: 1.85 h\n Memory used: 21.33 GB\n\nQLoRA with 4-bit Normal Floats:\n\n Training time: 2.79 h\n Memory used: 14.18 GB\n\nMoreover, I found that the modeling performance was barely affected, which makes QLoRA a feasible alternative to regular LoRA training to work around the common GPU memory bottleneck.\n\n# 3. Learning Rate Schedulers",
+            "score": 0.7610953,
+            "raw_content": null,
+            "id": "c26014-03"
+        },
+        {
+            "url": "https://infohub.delltechnologies.com/p/llama-2-efficient-fine-tuning-using-low-rank-adaptation-lora-on-single-gpu",
+            "title": "Llama 2: Efficient Fine-tuning Using Low-Rank Adaptation ...",
+            "content": "Nov 7, 2025 — In practice, trainable parameters vary as low as 0.1% to 1 be fine-tuned to 15-17 GB, as illustrated in figure 2. We recommend using a lower",
+            "score": 0.7576693,
+            "raw_content": null,
+            "id": "abcb99-04"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=S1Ezy99fM_A",
+            "title": "How to pick LoRA fine-tuning parameters?",
+            "content": "[57:20] I'm doing evaluation, which is why I set the eval batch size. I'm going to come to the questions just in a sec. Learning rate scheduler, I've got constant. So I've just got a constant learning\n[57:30] rate, one E minus four in this case. My evaluation strategy is going to be defined in terms of total\n[57:36] steps. And that means here, every 0.2, so every 20% of the steps. So if I've got 10 steps of training, [...] [45:22] rate should just depend on the number of parameters. So if our adapters were the same size as the original matrix, which of course makes no sense to do. But if it was, we should be using the same\n[45:32] learning rate. And so this basically tells me that we should set alpha so that it's equal to square\n[45:39] root of OR, where OR is roughly the size of the original matrices. So alpha should be roughly [...] [56:36] accumulation. So instead of just having 32 for your training batch size, you'll have a virtual batch size of 32 by doing a gradient accumulation of four and then a training batch size of eight.\n[56:48] And all the gradient accumulation does is it says to the training loop, okay, go forward on a batch of eight and instead of going backward, just do the next batch of eight",
+            "score": 0.7511561,
+            "raw_content": null,
+            "id": "2f90ac-05"
+        },
+        {
+            "url": "https://arxiv.org/html/2602.09492v1",
+            "title": "Beware of the Batch Size: Hyperparameter Bias in Evaluating LoRA",
+            "content": "For each batch size selected, we conduct a hyperparameter sweep to find the optimal learning rate. This is mainly due to the prior observations in the full-parameter training literature which indicates that the batch size closely interact with the learning rate Smith et al. (2018). We select learning rates in the range of 1×10−51\\times 10^{-5} to 3×10−33\\times 10^{-3}; see Appendix E for details.\n\n#### Fixed sample protocol. [...] In this work, we reveal that this apparent contradiction stems from the inconsistency in a critical yet overlooked hyperparameter: the batch size. In particular, we observe that, given a properly tuned batch size and learning rates, the vanilla LoRA can match or even outperform its more complex variants (Figure 1). This finding highlights the pivotal role of a careful batch size selection, not only for an effective LLM fine-tuning, but also for a reliable and reproducible evaluation of LoRA [...] As detailed in Section 2, we determine the optimal learning rate (lr) independently for each batch size configuration to ensure a fair comparison. Specifically, we conduct a grid search across an lr range of [1×10−5,3×10−3][1\\times 10^{-5},3\\times 10^{-3}]. To ensure a precise identification of the optimal point, we employ a refined logarithmic grid consisting of {1,2,5}×10n\\{1,2,5\\}\\times 10^{n}, with additional points such as 3×10−43\\times 10^{-4} to provide higher granularity in the high",
+            "score": 0.68191797,
+            "raw_content": null,
+            "id": "7fbf5b-06"
+        },
+        {
+            "url": "https://medium.com/@bnjmn_marie/lora-done-right-recommendations-for-near-full-fine-tuning-performance-311e7be5d4be",
+            "title": "LoRA Done Right: Recommendations for Near Full Fine-Tuning Performance",
+            "content": "The first takeaway is about scale and capacity. LoRA performs very well on small- to medium-sized post-training datasets, such as single-epoch passes over blends like Tülu-3 SFT (about one million examples) or subsets of OpenThoughts3. In that setting, and when adapters are placed in high-capacity components such as the MLP and MoE blocks, LoRA’s learning curves match full fine-tuning. At larger, pretraining-like scales, the difference shows up as reduced training efficiency: the adapter [...] the adapter capacity becomes the limiting factor before the base model does. I observed the same pattern in my own replication of Tülu-3 SFT with LoRA, which I… [...] Sitemap\n\nOpen in app\n\nSign up\n\nSign in\n\n?\n\nA new post from ThinkingMachines, _LoRA Without Regret__,_ provides a clear answer: yes, LoRA can match FFT when you set it up correctly.\n\nWhat stood out in this post was the thoroughness. The authors test LoRA ranks across orders of magnitude, retune learning rates for every setting, and show mathematically why some hyperparameters matter less under the standard LoRA parametrization. The presentation is systematic and easy to follow.",
+            "score": 0.6211049,
+            "raw_content": null,
+            "id": "28c1f9-07"
+        },
+        {
+            "url": "https://www.reddit.com/r/LocalLLaMA/comments/18p48fc/how_to_optimize_finetuning_of_llama2_13b",
+            "title": "How to optimize fine-tuning of Llama-2 13B? : r/LocalLLaMA",
+            "content": "Hey, I'm currently trying to fine-tune a Llama-2 13B (not the chat version) using QLoRA. I'm going to be using a dataset of about 10,000 samples (2k tokens",
+            "score": 0.5614318,
+            "raw_content": null,
+            "id": "ef092e-08"
+        },
+        {
+            "url": "https://discuss.huggingface.co/t/which-parameters-to-use-for-fine-tuning-llama-2-7b/168804",
+            "title": "Which parameters to use for fine-tuning Llama-2-7b? - Beginners - Hugging Face Forums",
+            "content": "| Topic |  | Replies | Views | Activity |\n ---  --- \n| Performance problems with finetuned model (Llama 2 7B based)  Beginners | 3 | 890 | June 10, 2024 |\n| Looking for exploratory study / best practices for LoRA adapters config (LLM fine-tuning)  🤗Transformers | 0 | 441 | April 15, 2024 |\n| Llama2 fine-tunning with PEFT QLora and testing the model  🤗Transformers | 13 | 15903 | December 21, 2023 | [...] Specifically:\n\nI have already read through the standard documentation for Llama and PEFT, but this does not clarify these parameters, it often only states “these are the parameters you want to adjust yourselves”. Can you provide answers or sources where it is better explained what parameters fit?\n\nThank you in advance!\n\nThe optimal LoRA hyperparameters always change depending on the fine-tuning goals and model characteristics, so maybe they’re not documented… [...] | How to calculate the memory required using Lora fine tuning  Models | 0 | 1100 | November 21, 2023 |\n| Fine-tune a Llama 2 7b hf take 160 hours on RTX 4070?  Beginners | 1 | 1449 | April 10, 2024 |",
+            "score": 0.48499045,
+            "raw_content": null,
+            "id": "cfe39d-09"
+        }
+    ],
+    "What is the computational complexity of computing a correlated equilibrium in an extensive-form game?": [
+        {
+            "url": "https://papers.neurips.cc/paper_files/paper/2020/file/e366d105cfd734677897aaccf51e97a3-Paper.pdf",
+            "title": "Polynomial-Time Computation of Optimal Correlated ...",
+            "content": "equilibrium (NFCCE) in a two-player extensive-form game is computationally tractable when the game does not include chance moves, and intractable when the game involves chance moves. In this paper we signiﬁcantly reﬁne this complexity threshold by showing that, in two-player games, an optimal correlated equilibrium can be computed in polynomial time, provided that a certain condition is satisﬁed. [...] Part of the reason for this gap is that the sequential nature of extensive-form games allows for a richness of behaviors and incentives that are not possible in normal-form settings. This richness translates to a signiﬁcantly different complexity landscape surrounding extensive-form correlated equilibria. As of today, it is known that ﬁnding an optimal extensive-form correlated equilibrium (EFCE), extensive-form coarse correlated equilibrium (EFCCE), or normal-form coarse correlated equilibrium [...] 1 Introduction A vast body of literature in computational game theory has focused on computing Nash equilibria (NEs) in two-player zero-sum imperfect-information extensive-form games. Success stories from that endeavor include the creation of strong—in some cases superhuman—AIs for several complex games, including two-player limit Texas hold’em , two-player no-limit Texas hold’em [5, 6, 22], and multiplayer no-limit Texas hold’em . NE captures strategic interactions in which each player",
+            "score": 0.71137124,
+            "raw_content": null,
+            "id": "2635c3-00"
+        },
+        {
+            "url": "https://ora.ox.ac.uk/objects/uuid:193eb910-d845-4925-837b-24f3bdfe86f0/files/s3t945t60w",
+            "title": "On the Complexity of the Optimal Correlated Equilibria in ...",
+            "content": "by V Cheval · 2026 · Cited by 1 — On the Complexity of the Optimal Correlated Equilibria in. Extensive-Form Games. VINCENT CHEVAL, University of Oxford, United Kingdom.Read more",
+            "score": 0.6366926,
+            "raw_content": null,
+            "id": "631b27-01"
+        },
+        {
+            "url": "http://www.maths.lse.ac.uk/personal/stengel/TEXTE/wine08.pdf",
+            "title": "Computing an Extensive-Form Correlated Equilibrium in ...",
+            "content": "Finding a Nash equilibrium of an extensive game with any number of players is as difﬁcult as for a game in strategic form. For the latter, a (more general) correlated equilibrium (CE)  can be found in polynomial time. Papadimitriou and Roughgarden [2,3] give a polynomial-time algorithm for succinctly representable games. Applying the ellipsoid method  to a linear program derived from the existence proof for CE due to  and , the method generates a polynomial-sized LP. The solution to that LP [...] = [ ∏ l∈Hk zl(cl k)]yk c,d , β k 2(d) = ∑ h ∈Hp : h precedes k ∏ l∈Hh zl(cl k) ∑ c∈Ch zh(c)yk c,d . [...] Computing an Extensive-Form Correlated Equilibrium in Polynomial Time 509 Let ap(s) be the payoff to player p if all players choose the strategies in s, and let z(s) be the probability according to which the correlation device selects the strategy proﬁle s. For any c ∈Cp, the variable u(c) is given by u(c) = ∑ s ∈S : c agrees with s ap(s)z(s).",
+            "score": 0.5900477,
+            "raw_content": null,
+            "id": "5f2ec1-02"
+        },
+        {
+            "url": "https://dl.acm.org/doi/10.1007/978-3-540-92185-1_56",
+            "title": "Computing an Extensive-Form Correlated Equilibrium in ...",
+            "content": "We present a polynomial-time algorithm for finding one extensive form correlated equilibrium (EFCE) for multiplayer extensive games with perfect recall.Read more",
+            "score": 0.5439058,
+            "raw_content": null,
+            "id": "c087ff-03"
+        },
+        {
+            "url": "https://ideas.repec.org/a/inm/ormoor/v51y2026i1p60-91.html",
+            "title": "Optimal Correlated Equilibria in General-Sum Extensive ...",
+            "content": "by BH Zhang · 2026 · Cited by 44 — We study the problem of finding optimal correlated equilibria of various sorts in extensive-form games: normal-form coarse correlated equilibrium (NFCCE) , ...Read more",
+            "score": 0.5150107,
+            "raw_content": null,
+            "id": "891600-04"
+        },
+        {
+            "url": "https://www.semanticscholar.org/paper/Extensive-Form-Correlated-Equilibrium%3A-Definition-Stengel-Forges/cf301c249d7283fce07ed86a3907f7e68ffd5c37",
+            "title": "Extensive-Form Correlated Equilibrium: Definition and ...",
+            "content": "It is shown that, in two-player games, an optimal correlated equilibrium can be computed in polynomial time, provided that a certain condition is satisfied, ...Read more",
+            "score": 0.47957736,
+            "raw_content": null,
+            "id": "5e3819-05"
+        },
+        {
+            "url": "https://openreview.net/pdf?id=SYdg8tcFgdG",
+            "title": "Sample-Efficient Learning of Correlated Equilibria in ...",
+            "content": "by Z Song · 2022 · Cited by 15 — Extensive-form correlated equilibrium: Definition and computational complexity. Mathematics of Operations Research, 33(4):1002–1022, 2008. [41] Brian Hu ...Read more",
+            "score": 0.46935064,
+            "raw_content": null,
+            "id": "03ce33-06"
+        },
+        {
+            "url": "https://pubsonline.informs.org/doi/10.1287/moor.1080.0340",
+            "title": "Extensive-Form Correlated Equilibrium: Definition and ...",
+            "content": "by B von Stengel · 2008 · Cited by 176 — This paper defines the extensive-form correlated equilibrium (EFCE) for extensive games with perfect recall. The EFCE concept extends ...Read more",
+            "score": 0.2651584,
+            "raw_content": null,
+            "id": "de39ec-07"
+        },
+        {
+            "url": "https://arxiv.org/html/2406.02357v1",
+            "title": "The complexity of approximate (coarse) correlated ...",
+            "content": "Jun 4, 2024 — Abstract. We study the iteration complexity of decentralized learning of approximate correlated equilibria in incomplete information games.Read more",
+            "score": 0.24955739,
+            "raw_content": null,
+            "id": "655330-08"
+        },
+        {
+            "url": "https://www.alphaxiv.org/abs/2605.17665",
+            "title": "On the Complexity of Correlated Equilibria Beyond Normal- ...",
+            "content": "In this paper, we resolve several long-standing questions concerning the complexity of correlated equilibria and swap regret minimization. First, we show that ...Read more",
+            "score": 0.1903328,
+            "raw_content": null,
+            "id": "28d064-09"
+        }
+    ],
+    "How do FlashAttention and speculative decoding affect inference latency in retrieval-augmented generation (RAG) systems?": [
+        {
+            "url": "https://medium.com/@_Ankit_Malviya/supercharge-your-rag-the-complete-guide-to-lightning-fast-retrieval-augmented-generation-8b1419f4aed4",
+            "title": "Supercharge Your RAG: The Complete Guide to Lightning-Fast Retrieval-Augmented Generation",
+            "content": "Leverage Speculative Decoding: Employ draft model architectures to accelerate inference through speculative token generation.\n\nIntegrate Flash Attention: Implement optimized attention mechanisms specifically engineered for computational efficiency.\n\n## 7. Data & Pipeline Optimization\n\nExecute Document Deduplication: Systematically eliminate redundant content from your corpus to reduce index size and improve retrieval precision. [...] ## Implementation 1: Speculative Decoding for 2–3x Inference Speedup\n\nDifficulty Level: Medium | Performance Impact: High (2–3x speedup) | Accuracy Impact: Negligible\n\nSpeculative decoding leverages a compact draft model to predict token sequences, which are then verified by a larger target model, dramatically reducing overall inference time. [...] 1.   Speculative Decoding: Implement draft-verify architecture  \nExpected impact: 2–3x inference speedup  \nImplementation time: 1–2 weeks\n2.   Hierarchical Indexing: Deploy multi-stage retrieval  \nExpected impact: 1.5–2x retrieval speedup, improved accuracy  \nImplementation time: 2–3 weeks\n3.   Custom Reranking Models: Fine-tune lightweight rerankers  \nExpected impact: 10–20% accuracy improvement  \nImplementation time: 1–2 weeks\n4.   Adaptive Retrieval: Implement confidence-based retrieval",
+            "score": 0.67885995,
+            "raw_content": null,
+            "id": "885548-00"
+        },
+        {
+            "url": "https://research.google/blog/speculative-rag-enhancing-retrieval-augmented-generation-through-drafting",
+            "title": "Speculative RAG: Enhancing retrieval augmented generation through drafting",
+            "content": "Speculative RAG follows the drafting approach described in speculative decoding, a method that accelerates auto-regressive LM inference by using a smaller model to concurrently and rapidly generate multiple subsequent tokens (e.g., words or word segments) verified in parallel with a base model, to improve the effectiveness and efficiency of RAG systems. We demonstrate that Speculative RAG yields significant improvements and achieves state-of-the-art performance in both accuracy and latency on [...] generation. We demonstrate the effectiveness of Speculative RAG with accuracy gains up to 12.97% while reducing latency by 51% compared to standard RAG systems. Speculative RAG sheds new light on the potential of collaborative architectures for enhancing RAG performance through task decomposition. [...] Due to the large volume of documents retrieved, latency presents a significant challenge for RAG systems. We analyze the latency of the standard RAG with Mixtral-Instruct-8x7B and Speculative RAG using TriviaQA, MuSiQue, PubHealth, and ARC-Challenge. We randomly sample 100 cases from each dataset and report the average time cost for each case. We use tensor parallelism (i.e., dividing tensors across multiple GPUs) to fit Mixtral-Instruct-8x7B into the GPU memory. We report the latency of",
+            "score": 0.64344186,
+            "raw_content": null,
+            "id": "3e6f36-01"
+        },
+        {
+            "url": "https://www.linkedin.com/pulse/how-does-retrieval-based-speculative-decoding-improve-daniel-chen-ksv3c",
+            "title": "How does Retrieval-Based Speculative Decoding Improve RAG ...",
+            "content": "In short, speculative decoding is a way to speed up inference by running a small language model (LM) alongside a large model. The small model",
+            "score": 0.5631623,
+            "raw_content": null,
+            "id": "a8b85a-02"
+        },
+        {
+            "url": "https://developers.redhat.com/articles/2025/07/01/fly-eagle3-fly-faster-inference-vllm-speculative-decoding",
+            "title": "Faster inference with vLLM & speculative decoding | Red Hat Developer",
+            "content": "Some servers can have lower usage, meaning fewer requests per second, and prioritize the latency (the time it takes for a response) of the request, while others might be used more heavily with many requests per second and therefore require higher throughput. Speculative decoding is fundamentally a tradeoff—we spend a little bit of extra compute to reduce memory movement. At low request rates, we are memory-bound, so reducing memory movement can really help with latency. However, at higher [...] You can interact with the server the exact same way as before, with a boost! As shown in Figure 1, incorporating Eagle 3 speculative decoding leads to significantly reduced end-to-end latency in text generation compared to a baseline model.\n\nFigure 1\n\n## Real-world performance\n\nEagle can provide significant speedups in various scenarios. Let's examine several variables that can influence performance in a specific use case.\n\n### Varying request rates [...] For this test, the 8B model is served on a single A100, and the 70B model is served on four A100s. Additionally, we limit the generation length to 1024 tokens for consistent testing. As shown in Figure 2, for a given request rate (x-axis), the latency of each request is reduced by up to 1.8X for the 8B model. The latency for each request of the 70B model is reduced by up to 1.6X at low request rates, but latency increases at higher request rates due to compute saturation.\n\nFigure 2",
+            "score": 0.56200886,
+            "raw_content": null,
+            "id": "096da8-03"
+        },
+        {
+            "url": "https://developer.nvidia.com/blog/an-introduction-to-speculative-decoding-for-reducing-latency-in-ai-inference",
+            "title": "An Introduction to Speculative Decoding for Reducing Latency in AI Inference | NVIDIA Technical Blog",
+            "content": "Speculative decoding is an inference optimization technique that pairs a target model with a lightweight draft mechanism that quickly proposes several next tokens. The target model verifies those proposals in a single forward pass, accepts the longest prefix that matches its own predictions, and continues from there. Compared with standard autoregressive decoding, which produces one token per pass, this technique lets the system generate multiple tokens at once, cutting latency and boosting [...] Speculative decoding can collapse these multiple waiting periods into one. By using a fast draft mechanism to speculate two candidate tokens then verifying them all in a single 250 ms forward pass, the model can generate three tokens (two speculations plus one base model generation) in 250 ms versus 600 ms. This concept is illustrated in Figure 4. [...] The NVIDIA TensorRT-Model Optimizer API provides a Speculative Decoding module that converts models to use EAGLE-3, enabling developers to apply the technique to their own models.\n By collapsing sequential generation steps into fewer forward passes, speculative decoding reduces cumulative latency — for example, generating three tokens in one 250 ms pass instead of three 200 ms passes — creating more responsive interactive applications.",
+            "score": 0.5533369,
+            "raw_content": null,
+            "id": "fb77a4-04"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=4TzPQj7sTN8&vl=en",
+            "title": "Lossless LLM inference acceleration with Speculators",
+            "content": "[11:04] Now when we want to use speculative decoding it's not it's not necessarily a panacea\n[11:11] and so it's in some situations for example like latency sensitive\n[11:17] situations where we've got userfacing applications like retrieval augmented generation or agents or assistants um\n[11:26] that are going to be generating a long response for the user um speculative decoding is good because [...] [23:12] For the second case, the retrieval augmented generation.\n[23:17] Um, it appears as though it does pretty well for most request rates, but when you have a lot of requests coming into\n[23:24] your server all at once, speculation might actually start slowing you down because in this case, it looks like we\n[23:30] might be using too much compute compared to our memory or memory movement. [...] [12:03] Um, and the other thing is that if we've got a case for example where we don't actually want very many tokens as the\n[12:10] output. So think like answering a multiple choice question. Um, speculative decoding doesn't improve\n[12:18] things like your time to your first token. So if you're just answering a question and you're expecting like ABC as a response, then it's not going to",
+            "score": 0.4833807,
+            "raw_content": null,
+            "id": "46f76a-05"
+        },
+        {
+            "url": "https://arxiv.org/html/2412.11854v1",
+            "title": "Towards Understanding Systems Trade-offs in Retrieval-Augmented Generation Model Inference",
+            "content": "Takeaway 1: Compared to baseline LLM inference, RAG-based LLMs introduce additional overheads that prolong TTFT inference latency.\nFigure 2 shows the TTFT latency of RAG-based LLMs using two different retrieval indices that achieve comparable retrieval accuracy: HNSW and IVF with scalar quantization (SQ).\nWhile prefill and decoding stages are standard in LLM inference, RAG introduces three additional stages: encoding, retrieval, and additional prefill steps for retrieved contexts. [...] With an extremely aggressive stride length of 4, the end-to-end latency increases to nearly 30 seconds.\nIn this case, RAG unique components account for nearly 97% of the end-to-end latency; retrieval and additional prefill overheads (due to added contexts and additional retrievals) account for 36% and 45% of the latency respectively.\nFigure 2(e) shows that this latency overhead also grows with the number of output tokens generated, due to the additional prefill stages from re-retrieval. [...] Figure 2(a) shows that these RAG stages nearly double the TTFT latency, from 495ms to 965ms, compared to the baseline LLM.\nIn both scenarios, using either HNSW-SQ or IVF-SQ, the most significant portion of the overhead comes from the retrieval stage which accounts for nearly 35% of the total TTFT latency.\nFigure 2(c) shows that even as the input sequence increases to 1000 tokens, retrieval continues to be dominant compared to the encoding stage’s latency.",
+            "score": 0.46599558,
+            "raw_content": null,
+            "id": "cec3e0-06"
+        },
+        {
+            "url": "https://inworld.ai/resources/inference-latency-optimization",
+            "title": "Inference Latency Optimization Guide - Inworld AI",
+            "content": "Inference latency optimization is the work of cutting the delay between a user's request and the model's response. Inworld AI, a research lab and inference provider focused on realtime consumer AI, runs speculative decoding, KV caching, quantization, and custom kernels in production; speculative decoding alone speeds decode 2 to 3x with provably identical output (Leviathan et al., 2022). [...] ## What do these levers look like run as a product?\n\nInworld's Realtime Inference engine runs four of these levers as a product for consumer-scale realtime workloads: vLLM with a custom FlashInfer kernel patch (kernels), speculative decoding, KV cache optimization (caching), and NVFP4 quantization on NVIDIA B200 GPUs, serving open models including Gemma 4 and the DeepSeek V3.2/V4 family (hosting guide). [...] Six serving-side levers dominate the optimization stack: speculative decoding, prefix caching, quantization, batching-window tuning, disaggregated prefill/decode, and kernel optimization. Each buys a specific improvement and costs something specific, whether memory, throughput, marginal accuracy, or engineering time. None changes model outputs except quantization.",
+            "score": 0.41976747,
+            "raw_content": null,
+            "id": "7304ee-07"
+        },
+        {
+            "url": "https://mlsys.org/virtual/2026/oral/3796",
+            "title": "MLSys Oral TeleRAG: Efficient Retrieval-Augmented Generation Inference with Lookahead Retrieval",
+            "content": "Retrieval-augmented generation (RAG) extends large language models (LLMs) with external data sources to enhance factual correctness and domain coverage. Modern RAG pipelines rely on large datastores, creating a significant system challenge: achieving high throughput and low latency is difficult, especially when GPU memory is limited. To address these challenges, we propose TeleRAG, an efficient inference system that reduces latency and improves throughput with minimal GPU memory requirements. [...] requirements. The core innovation of TeleRAG is \\lookahead retrieval\\, a prefetching mechanism that predicts required data and transfers them from CPU to GPU in parallel with LLM generation. In addition, TeleRAG adopts a prefetching scheduler and a cache-aware scheduler to support efficient multi-GPU inference with minimal overhead. Evaluations show TeleRAG achieves up to a 1.98$\\times$ average end-to-end latency reduction (single-query) and 1.83$\\times$ higher average throughput (batched), as [...] (batched), as well as good scalability in throughput. This confirms the practical utility of TeleRAG for faster and more memory-efficient deployments of RAG applications.",
+            "score": 0.30361873,
+            "raw_content": null,
+            "id": "82dbf5-08"
+        },
+        {
+            "url": "https://openreview.net/forum?id=73mDARqOtQ",
+            "title": "RAPID: Long-Context Inference with Retrieval-Augmented ...",
+            "content": "This paper introduces Retrieval-Augmented Speculative Decoding (RAPID) that aims at both accelerating and enhancing generation quality in long-",
+            "score": 0.296558,
+            "raw_content": null,
+            "id": "6fa30d-09"
+        }
+    ],
+    "How does ColBERT’s late-interaction (MaxSim) scoring rank documents in a retrieval-augmented generation (RAG) pipeline?": [
+        {
+            "url": "https://developer.ibm.com/articles/how-colbert-works",
+            "title": "How the ColBERT re-ranker model in a RAG system works",
+            "content": "Sep 3, 2026 — ColBERT uses late interaction and MaxSim scoring to rank documents by relevance, making it especially effective in retrieval-augmented ...Read more",
+            "score": 0.890761,
+            "raw_content": null,
+            "id": "70f449-00"
+        },
+        {
+            "url": "https://www.techinterview.net/blog/colbert-late-interaction-search-systems",
+            "title": "ColBERT System Design: Late Interaction RAG [2026]",
+            "content": "MaxSim calculation is only run on the top 200-500 candidate documents, not the entire corpus. This pipeline allows ColBERT to search tens of millions of",
+            "score": 0.81204927,
+            "raw_content": null,
+            "id": "579d30-01"
+        },
+        {
+            "url": "https://dataaspirant.com/blog/colbert-explained",
+            "title": "ColBERT and Late Interaction Explained: MaxSim to ColPali (2026) | DataAspirant",
+            "content": "ColBERT's bet is that a very cheap interaction at the very end captures most of what full cross-attention buys. Documents are encoded offline into a bag of small token vectors, 128 dimensions each in the standard configuration.\n\nAt query time, only the query is encoded: a few dozen tokens through a small BERT-sized model. Scoring is nothing but dot products and maxes. [...] The expensive part of a cross-encoder, re-reading every document per query, is gone. The fatal part of the bi-encoder, pooling, never happened.\n\n## MaxSim: the whole scoring rule#\n\nscore(q,d)=i∈∣q∣∑​j∈∣d∣max​Eqi​​⋅Edj​​\n\nFor each query token embedding E\\_qi, find the single best-matching document token embedding E\\_dj by dot product, and sum those maxima over the query tokens. That sum is the document's relevance score. [...] ## Conclusion#\n\nColBERT resolves the oldest trade in neural retrieval by moving one question: not whether query and document interact, but when. Keep a vector per token, precompute the document side, and let a sum of per-token maxima do at scoring time most of what full cross-attention does at a hundred times the price.",
+            "score": 0.76617163,
+            "raw_content": null,
+            "id": "bc0fb8-02"
+        },
+        {
+            "url": "https://medium.com/@vanshkharidia7/rag-retrieval-beyond-semantic-search-day-4-late-interaction-b109aa0bfee6",
+            "title": "RAG Retrieval Beyond Semantic Search: Day 4 - Late Interaction",
+            "content": "The MaxSim operation is where ColBERT’s precision emerges. Rather than averaging or pooling token representations, MaxSim ensures that every query token finds its optimal match. This approach mirrors how humans read and assess relevance — we look for specific concepts and evaluate how well each is addressed.\n\nWhen a user searches for “machine learning model deployment scalability,” MaxSim ensures that documents are scored based on how well they address: [...] Traditional neural retrieval systems operate as black boxes - you input a query and receive ranked documents with no explanation of the relevance decisions. ColBERT changes this by providing token-level interaction scores that reveal exactly which parts of the query matched which parts of each document. [...] Score(q,d) = Σ(i=1 to |q|) max(j=1 to |d|) E_q^i · E_d^j\nWhere:\n\n   `E_q^i` = embedding of query token i\n   `E_d^j` = embedding of document token j\n   `·` = cosine similarity\n\nThis MaxSim operation ensures that each query token finds its best match in the document, preserving the precision of exact matching while leveraging the power of semantic embeddings.\n\n## The Architecture of Precision: ColBERT’s Design Philosophy",
+            "score": 0.7361925,
+            "raw_content": null,
+            "id": "3dd959-03"
+        },
+        {
+            "url": "https://apxml.com/courses/optimizing-rag-for-production/chapter-2-advanced-retrieval-optimization/advanced-document-representations-rag",
+            "title": "Multi-vector & ColBERT for RAG | Doc Representation",
+            "content": "ColBERT processes queries and documents by creating contextualized embeddings for each of their tokens. The \"late interaction\" part of its name refers to how it calculates relevance:\n\nThis approach allows ColBERT to identify documents where many query terms are strongly, though perhaps not contiguously, represented. [...] ColBERT, which stands for Contextualized Late Interaction over BERT, is an advanced architecture designed for dense retrieval that emphasizes fine-grained, token-level interactions between the query and the document. Unlike traditional bi-encoder models that compute single embeddings for the query and document and then a simple similarity score, ColBERT delays and enriches the interaction process.\n\n#### How ColBERT Works [...] During retrieval, the query is embedded and then compared against all the individual vectors associated with the documents in your knowledge base. If a query vector shows high similarity to one or more sub-vectors of a document, that parent document is relevant. The relevance score for the parent document can be determined by aggregating the scores from its constituent vectors, for example, by taking the maximum similarity score, the average of the top-k highest-scoring sub-vectors, or a more",
+            "score": 0.68697983,
+            "raw_content": null,
+            "id": "4011de-04"
+        },
+        {
+            "url": "https://weaviate.io/blog/late-interaction-overview",
+            "title": "An Overview of Late Interaction Retrieval Models: ColBERT, ColPali, and ColQwen | Weaviate",
+            "content": "Late interaction models can be used across various retrieval tasks, helping researchers and practitioners find relevant documents in large document collections, such as financial documents or legal contracts. These models are particularly helpful in downstream tasks requiring efficient retrieval processes, such as search engines or Generative AI applications, such as Retrieval-Augmented Generation (RAG) pipelines, where semantic precision can improve information extraction and understanding. [...] One advantage of ColBERT is its impact on retrieval performance. Because it’s scalable and contextually rich, it can improve retrieval accuracy and, therefore, overall performance in RAG applications and ranking pipelines compared to typical dense vector embedding models. [...] The late interaction mechanism calculates the maximum similarity score between the query tokens and the document tokens. It requires lower-level representations of input documents or images, such as their tokens (word parts) or image patches (small image/document sections), and uses these for comparison instead of a global document representation. Late interaction was first introduced in the ColBERT paper.\n\nLate Interaction Formula\n\nLate Interaction Formula",
+            "score": 0.62330866,
+            "raw_content": null,
+            "id": "13d221-05"
+        },
+        {
+            "url": "https://arxiv.org/html/2607.16208v1",
+            "title": "ColGraphRAG: Late-Interaction Evidence Retrievalfor Multimodal GraphRAG",
+            "content": "We refer to Eq. 1 as MaxSim-style late-interaction scoring in the ColBERT/ColPali lineage [13, 15]; it is not applied to text or table rows in our pipeline.\nLet 𝒳img​(G)\\mathcal{X}\\_{\\mathrm{img}}(G) denote graph-linked image candidates on GG.\nWe define the top-kk graph-linked image evidence list by late-interaction score as [...] At inference time, the user query is processed against this graph: baseline text/table/entity retrieval RbaseR\\_{\\mathrm{base}} is unchanged, while the image branch applies RimgR\\_{\\mathrm{img}} over graph-linked IMAGE nodes.\nThe image branch forms deterministic template-based visual query phrases and ranks candidates with late-interaction MaxSim scoring on GG. [...] We study the retrieval-to-graph bottleneck by replacing the graph-linked visual ranker within the same GraphRAG pipeline.\nAt inference, ColGraphRAG operates on the same pre-built graph GG as the pooled-ranking baseline but replaces the graph-linked visual ranker with ColBERT/ColPali-style MaxSim scoring over multiple query vectors and local visual units, using deterministic template-based visual query phrases; offline construction and non-visual retrieval match the baseline.",
+            "score": 0.60805947,
+            "raw_content": null,
+            "id": "bce66e-06"
+        },
+        {
+            "url": "https://www.emergentmind.com/topics/late-interaction-mechanism",
+            "title": "Late Interaction Mechanism in Retrieval",
+            "content": "The canonical late interaction framework encodes queries q={q1​,…,qn​} and documents d={d1​,…,dm​} as sets of d-dimensional token embeddings via independent application of a transformer or vision-LLM. The semantics of their interaction are governed by the score function: Score(q,d)=i=1∑n​1≤j≤mmax​⟨qi​,dj​⟩ as introduced in ColBERT and widely adopted across text, image, vision, and multimodal retrieval tasks (Khattab et al., 2020, Santhanam et al., 2021). Each query token qi​ \"fires\" on its most [...] A late interaction mechanism is an information retrieval paradigm in which queries and documents are independently encoded as sequences of token-level (or patch-level) embeddings, with their mutual relevance evaluated through a fine-grained, token-to-token (or multi-vector) interaction in a dedicated scoring step following the initial encoding. This mechanism contrasts sharply with both early interaction (cross-encoder) models, which fuse query and document representations early via joint [...] Text-to-video (MSR-VTT, ActivityNet): Video-ColBERT's dual-stream MeanMaxSim outperforms frame-only or single-stream baselines by up to +5% R@1 without slowing inference (Reddy et al., 24 Mar 2025).\n Storage/latency tradeoffs: Late interaction models with 50–75% token/patch pruning maintain near-identical effectiveness (≤2% drop), reduce disk by 25–40%, and cut query time by 30–50% (Liu et al., 2024).",
+            "score": 0.5925965,
+            "raw_content": null,
+            "id": "400824-07"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=sYaPahScDN4",
+            "title": "Better RAG with ColBERT : Contextualized late interactions",
+            "content": "[5:17] query token one right so similarly this is the similarity of the document tokens with the uh query token 2 and uh this is\n[5:26] the score which is related to the document token sity with the third query token right so we can get this score for\n[5:34] each of the document tokens and then what we do is we uh C which we kind of fetch the maximum similarity score for\n[5:44] each tokens so you can see for this query token the maximum similarity score is this one and similarly we have the [...] [5:51] other Max scores right so this is uh what we are calculating here is the interactions between between each of the\n[5:59] the query tokens with each of the document tokens right and then we kind of select the maximum similarity and\n[6:06] what we do after that is we calculate this Maxim which is the sum of this values right\n[6:12] 8584 and 97 right so this is actually the similarity score for this query with [...] [6:54] uh chunk so and then we will calculate the maxim for each of these chunks and then we will select the top K chunks\n[7:01] using this mechanism right so as we are doing this similarity calculations at the very granular stage like at the\n[7:11] token level we are calculating the maximum similarity and the maxim score for each documents or chunks and then we\n[7:19] will calculate like what are the top K document or chunks right so this is another example where we kind of",
+            "score": 0.5829428,
+            "raw_content": null,
+            "id": "30e029-08"
+        },
+        {
+            "url": "https://qdrant.tech/course/multi-vector-search/module-1/late-interaction-basics",
+            "title": "Late Interaction Basics - Qdrant",
+            "content": "1. Encode: Pass the document through an encoder (like ColBERT) to generate one embedding vector per token\n2. Store multi-vector representations: Keep all token vectors instead of aggregating them into a single vector\n3. Defer comparison: At search time, compare query token vectors against document token vectors\n4. Late interaction: The actual “interaction” between query and document happens late - only when computing relevance scores [...] indicating the relevance of the document for # the score indicating the relevance of the document for# the provided query. # the provided query. # the provided query.cross_encoder.rerank(query, documents) cross_encoder.rerank(query, documents) cross_encoder. rerank(query, documents) [...] Late interaction solves this challenge through a simple but powerful idea: encode documents and queries into multiple token-level vectors, then defer the comparison until search time.\n\n### How It Works\n\nInstead of compressing a document into a single vector, late interaction represents it as a collection of contextualized token embeddings",
+            "score": 0.5037359,
+            "raw_content": null,
+            "id": "0e696a-09"
+        }
+    ]
+}

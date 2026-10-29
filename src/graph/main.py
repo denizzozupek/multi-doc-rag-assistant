@@ -32,6 +32,7 @@ def web_search_needed_edge(state: State) -> str:
 def graph_pipeline(
     llm: BaseChatModel = DEFAULT_LLM,
     top_k: int = DEFAULT_RERANK_TOP_K,
+    crag_enable: bool = True,
 ) -> StateGraph:
     """Creates and returns an uncompiled StateGraph for the RAG workflow."""
     workflow = StateGraph(State)
@@ -43,19 +44,26 @@ def graph_pipeline(
         create_retrieve_and_rerank_node(top_k=top_k),
     )
     workflow.add_node("generate_response", create_generation_node(llm=llm))
-    workflow.add_node("grade_documents", create_grade_documents_node(llm=llm))
-    workflow.add_node("web_search", create_web_search_node(llm=llm))
-    
-    
 
     # Define linear execution edges
     workflow.add_edge(START, "rewrite_query")
     workflow.add_edge("rewrite_query", "retrieve_and_rerank")
-    workflow.add_edge("retrieve_and_rerank", "grade_documents")
-    workflow.add_conditional_edges("grade_documents",
-                                   web_search_needed_edge,
-                                   {"web_search": "web_search", "generate_response": "generate_response"})
-    workflow.add_edge("web_search", "generate_response")
+
+    if crag_enable:
+
+        workflow.add_node("grade_documents", create_grade_documents_node(llm=llm))
+        workflow.add_node("web_search", create_web_search_node(llm=llm))
+
+
+        workflow.add_edge("retrieve_and_rerank", "grade_documents")
+        workflow.add_conditional_edges("grade_documents",
+                                    web_search_needed_edge,
+                                    {"web_search": "web_search", "generate_response": "generate_response"})
+        workflow.add_edge("web_search", "generate_response")
+
+    else:
+        workflow.add_edge("retrieve_and_rerank", "generate_response")
+
     workflow.add_edge("generate_response", END)
 
     return workflow

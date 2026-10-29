@@ -3,12 +3,12 @@ import json
 import logging
 import asyncio
 from pathlib import Path
+from time import perf_counter
 
 from dotenv import load_dotenv
+from langchain_community.callbacks import get_openai_callback
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
-
-from time import perf_counter
 
 from eval.generation.prompts import build_judge_prompt
 from eval.generation.schemas import (
@@ -16,11 +16,13 @@ from eval.generation.schemas import (
     GenerationEvaluationReport,
     GenerationSummary,
     JudgeEvaluationPrompt,
+    RunMetadata,
 )
 from src.config import DEFAULT_LLM, CONCURRENT_SEMAPHORE, DEFAULT_RERANK_TOP_K
 from src.graph import graph_pipeline
 from src.ingestion import ingestion_pipeline
 from src.utils import calculate_percentile, format_docs_as_context, format_history
+from src.retrieval.reranker import get_cross_encoder_model
 
 load_dotenv()
 
@@ -33,7 +35,7 @@ semaphore = asyncio.Semaphore(CONCURRENT_SEMAPHORE)
 # ------- Evaluate Queries and Save Results -------
 
 
-async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
+async def evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable=True):
     async with semaphore:
         query_text = item["query"]
         file_name = item.get("source_doc")
@@ -49,26 +51,37 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
                 "selected_files": selected_files,
             }
 
-            gen_start = perf_counter()
-            output = await app.ainvoke(state_input)
-            generation_time_ms = round((perf_counter() - gen_start) * 1000, 2)
+            # 1. RAG Pipeline Execution (Rewrite, Retrieval, Grading if CRAG, Generation)
+            with get_openai_callback() as rag_cb:
+                gen_start = perf_counter()
+                output = await app.ainvoke(state_input)
+                generation_time_ms = round((perf_counter() - gen_start) * 1000, 2)
 
             retrieved_docs = output.get("documents", [])
             context = format_docs_as_context(retrieved_docs)
             answer = output["messages"][-1].content
 
-            # LLM Judge: Evaluate the answer for faithfulness and relevance
+            # 2. LLM Judge Execution (Independent Evaluation)
             prompt = build_judge_prompt(
                 query=query_text,
                 context=context,
                 response=answer,
             )
-            judge_start = perf_counter()
-            judge_result = await judge_llm.ainvoke(prompt)
-            judge_time_ms = round((perf_counter() - judge_start) * 1000, 2)
+            with get_openai_callback() as judge_cb:
+                judge_start = perf_counter()
+                judge_result = await judge_llm.ainvoke(prompt)
+                judge_time_ms = round((perf_counter() - judge_start) * 1000, 2)
+
             total_time_ms = round((perf_counter() - total_start) * 1000, 2)
 
-            return {
+            rag_tokens = rag_cb.total_tokens
+            rag_cost = round(rag_cb.total_cost, 6)
+            judge_tokens = judge_cb.total_tokens
+            judge_cost = round(judge_cb.total_cost, 6)
+            total_tokens = rag_tokens + judge_tokens
+            cost_usd = round(rag_cost + judge_cost, 6)
+
+            result = {
                 "id": item.get("id"),
                 "query": query_text,
                 "source_doc": file_name,
@@ -79,8 +92,26 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
                 "generation_latency_ms": generation_time_ms,
                 "judge_latency_ms": judge_time_ms,
                 "total_latency_ms": total_time_ms,
+                "rag_tokens": rag_tokens,
+                "rag_cost_usd": rag_cost,
+                "judge_tokens": judge_tokens,
+                "judge_cost_usd": judge_cost,
+                "total_tokens": total_tokens,
+                "cost_usd": cost_usd,
                 "judge_result": judge_result.model_dump(),
             }
+
+            if crag_enable:
+                is_web = output.get("web_search_needed", False)
+                result["crag_telemetry"] = {
+                    "web_search_triggered": is_web,
+                    "docs_after_grading": 0 if is_web else len(retrieved_docs),
+                    "grader_tokens": output.get("grader_tokens", 0) or 0,
+                    "grader_cost_usd": output.get("grader_cost_usd", 0.0) or 0.0,
+                }
+
+            return result
+
         except Exception as e:
             logger.error(f"Error evaluating query '{query_text}': {e}", exc_info=True)
             total_time_ms = round((perf_counter() - total_start) * 1000, 2)
@@ -95,12 +126,19 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k):
                 "generation_latency_ms": 0.0,
                 "judge_latency_ms": 0.0,
                 "total_latency_ms": total_time_ms,
+                "rag_tokens": 0,
+                "rag_cost_usd": 0.0,
+                "judge_tokens": 0,
+                "judge_cost_usd": 0.0,
+                "total_tokens": 0,
+                "cost_usd": 0.0,
                 "judge_result": {
                     "faithfulness_reason": str(e),
                     "faithfulness_score": 0,
                     "relevance_reason": str(e),
                     "relevance_score": 0,
                 },
+                "crag_telemetry": None,
             }
 
 
@@ -108,21 +146,25 @@ async def evaluate_queries(
     judge_llm,
     ground_truth: list[dict],
     top_k: int = DEFAULT_RERANK_TOP_K,
+    crag_enable: bool = True,
 ) -> list[dict]:
     """Evaluate a list of queries using the graph pipeline and judge LLM."""
 
-    app = graph_pipeline(llm=DEFAULT_LLM, top_k=top_k).compile()
+    # Warm-up Cross-Encoder model before benchmark to eliminate race condition
+    get_cross_encoder_model()
+
+    app = graph_pipeline(llm=DEFAULT_LLM, top_k=top_k, crag_enable=crag_enable).compile()
 
     tasks = [
-        evaluate_query_with_semaphore(app, judge_llm, item, top_k)
+        evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable=crag_enable)
         for item in ground_truth
     ]
     results = await asyncio.gather(*tasks)
     return results
 
 
-def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluationReport:
-    """Save judge evaluation results to a JSON file and log summary statistics with latencies."""
+def save_judge_results(results: list[dict], run_id: str, metadata: RunMetadata) -> GenerationEvaluationReport:
+    """Save judge evaluation results to a JSON file and log summary statistics with latencies and token costs."""
     valid_results = [
         r for r in results if r["context"] is not None and r["answer"] is not None
     ]
@@ -154,6 +196,27 @@ def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluation
         p95_total_ms = calculate_percentile(
             [r["total_latency_ms"] for r in valid_results], 0.95
         )
+        total_rag_cost = sum(r.get("rag_cost_usd", 0.0) for r in valid_results)
+        total_judge_cost = sum(r.get("judge_cost_usd", 0.0) for r in valid_results)
+        total_cost = sum(r.get("cost_usd", 0.0) for r in valid_results)
+        avg_rag_tokens = sum(r.get("rag_tokens", 0) for r in valid_results) / total_valid
+        avg_tokens = sum(r.get("total_tokens", 0) for r in valid_results) / total_valid
+
+        total_grader_cost = sum(
+            r.get("crag_telemetry", {}).get("grader_cost_usd", 0.0)
+            for r in valid_results
+            if r.get("crag_telemetry")
+        )
+        avg_grader_tokens = (
+            sum(
+                r.get("crag_telemetry", {}).get("grader_tokens", 0)
+                for r in valid_results
+                if r.get("crag_telemetry")
+            )
+            / total_valid
+            if total_valid > 0
+            else 0.0
+        )
 
         logger.info(
             f"Average Faithfulness Score: {avg_faithfulness:.2f} ({total_valid}/{total_questions} valid)"
@@ -167,6 +230,16 @@ def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluation
         logger.info(
             f"Average Total Latency: {avg_total_ms:.2f} ms | P95: {p95_total_ms:.2f} ms"
         )
+        logger.info(
+            f"Production RAG Cost: ${total_rag_cost:.4f} USD | Avg RAG Tokens/Query: {avg_rag_tokens:.1f}"
+        )
+        if metadata.crag_enabled:
+            logger.info(
+                f"CRAG Grader Cost: ${total_grader_cost:.4f} USD | Avg Grader Tokens/Query: {avg_grader_tokens:.1f}"
+            )
+        logger.info(
+            f"Judge Cost: ${total_judge_cost:.4f} USD | Total Run Cost: ${total_cost:.4f} USD"
+        )
     else:
         avg_faithfulness = 0.0
         avg_relevance = 0.0
@@ -175,6 +248,13 @@ def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluation
         avg_total_ms = 0.0
         p95_gen_ms = 0.0
         p95_total_ms = 0.0
+        total_rag_cost = 0.0
+        avg_rag_tokens = 0.0
+        total_grader_cost = 0.0
+        avg_grader_tokens = 0.0
+        total_judge_cost = 0.0
+        total_cost = 0.0
+        avg_tokens = 0.0
 
     multiturn_questions = [
         r for r in valid_results if r["question_type"] == "multi_turn_followup"
@@ -215,9 +295,17 @@ def save_judge_results(results: list[dict], run_id: str) -> GenerationEvaluation
         avg_total_latency_ms=round(avg_total_ms, 2),
         p95_generation_latency_ms=round(p95_gen_ms, 2),
         p95_total_latency_ms=round(p95_total_ms, 2),
+        total_rag_cost_usd=round(total_rag_cost, 4),
+        avg_rag_tokens_per_query=round(avg_rag_tokens, 1),
+        total_grader_cost_usd=round(total_grader_cost, 4),
+        avg_grader_tokens_per_query=round(avg_grader_tokens, 1),
+        total_judge_cost_usd=round(total_judge_cost, 4),
+        total_run_cost_usd=round(total_cost, 4),
+        avg_tokens_per_query=round(avg_tokens, 1),
     )
 
     report = GenerationEvaluationReport(
+        metadata=metadata,
         total_questions=total_questions,
         total_valid=total_valid,
         total_multiturn=total_multiturn,
@@ -243,12 +331,30 @@ if __name__ == "__main__":
     with open("data/ground_truth.json", "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
 
-    judge_llm = DEFAULT_LLM.with_structured_output(JudgeEvaluationPrompt)
+    base_judge_llm = DEFAULT_LLM
+    judge_llm = base_judge_llm.with_structured_output(JudgeEvaluationPrompt)
 
     run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    crag_enable = True
 
     results = asyncio.run(
-        evaluate_queries(judge_llm, ground_truth, top_k=DEFAULT_RERANK_TOP_K)
+        evaluate_queries(judge_llm, ground_truth, top_k=DEFAULT_RERANK_TOP_K, crag_enable=crag_enable)
     )
-    save_judge_results(results, run_id)
 
+    run_prefix = "crag" if crag_enable else "baseline"
+
+    model_temp = getattr(DEFAULT_LLM, "temperature", 0.0)
+    judge_temp = getattr(base_judge_llm, "temperature", 0.0)
+
+    metadata = RunMetadata(
+        run_name=f"{run_prefix}_run_{run_id}",
+        timestamp=datetime.datetime.now().isoformat(),
+        crag_enabled=crag_enable,
+        model=getattr(DEFAULT_LLM, "model_name", "gpt-4o-mini"),
+        temperature=model_temp if model_temp is not None else 0.0,
+        judge_model=getattr(base_judge_llm, "model_name", "gpt-4o-mini"),
+        judge_temperature=judge_temp if judge_temp is not None else 0.0,
+        top_k=DEFAULT_RERANK_TOP_K,
+    )
+
+    save_judge_results(results, run_id, metadata=metadata)
