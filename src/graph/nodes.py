@@ -1,7 +1,5 @@
 import asyncio
-import json
 import logging
-import os
 from typing import Any, Callable
 
 from langchain_community.callbacks import get_openai_callback
@@ -10,7 +8,6 @@ from langchain_core.messages import AIMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.documents import Document
-from langchain_tavily import TavilySearch
 
 from src.config import (
     DEFAULT_RERANK_TOP_K,
@@ -26,34 +23,11 @@ from src.prompt import (
     rewrite_for_web_search_prompt,
 )
 from src.graph.state import State
-from src.retrieval.reranker import get_rerank_semaphore, reranker
-from src.retrieval.retriever import get_retriever
+from src.retrieval.pipeline import retrieve_and_rerank
+from src.retrieval.web import fetch_web_documents
 from src.utils import format_docs_as_context
 
-web_search_tool = TavilySearch(k=3)
-
 logger = logging.getLogger(__name__)
-
-TAVILY_CACHE_PATH = "data/tavily_search_results.json"
-
-
-def _load_tavily_cache() -> dict:
-    if os.path.exists(TAVILY_CACHE_PATH):
-        try:
-            with open(TAVILY_CACHE_PATH, "r", encoding="utf-8") as f:
-                return json.load(f)
-        except Exception as e:
-            logger.warning(
-                "Error loading Tavily cache: %s. Starting with empty cache.", e
-            )
-            return {}
-    return {}
-
-
-def _save_tavily_cache(cache: dict) -> None:
-    os.makedirs(os.path.dirname(TAVILY_CACHE_PATH), exist_ok=True)
-    with open(TAVILY_CACHE_PATH, "w", encoding="utf-8") as f:
-        json.dump(cache, f, ensure_ascii=False, indent=4)
 
 
 # 1. Rewrite Query Node
@@ -109,50 +83,16 @@ def create_retrieve_and_rerank_node(
     """Creates a node that retrieves documents dynamically based on selected files and reranks them."""
 
     async def retrieve_and_rerank_node(state: State) -> dict:
-        """Retrieves and reranks documents based on runtime state, returning the top_k results."""
-        query = state.get("rewrite_query")
-        selected_files = state.get("selected_files")
-
-        if not selected_files:
-            logger.warning(
-                "No selected files provided. Using all available documents for retrieval."
-            )
-
-        if not query or not query.strip():
-            logger.warning("No query provided. Returning empty document list.")
-            return {"documents": []}
-
-        retriever = get_retriever(
-            k=candidate_k,
-            selected_files=selected_files,
+        docs = await retrieve_and_rerank(
+            query=state.get("rewrite_query"),
+            selected_files=state.get("selected_files"),
+            model=model,
+            candidate_k=candidate_k,
+            top_k=top_k,
             search_type=search_type,
         )
-        if retriever is None:
-            logger.warning(
-                "Retriever could not be created. Returning empty document list."
-            )
-            return {"documents": []}
+        return {"documents": docs}
 
-        raw_docs = await retriever.ainvoke(query)
-        logger.info("Retrieved documents count: %s", len(raw_docs))
-
-        if not raw_docs:
-            logger.warning("No documents retrieved.")
-            return {"documents": []}
-
-        # Rerank retrieved candidate documents using Cross-Encoder model (throttled to protect CPU)
-        async with get_rerank_semaphore():
-            reranked_docs = await asyncio.to_thread(
-                reranker,
-                query=query,
-                documents=raw_docs,
-                model=model,
-                top_k=top_k,
-            )
-
-        return {"documents": reranked_docs}
-
-    logger.info("Retrieve and rerank node created successfully.")
     return retrieve_and_rerank_node
 
 
@@ -263,48 +203,19 @@ def create_grade_documents_node(
 
 # 5. Web Search Node
 def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State], Any]:
-    """Creates a node that reformulates user questions for web search and retrieves web results with caching."""
+    """Creates a node that rewrites the query for web search and fetches web results."""
 
     chain = rewrite_for_web_search_prompt | llm | StrOutputParser()
 
     async def web_search_node(state: State) -> dict:
-        query = state.get("rewrite_query") or state.get("messages", [])[-1].content
-        documents = state.get("documents", [])
-
+        query = state.get("rewrite_query") or state["messages"][-1].content
         if not query or not query.strip():
-            logger.warning("No query found in state. Returning empty rewrite query.")
             return {"rewrite_query": ""}
 
         rewritten_query = await chain.ainvoke({"user_question": query})
-        logger.info(
-            "Rewritten web search query generated successfully: %s", rewritten_query
-        )
+        logger.info("Rewritten web search query: %s", rewritten_query)
 
-        tavily_cache = _load_tavily_cache()
-
-        if rewritten_query in tavily_cache:
-            logger.info(
-                "Search results found for query in tavily_search_results: %s",
-                rewritten_query,
-            )
-            results = tavily_cache[rewritten_query]
-        else:
-            logger.warning(
-                "No search results found in cache, starting web search for: %s",
-                rewritten_query,
-            )
-            web_results = await web_search_tool.ainvoke(rewritten_query)
-            results = web_results.get("results", [])
-            tavily_cache[rewritten_query] = results
-            _save_tavily_cache(tavily_cache)
-
-        for result in results:
-            source = result.get("url") or "Web Search"
-            content = result.get("content", "").strip()
-            if content:
-                documents.append(
-                    Document(page_content=content, metadata={"source": source})
-                )
-        return {"documents": documents}
+        new_docs = await fetch_web_documents(rewritten_query)
+        return {"documents": [*state.get("documents", []), *new_docs]}
 
     return web_search_node

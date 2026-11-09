@@ -1,47 +1,65 @@
 import logging
-from typing import List
-from functools import lru_cache
-from typing import List
+from typing import Annotated
 
 from langchain_core.tools import tool
+from langgraph.prebuilt import InjectedState
 
-from src.retrieval.retriever import get_retriever
-from src.retrieval.reranker import reranker
-from src.config import DEFAULT_RERANK_TOP_K
+from src.retrieval.pipeline import retrieve_and_rerank, format_docs
+from src.retrieval.web import fetch_web_documents
 
 logger = logging.getLogger(__name__)
 
-query_cache = dict[str, str] = {}
-
-@lru_cache(maxsize=1)
-def get_cached_retriever(selected_files: List[str] | None = None):
-    if selected_files is not None:
-        return get_retriever(selected_files=selected_files)
-    return get_retriever()
 
 @tool
-def search_internal_docs(query: str, selected_files: List[str] | None = None) -> str:
-    """Searches the internal knowledge base, technical documentation, and indexed research papers.
-    
-    Use this tool whenever you need to retrieve verified facts, algorithms, formulas, or specific
-    domain knowledge from the local document repository. You can optionally provide `selected_files`
-    to restrict the search to specific document filenames.
+async def search_docs(
+    query: str,
+    selected_files: Annotated[list[str] | None, InjectedState("selected_files")],
+    file_name: str | None = None,
+) -> str:
+    """Searches the documents the user selected for this conversation
+    (books, notes, papers, articles etc.) and returns the most relevant passages with
+    source file and page. The returned passages are the only allowed
+    evidence for an answer.
+
+    Write `query` as a short, self-contained search phrase. For questions
+    that compare several documents, call this once per part, using
+    `file_name` to target one document. Omit `file_name` to search all
+    selected documents.
     """
-    normalized_query = query.strip().lower()
-    files_key = ",".join(sorted(selected_files)) if selected_files else "all"
+    allowed = selected_files or []
+
+    if file_name is not None and file_name not in allowed:
+        return (
+            f"'{file_name}' is not a selected file. "
+            f"Selected files: {', '.join(allowed)}"
+        )
+
+    scope = [file_name] if file_name else allowed
+
     try:
-        if selected_files:
-            retriever = get_cached_retriever(selected_files=selected_files)
-        else:
-            retriever = get_cached_retriever()
+        docs = await retrieve_and_rerank(query=query, selected_files=scope)
     except Exception as e:
-        return f"Error occurred while initializing the retriever: {str(e)}"
-    
-    if retriever is None:
-        return "No retriever available. Please ensure the vector database is set up correctly."
-    
-    docs = retriever.invoke(query)
-    final_docs = reranker.invoke(docs, query, top_k=DEFAULT_RERANK_TOP_K)
-    
+        logger.exception("search_docs failed")
+        return f"Retriever error: {e}"
+
     if not docs:
-        return "No relevant documents found."
+        return "No relevant passages found."
+
+    return format_docs(docs)
+
+
+@tool
+async def search_web(query: str) -> str:
+    """Searches the web. Use ONLY when the selected documents did not
+    contain the answer after searching them, and the user has enabled
+    web search. Write `query` as a short, self-contained search phrase.
+    Web results are not part of the user's documents; say so in the answer."""
+    try:
+        docs = await fetch_web_documents(query)
+    except Exception as e:
+        logger.exception("web_search failed")
+        return f"Web search error: {e}"
+    if not docs:
+        return "No web results found."
+    return format_docs(docs)
+
