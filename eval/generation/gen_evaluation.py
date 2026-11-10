@@ -2,6 +2,7 @@ import datetime
 import json
 import logging
 import asyncio
+import argparse
 from pathlib import Path
 from time import perf_counter
 
@@ -18,11 +19,13 @@ from eval.generation.schemas import (
     JudgeEvaluationPrompt,
     RunMetadata,
 )
+
 from src.config import DEFAULT_LLM, CONCURRENT_SEMAPHORE, DEFAULT_RERANK_TOP_K
 from src.graph import graph_pipeline
 from src.ingestion import ingestion_pipeline
 from src.utils import calculate_percentile, format_docs_as_context, format_history
 from src.retrieval.reranker import get_cross_encoder_model
+from src.agent.main import agent_pipeline
 
 load_dotenv()
 
@@ -30,6 +33,15 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 semaphore = asyncio.Semaphore(CONCURRENT_SEMAPHORE)
+
+
+# ------ Argument Parsing Function ------
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Evaluate queries using a graph pipeline and judge LLM."
+    )
+    parser.add_argument("--mode", choices=["crag", "agent"], default="crag")
+    return parser.parse_args()
 
 
 # ------- Evaluate Queries and Save Results -------
@@ -45,7 +57,9 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable
         try:
             raw_history = item.get("conversation_history", [])
             raw_history_formatted = format_history(raw_history)
-            selected_files = [s.strip() for s in file_name.split(",")] if file_name else None
+            selected_files = (
+                [s.strip() for s in file_name.split(",")] if file_name else None
+            )
             state_input = {
                 "messages": raw_history_formatted + [HumanMessage(content=query_text)],
                 "selected_files": selected_files,
@@ -54,11 +68,17 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable
             # 1. RAG Pipeline Execution (Rewrite, Retrieval, Grading if CRAG, Generation)
             with get_openai_callback() as rag_cb:
                 gen_start = perf_counter()
-                output = await app.ainvoke(state_input)
+                output = await app.ainvoke(state_input, config={"recursion_limit": 10})
                 generation_time_ms = round((perf_counter() - gen_start) * 1000, 2)
 
             retrieved_docs = output.get("documents", [])
-            context = format_docs_as_context(retrieved_docs)
+
+            if retrieved_docs:
+                context = format_docs_as_context(retrieved_docs)
+            else:
+                tool_contents = [str(msg.content) for msg in output.get("messages", []) if msg.type == "tool"]
+                context = "\n\n".join(tool_contents)
+
             answer = output["messages"][-1].content
 
             # 2. LLM Judge Execution (Independent Evaluation)
@@ -145,6 +165,7 @@ async def evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable
 async def evaluate_queries(
     judge_llm,
     ground_truth: list[dict],
+    mode: str = "crag",
     top_k: int = DEFAULT_RERANK_TOP_K,
     crag_enable: bool = True,
 ) -> list[dict]:
@@ -153,17 +174,27 @@ async def evaluate_queries(
     # Warm-up Cross-Encoder model before benchmark to eliminate race condition
     get_cross_encoder_model()
 
-    app = graph_pipeline(llm=DEFAULT_LLM, top_k=top_k, crag_enable=crag_enable).compile()
+    if mode == "crag":
+        app = graph_pipeline(
+            llm=DEFAULT_LLM, top_k=top_k, crag_enable=crag_enable
+        ).compile()
+
+    elif mode == "agent":
+        app = agent_pipeline(llm=DEFAULT_LLM)
 
     tasks = [
-        evaluate_query_with_semaphore(app, judge_llm, item, top_k, crag_enable=crag_enable)
+        evaluate_query_with_semaphore(
+            app, judge_llm, item, top_k, crag_enable=crag_enable
+        )
         for item in ground_truth
     ]
     results = await asyncio.gather(*tasks)
     return results
 
 
-def save_judge_results(results: list[dict], run_id: str, metadata: RunMetadata) -> GenerationEvaluationReport:
+def save_judge_results(
+    results: list[dict], run_id: str, metadata: RunMetadata
+) -> GenerationEvaluationReport:
     """Save judge evaluation results to a JSON file and log summary statistics with latencies and token costs."""
     valid_results = [
         r for r in results if r["context"] is not None and r["answer"] is not None
@@ -184,12 +215,8 @@ def save_judge_results(results: list[dict], run_id: str, metadata: RunMetadata) 
         avg_gen_ms = (
             sum(r["generation_latency_ms"] for r in valid_results) / total_valid
         )
-        avg_judge_ms = (
-            sum(r["judge_latency_ms"] for r in valid_results) / total_valid
-        )
-        avg_total_ms = (
-            sum(r["total_latency_ms"] for r in valid_results) / total_valid
-        )
+        avg_judge_ms = sum(r["judge_latency_ms"] for r in valid_results) / total_valid
+        avg_total_ms = sum(r["total_latency_ms"] for r in valid_results) / total_valid
         p95_gen_ms = calculate_percentile(
             [r["generation_latency_ms"] for r in valid_results], 0.95
         )
@@ -199,7 +226,9 @@ def save_judge_results(results: list[dict], run_id: str, metadata: RunMetadata) 
         total_rag_cost = sum(r.get("rag_cost_usd", 0.0) for r in valid_results)
         total_judge_cost = sum(r.get("judge_cost_usd", 0.0) for r in valid_results)
         total_cost = sum(r.get("cost_usd", 0.0) for r in valid_results)
-        avg_rag_tokens = sum(r.get("rag_tokens", 0) for r in valid_results) / total_valid
+        avg_rag_tokens = (
+            sum(r.get("rag_tokens", 0) for r in valid_results) / total_valid
+        )
         avg_tokens = sum(r.get("total_tokens", 0) for r in valid_results) / total_valid
 
         total_grader_cost = sum(
@@ -284,12 +313,16 @@ def save_judge_results(results: list[dict], run_id: str, metadata: RunMetadata) 
     summary = GenerationSummary(
         avg_faithfulness=round(avg_faithfulness, 2),
         avg_relevance=round(avg_relevance, 2),
-        avg_multiturn_faithfulness=round(avg_multiturn_faithfulness, 2)
-        if avg_multiturn_faithfulness is not None
-        else None,
-        avg_multiturn_relevance=round(avg_multiturn_relevance, 2)
-        if avg_multiturn_relevance is not None
-        else None,
+        avg_multiturn_faithfulness=(
+            round(avg_multiturn_faithfulness, 2)
+            if avg_multiturn_faithfulness is not None
+            else None
+        ),
+        avg_multiturn_relevance=(
+            round(avg_multiturn_relevance, 2)
+            if avg_multiturn_relevance is not None
+            else None
+        ),
         avg_generation_latency_ms=round(avg_gen_ms, 2),
         avg_judge_latency_ms=round(avg_judge_ms, 2),
         avg_total_latency_ms=round(avg_total_ms, 2),
@@ -331,6 +364,8 @@ if __name__ == "__main__":
     with open("data/ground_truth.json", "r", encoding="utf-8") as f:
         ground_truth = json.load(f)
 
+    args = parse_arguments()
+
     base_judge_llm = DEFAULT_LLM
     judge_llm = base_judge_llm.with_structured_output(JudgeEvaluationPrompt)
 
@@ -338,10 +373,15 @@ if __name__ == "__main__":
     crag_enable = True
 
     results = asyncio.run(
-        evaluate_queries(judge_llm, ground_truth, top_k=DEFAULT_RERANK_TOP_K, crag_enable=crag_enable)
+        evaluate_queries(
+            judge_llm, ground_truth, mode=args.mode, top_k=DEFAULT_RERANK_TOP_K, crag_enable=crag_enable
+        )
     )
 
-    run_prefix = "crag" if crag_enable else "baseline"
+    if args.mode == "agent":
+        run_prefix = "agentic"
+    else: 
+        run_prefix = "crag" if crag_enable else "baseline"
 
     model_temp = getattr(DEFAULT_LLM, "temperature", 0.0)
     judge_temp = getattr(base_judge_llm, "temperature", 0.0)

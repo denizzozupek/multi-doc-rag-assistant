@@ -10,8 +10,8 @@ from src.config import DEFAULT_LLM
 logger = logging.getLogger(__name__)
 
 
-def create_agent_graph(llm=DEFAULT_LLM):
-    """Creates and compiles the ReAct agent graph."""
+def agent_pipeline(llm=DEFAULT_LLM):
+    """An agent pipeline that uses a state graph to manage the flow of information between the agent and tools."""
     tool_node = ToolNode([search_docs, search_web])
 
     workflow = StateGraph(AgentState)
