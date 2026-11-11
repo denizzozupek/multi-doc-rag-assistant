@@ -1,4 +1,4 @@
-from src.graph.main import graph_pipeline
+from src.graph.crag import graph_pipeline
 from src.graph.nodes import (
     create_generation_node,
     create_retrieve_and_rerank_node,

@@ -21,11 +21,10 @@ from eval.generation.schemas import (
 )
 
 from src.config import DEFAULT_LLM, CONCURRENT_SEMAPHORE, DEFAULT_RERANK_TOP_K
-from src.graph import graph_pipeline
 from src.ingestion import ingestion_pipeline
 from src.utils import calculate_percentile, format_docs_as_context, format_history
 from src.retrieval.reranker import get_cross_encoder_model
-from src.agent.main import agent_pipeline
+from src.main import get_pipeline
 
 load_dotenv()
 
@@ -40,7 +39,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Evaluate queries using a graph pipeline and judge LLM."
     )
-    parser.add_argument("--mode", choices=["crag", "agent"], default="crag")
+    parser.add_argument("--mode", choices=["crag", "agent", "escalate"], default="crag")
     return parser.parse_args()
 
 
@@ -174,13 +173,7 @@ async def evaluate_queries(
     # Warm-up Cross-Encoder model before benchmark to eliminate race condition
     get_cross_encoder_model()
 
-    if mode == "crag":
-        app = graph_pipeline(
-            llm=DEFAULT_LLM, top_k=top_k, crag_enable=crag_enable
-        ).compile()
-
-    elif mode == "agent":
-        app = agent_pipeline(llm=DEFAULT_LLM)
+    app = get_pipeline(mode=mode, llm=DEFAULT_LLM, top_k=top_k, crag_enable=crag_enable)
 
     tasks = [
         evaluate_query_with_semaphore(
@@ -380,6 +373,8 @@ if __name__ == "__main__":
 
     if args.mode == "agent":
         run_prefix = "agentic"
+    elif args.mode == "escalate":
+        run_prefix = "escalate"
     else: 
         run_prefix = "crag" if crag_enable else "baseline"
 

@@ -25,6 +25,11 @@ eval/graph_evaluation_results/
 judge_results_*.json
 !eval/benchmarks/**
 data/bm25_index/
+data/*.db
+data/*.db-*
+*.db
+*.db-shm
+*.db-wal
 
 tests/
 

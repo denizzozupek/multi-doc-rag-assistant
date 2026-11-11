@@ -1,3 +1,4 @@
+import asyncio
 import hashlib
 import json
 import logging
@@ -19,7 +20,13 @@ from src.config import (
     RETRIEVER_SEARCH_TYPE,
     SQLITE_DB_PATH,
 )
-from src.graph.main import graph_pipeline
+from src.graph.crag import graph_pipeline
+from src.graph.escalate import escalate_graph_pipeline
+from src.agent.agent_state import AgentState
+from src.agent.tools import search_docs, search_web
+from src.agent.nodes import create_agent_node
+from langgraph.graph import StateGraph, START
+from langgraph.prebuilt import ToolNode, tools_condition
 from src.ingestion.ingestion import ingestion_pipeline
 from src.utils import delete_file, get_existing_file_names_with_hashes
 
@@ -27,23 +34,55 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
+class AsyncFriendlySqliteSaver(SqliteSaver):
+    """SqliteSaver that bridges async LangGraph methods (aget_tuple, aput, aput_writes)
+    to a background threadpool so async streaming works seamlessly alongside synchronous SQLite."""
+
+    async def aget_tuple(self, config):
+        return await asyncio.to_thread(self.get_tuple, config)
+
+    async def aput(self, config, checkpoint, metadata, new_versions):
+        return await asyncio.to_thread(self.put, config, checkpoint, metadata, new_versions)
+
+    async def aput_writes(self, config, writes, task_id, task_path=""):
+        return await asyncio.to_thread(self.put_writes, config, writes, task_id, task_path)
+
+
 @st.cache_resource
-def get_compiled_app():
-    """Initializes the SQLite checkpointer, builds the workflow graph, and returns the compiled application."""
+def get_compiled_app(mode: str = "crag"):
+    """Initializes SQLite checkpointer and returns the compiled application for the selected mode."""
     Path(SQLITE_DB_PATH.parent).mkdir(parents=True, exist_ok=True)
 
     try:
         conn = sqlite3.connect(SQLITE_DB_PATH, check_same_thread=False)
-        saver = SqliteSaver(conn)
+        saver = AsyncFriendlySqliteSaver(conn)
+        saver.setup()
 
-        workflow = graph_pipeline(
-            llm=DEFAULT_LLM,
-            top_k=DEFAULT_RERANK_TOP_K,
-        )
+        mode = mode.lower().strip()
+        if mode == "crag":
+            workflow = graph_pipeline(
+                llm=DEFAULT_LLM,
+                top_k=DEFAULT_RERANK_TOP_K,
+            )
+        elif mode == "agent":
+            tool_node = ToolNode([search_docs, search_web])
+            workflow = StateGraph(AgentState)
+            workflow.add_node("agent", create_agent_node(llm=DEFAULT_LLM))
+            workflow.add_node("tools", tool_node)
+            workflow.add_edge(START, "agent")
+            workflow.add_conditional_edges("agent", tools_condition)
+            workflow.add_edge("tools", "agent")
+        elif mode == "escalate":
+            workflow = escalate_graph_pipeline(
+                llm=DEFAULT_LLM,
+                top_k=DEFAULT_RERANK_TOP_K,
+            )
+        else:
+            raise ValueError(f"Unknown mode: {mode}")
 
         app = workflow.compile(checkpointer=saver)
         logger.info(
-            "LangGraph workflow compiled successfully with SQLite checkpointer."
+            "LangGraph workflow (%s) compiled successfully with SQLite checkpointer.", mode
         )
         return app
     except Exception as e:
@@ -172,7 +211,6 @@ st.title("Conversational Document Assistant")
 st.caption("Conversational RAG with LangGraph")
 
 start_chat_session()
-app = get_compiled_app()
 
 if "processed_files" not in st.session_state:
     st.session_state.processed_files = get_existing_file_names_with_hashes()
@@ -193,6 +231,20 @@ with st.sidebar:
         options=list(st.session_state.processed_files.keys()),
         help="If no files are selected, the system will use all processed files for retrieval.",
     )
+
+    pipeline_mode = st.radio(
+        "Execution Mode",
+        options=["crag", "agent", "escalate"],
+        format_func=lambda x: {
+            "crag": "CRAG (Single-pass Workflow)",
+            "agent": "Agentic (ReAct Multi-hop)",
+            "escalate": "Escalate (Adaptive Hybrid)",
+        }[x],
+        index=0,
+        help="Select the underlying reasoning architecture.",
+    )
+
+    app = get_compiled_app(mode=pipeline_mode)
 
     if st.button("Delete Selected Files", disabled=not selected_files):
         for file_name in selected_files:
@@ -256,7 +308,10 @@ if prompt := st.chat_input("Ask a question about your documents..."):
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    config = {"configurable": {"thread_id": active_chat_id}}
+    config = {
+        "configurable": {"thread_id": active_chat_id},
+        "recursion_limit": 10,
+    }
     inputs = {
         "messages": [("user", prompt)],
         "selected_files": selected_files,

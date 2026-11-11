@@ -26,6 +26,7 @@ from src.graph.state import State
 from src.retrieval.pipeline import retrieve_and_rerank
 from src.retrieval.web import fetch_web_documents
 from src.utils import format_docs_as_context
+from src.agent.nodes import create_agent_node
 
 logger = logging.getLogger(__name__)
 
@@ -219,3 +220,8 @@ def create_web_search_node(llm: BaseChatModel = DEFAULT_LLM) -> Callable[[State]
         return {"documents": [*state.get("documents", []), *new_docs]}
 
     return web_search_node
+
+# 6. Fallback Agent Node for Escalate Mode
+def fallback_agent_node(llm=DEFAULT_LLM):
+    """Creates a fallback agent node if grade_documents_node fails to find relevant documents"""
+    return create_agent_node(llm=llm)
