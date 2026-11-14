@@ -1034,5 +1034,291 @@
             "raw_content": null,
             "id": "89f6fc-02"
         }
+    ],
+    "Can deterministic consensus be achieved in an asynchronous distributed system with crash failures?": [
+        {
+            "url": "https://disco.ethz.ch/courses/fs09/distcomp/lecture/consensus.pdf",
+            "title": "Consensus - Distributed Computing Group",
+            "content": "Theorem 6.5. In an asynchronous shared memory system with n > 1 nodes, and node crash failures (but no memory failures!) consensus as in Deﬁnition 6.1 cannot be achieved by a deterministic algorithm.\n54 CHAPTER 6. CONSENSUS Proof. Let us simplify the proof by setting n = 2. We have processes u and v, with input values xu and xv. Further let the input values be binary, either 0 or 1. [...] • However, the algorithm is not fault-tolerant at all. If the leader crashes before being able to answer all requests, there are nodes which will never terminate, and hence violate the termination condition. Is there a deter-ministic protocol that can achieve consensus in an asynchronous system, even in the presence of failures? Let’s ﬁrst try something slightly diﬀerent. [...] Theorem 6.10. Plugging Algorithm 28 into Algorithm 27 we get a randomized consensus algorithm which ﬁnishes in a constant expected number of rounds.\n6.2. RANDOMIZED CONSENSUS 59 Remarks: • If some nodes go into line 8 of Algorithm 27 the others still have a constant probability to guess the same shared coin.\n• For crash failures there exists an improved constant expected time algo-rithm which tolerates f failures with 2f < n.",
+            "score": 0.8112278,
+            "raw_content": null,
+            "id": "fdb220-00"
+        },
+        {
+            "url": "https://en.wikipedia.org/wiki/Consensus_(computer_science)",
+            "title": "Consensus (computer science) - Wikipedia",
+            "content": "In a fully asynchronous message-passing distributed system, in which at least one process may have a crash failure, it has been proven in the famous 1985 FLP impossibility result by Fischer, Lynch and Paterson that a deterministic algorithm for achieving consensus is impossible.\n\nIn an asynchronous model, some forms of failures can be handled by a synchronous consensus protocol. For instance, the loss of a communication link may be modeled as a process which has suffered a Byzantine failure. [...] In a fully asynchronous system there is no consensus solution that can tolerate one or more crash failures even when only requiring the non triviality property. This result is sometimes called the FLP impossibility proof named after the authors Michael J. Fischer, Nancy Lynch, and Mike Paterson who were awarded a Dijkstra Prize for this significant work. The FLP result has been mechanically verified to hold even under fairness assumptions. However, FLP does not state that consensus can never be [...] 1 Problem description\n 2 Models of computation\n  + 2.1 Communication channels with direct or transferable authentication\n  + 2.2 Inputs and outputs of consensus\n  + 2.3 Crash and Byzantine failures\n  + 2.4 Asynchronous and synchronous systems\n    - 2.4.1 The FLP impossibility result for asynchronous deterministic consensus\n  + 2.5 Permissioned versus permissionless consensus\n 3 Equivalency of agreement problems\n  + 3.1 Terminating Reliable Broadcast\n  + 3.2 Consensus",
+            "score": 0.8110782,
+            "raw_content": null,
+            "id": "002921-01"
+        },
+        {
+            "url": "https://medium.com/rahasak/consensus-made-simple-76cbb6955123",
+            "title": "Distributed System Consensus",
+            "content": "## FLP Impossibility\n\nThe theory proposed by `Fischer`, `Lynch`, and `Paterson` in 1985 on their paper `Impossibility of Distributed Consensus with One Faulty Process`. It says, `even a single faulty process makes it impossible to reach consensus among deterministic asynchronous system`. It proves for `Crash Faults` which is weaker than `Byzantine Fault`. So `Byzantine Faults` are implicitly included in the FLP impossibility claim. [...] Now let’s look at consensus problem in deterministic system(means vote-based system where nodes as previously defined) with the failure model and message passing model(`synchronous` and `asynchronous`). Even with node failures, the consensus problem in synchronous model is solvable. But in asynchronous model, the consensus problem is unsolvable(or at-least hard to solve) when there is node failures. The difficulty to reach consensus in deterministic asynchronous system proves in `FLP [...] When align this theory with consensus algorithm correctness properties(`Agreement`/`Validity` and `Termination`), it says that, in a deterministic asynchronous system, `Fault Tolerant` consensus cannot simultaneously satisfy `Agreement` and `Termination` properties.`Agreement` property goes together with `Validity`, so `Validity` implicitly comes with `Agreement`). Thus distributed systems cannot achieve `Fault Tolerance` and `Correctness` simultaneously. Following is the FLP impossibility",
+            "score": 0.7932662,
+            "raw_content": null,
+            "id": "ae0ef7-02"
+        }
+    ],
+    "Recommended learning rate and batch size for training a LoRA adapter on LLaMA 2 fine-tuning】【。": [
+        {
+            "url": "https://www.anyscale.com/blog/fine-tuning-llms-lora-or-full-parameter-an-in-depth-analysis-with-llama-2",
+            "title": "Fine-Tuning LLMs: In-Depth Analysis with LLAMA-2 | Anyscale",
+            "content": "#### LinkBase learning rate: 1e-4\n\nA learning rate of 1e-4 has become the standard when fine-tuning LLMs with LoRA. Although we occasionally encountered training loss instabilities, reducing the learning rate to lower values like 3e-5 proved effective in stabilizing the process—more on this will follow.\n\n## LinkModel quality results [...] For instance, while fine-tuning a Llama-7B model on a p4de.24xlarge node, a full-parameter approach would require a batch size of 8 to make the most out of the available GRAM memory. With LoRA, on the other hand, you can crank the batch size up to 64 and still stay within the memory constraints, thus optimizing the training speed.\n\nLora Blog 9\n\nLora Blog 9 [...] We found out that without leveraging the reduced memory footprint (via increasing the batch size), LoRA doesn't offer a substantial speed advantage over full-parameter fine-tuning. That said, if your workload isn't compute-bounded, bumping up the batch size can indeed improve your training throughput.",
+            "score": 0.59443355,
+            "raw_content": null,
+            "id": "14f129-00"
+        },
+        {
+            "url": "https://arxiv.org/html/2602.04998v2",
+            "title": "Learning Rate Matters: Vanilla LoRA May Suffice for LLM Fine-tuning",
+            "content": "16.1%.\nIn contrast, by fixing the batch size to any value in {16,64,128}\\{16,64,128\\} and tuning the learning rate, the model achieves substantially higher performance\naround 20.6%.\nMoreover, we observe that the optimal learning rate scales proportionally with batch size, aligning with the “scaling rule” established in SGD literature [105, 106].\nThis offers several practical heuristics for LoRA hyperparameter tuning: [...] The results reveal an intriguing phenomenon: even after learning-rate tuning, the best achievable performance of both LoRA and PiSSA begins to decay when the batch size reaches B≥256B\\geq 256.\nThis suggests that, while learning-rate tuning should be prioritized, the batch size should still be kept within a relatively small-to-medium range, as stated in practical heuristic I. [...] We therefore suggest using a small or medium batch size as the default choice.",
+            "score": 0.5572129,
+            "raw_content": null,
+            "id": "f78a3f-01"
+        },
+        {
+            "url": "https://pub.towardsai.net/the-lora-hyperparameters-no-one-explains-how-to-fine-tune-correctly-part-4-a58268050766",
+            "title": "The LoRA Hyperparameters No One Explains | How to Fine-Tune Correctly, Part 4 | by Suchitra Malimbada | Towards AI",
+            "content": "The practical consequence is specific. The recommended starting point for learning rate in a standard LoRA or QLoRA fine-tuning run is `2e-4`, with the full workable range extending down to `5e-6` depending on the task and dataset. Exceeding `2e-4` by a meaningful margin does not produce a gradual performance penalty. It pushes the adapter weights out of the viable region of the loss landscape before the model has had any real opportunity to learn the target task. The updates are too violent [...] Six chapters have covered the full lifecycle of hyperparameter decisions in a LoRA fine-tuning run. Learning rate sets the update magnitude relative to the concentrated gradient pressure of a small adapter, with `2e-4` as the recommended starting point for standard LoRA and QLoRA. Effective batch size and gradient accumulation trade memory for signal quality on constrained hardware. The cosine scheduler and warmup period control how the learning rate evolves from fragile early steps to",
+            "score": 0.53518957,
+            "raw_content": null,
+            "id": "57a7dd-02"
+        }
+    ],
+    "How does Raft use election timeouts to elect a leader and prevent split votes?": [
+        {
+            "url": "https://www.freecodecamp.org/news/in-search-of-an-understandable-consensus-algorithm-a-summary-4bc294c97e0d",
+            "title": "Understanding the Raft consensus algorithm: an academic article summary",
+            "content": "> Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly. To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300ms). This spreads out the servers so that in most cases only a single server will time out; it wins the election and sends heartbeats before any other servers time out. The same mechanism is used to handle split votes. Each candidate restarts its randomized election [...] randomized election timeout at the start of an election, and it waits for that timeout to elapse before starting the next election; this reduces the likelihood of another split vote in the new election. [...] Raft divides time into terms of arbitrary length, each beginning with an election. If a candidate wins the election, it remains the leader for the rest of the term. If the vote is split, then that term ends without a leader.\n\nThe term number increases monotonically. Each server stores the current term number which is also exchanged in every communication.",
+            "score": 0.83761996,
+            "raw_content": null,
+            "id": "aa925e-00"
+        },
+        {
+            "url": "https://blog.42yeah.is/distributed/2023/04/29/raft-leader-election.html",
+            "title": "The Consensus Algorithm: Raft (I) - Leader Election | Of Shaders & Triangles",
+            "content": "Raft uses randomized election timeouts to ensure that split votes are rare and that they are resolved quickly.\n To prevent split votes in the first place, election timeouts are chosen randomly from a fixed interval (e.g., 150–300 ms)\n Each candidate restarts its randomized election timeout at the start of an election, and it waits for that timeout to elapse before starting the next election;\n\n## Practical Problem\n\n### Livelocks",
+            "score": 0.83548355,
+            "raw_content": null,
+            "id": "6672df-01"
+        },
+        {
+            "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)",
+            "title": "Raft (algorithm) - Wikipedia",
+            "content": "Raft uses a randomized election timeout to ensure that split vote problems are resolved quickly. This should reduce the chance of a split vote because servers won't become candidates at the same time: a single server will time out, win the election, then become leader and send heartbeat messages to other servers before any of the followers can become candidates.\n\n#### Log replication\n\n[edit&action=edit&section=4 \"Edit section: Log replication\")] [...] A leader election is started by a candidate server. A server becomes a candidate if it receives no communication by the leader over a period called the election timeout, so it assumes there is no acting leader anymore. It starts the election by increasing the term counter, voting for itself as new leader, and sending a message to all other servers requesting their vote. A server will vote only once per term, on a first-come-first-served basis. If a candidate receives a message from another",
+            "score": 0.82275945,
+            "raw_content": null,
+            "id": "21941d-02"
+        }
+    ],
+    "What factors determine the effectiveness of retrieval-augmented generation (RAG)?": [
+        {
+            "url": "https://www.databricks.com/blog/what-is-retrieval-augmented-generation",
+            "title": "What is Retrieval Augmented Generation (RAG)? | Databricks",
+            "content": "RAG systems are evaluated using a combination of relevance scoring, groundedness checks, human evaluations and task-specific performance metrics. Because RAG combines retrieval and generation, traditional AI evaluation methods alone fall short of capturing both the quality of retrieved context and the accuracy of the final response. As retriever-generator co-training matures, some of this evaluation burden may ease, since retrievers and generators trained jointly learn from and refine one [...] ### Does RAG reduce hallucinations in LLMs?\n\nYes, grounding an LLM's response in retrieved, up-to-date content reduces the likelihood of hallucinations. This is especially valuable in domains that require high accuracy, such as healthcare, legal work or enterprise support. RAG outputs can also include citations to the original sources, allowing for human verification of the information provided.\n\n### What kind of data does RAG need? [...] | Retrieval augmented generation (RAG) | Combining an LLM with external knowledge retrieval | Dynamic datasets and external knowledge | External knowledge base or database (e.g., vector database) | Dynamically updated context, enhanced accuracy | Increases prompt length and inference computation |",
+            "score": 0.65301627,
+            "raw_content": null,
+            "id": "3791d2-00"
+        },
+        {
+            "url": "https://medium.com/data-science/10-ways-to-improve-the-performance-of-retrieval-augmented-generation-systems-5fa2cee7cd5c",
+            "title": "10 Ways to Improve the Performance of Retrieval Augmented Generation Systems",
+            "content": "RAG connects the capabilities of an LLM to your data. If your data is confusing, in substance or layout, then your system will suffer. If you’re using data with conflicting or redundant information, your retrieval will struggle to find the right context. And when it does, the generation step performed by the LLM may be suboptimal. Say you’re building a chatbot for your startup’s help docs and you find it is not working well. The first thing you should take a look at is the data you are feeding [...] Chunking up the context data is a core part of building a RAG system. Frameworks abstract away the chunking process and allow you to get away without thinking about it. But you should think about it. Chunk size matters. You should explore what works best for your application. In general, smaller chunks often improve retrieval but may cause generation to suffer from a lack of surrounding context. There are a lot of ways you can approach chunking. The one thing that doesn’t work is approaching it [...] The index is the core pillar of LlamaIndex and LangChain. It is the object that holds your retrieval system. The standard approach to RAG involves embeddings and similarity search. Chunk up the context data, embed everything, when a query comes, find similar pieces from the context. This works very well, but isn’t the best approach for every use case. Will queries relate to specific items, such as products in an e-commerce store? You may want to explore key-word based search. It doesn’t have to",
+            "score": 0.6481324,
+            "raw_content": null,
+            "id": "f64646-01"
+        },
+        {
+            "url": "https://cloud.google.com/use-cases/retrieval-augmented-generation",
+            "title": "What is Retrieval-Augmented Generation (RAG)? | Google Cloud",
+            "content": "The retrieval mechanism in RAG is critically important. You need the best semantic search on top of a curated knowledge base to ensure that the retrieved information is relevant to the input query or context. If your retrieved information is irrelevant, your generation could be grounded but off-topic or incorrect. [...] Providing “facts” to the LLM as part of the input prompt can mitigate “gen AI hallucinations.” The crux of this approach is ensuring that the most relevant facts are provided to the LLM, and that the LLM output is entirely grounded on those facts while also answering the user’s question and adhering to system instructions and safety constraints. [...] by configuring your search engine, curating your source data, improving source layout parsing or chunking strategies, or refining the user’s question prior to search. A RAG Ops, metrics driven approach like this will help you hill climb to high quality RAG and grounded generation.",
+            "score": 0.6467949,
+            "raw_content": null,
+            "id": "9ae533-02"
+        }
+    ],
+    "What contrastive loss function and hard-negative mining strategy are used to train the neural retriever in the RAG model?": [
+        {
+            "url": "https://arxiv.org/html/2407.15831v2",
+            "title": "NV-Retriever: Improving text embedding models with effective hard-negative mining",
+            "content": "A popular contrastive learning loss for retrieval models is InfoNCE (Oord et al., 2018) shown in Equation 1, where s​i​m​(⋅)sim(\\cdot) is a similarity function (e.g., cosine similarity or dot product), d+d^{+} is a positive relevant passage, d−d^{-} is one of the NN negative passages and τ\\tau is the temperature parameter. The objective is to maximize the embedding similarity between the query and positive passage, whilst minimizing the similarity between the query and negative passages. [...] When preparing data for training embedding models, hard-negative mining is typically used to select negative passages for queries. It leverages a teacher retrieval model to find passages somewhat relevant to the query, making it harder for the contrastive loss to differentiate positives from negatives, resulting in more efficient and effective fine-tuning of the embedding model. [...] For the experiments comparing different mining models, in order to remove potential false negatives, we use the TopK-PercPos mining method configured to set the maximum threshold for hard-negative scores as 95% of the corresponding positive score. That mining method and configuration performed best in our ablation, as described in Section 4.3. with those different teacher models for every question in the train set. This process results in one train set per teacher model, which is then used for",
+            "score": 0.66377795,
+            "raw_content": null,
+            "id": "32c163-00"
+        },
+        {
+            "url": "https://arxiv.org/html/2510.24652v1",
+            "title": "Optimizing Retrieval for RAG via Reinforced Contrastive Learning",
+            "content": "Sampling. In practice, we iterate through the retrieved documents in descending order of retrieval relevance. For each document d^i\\hat{d}\\_{i}, we apply the LLM forward pass to classify it as positive, negative, or discard it. This process continues until the first negative document is identified, which we designate as the hard negative d^−\\hat{d}^{-}. We then randomly sample one positive document d^+\\hat{d}^{+} from 𝒟^q+\\hat{\\mathcal{D}}\\_{q}^{+}. If either d^+\\hat{d}^{+} or d^−\\hat{d}^{-} is [...] Overall, the current strategy (A) achieves the best performance on both datasets. We hypothesize that incorporating the most-relevant negative increases training difficulty and encourages more discriminative learning, while introducing randomness in positive sampling promotes generalization. These findings are consistent with observations from prior retrieval learning studies (e.g., DPR), where the choice of hard negatives has a substantial impact on performance, whereas positive selection [...] Our training objective follows SiDR to preserve its compatibility with late parametric retrieval (i.e., retrieving documents from a bag-of-tokens index and then re-ranking). Given a batch BB of NN samples, each sample contains a query qiq\\_{i}, a positive document di+d\\_{i}^{+}, and a negative document di−d\\_{i}^{-}. The semi-parametric contrastive loss is defined as:",
+            "score": 0.56481874,
+            "raw_content": null,
+            "id": "94c9e0-01"
+        },
+        {
+            "url": "https://www.youtube.com/watch?v=mODXsoGfHp0",
+            "title": "Workshop: Building Flexible RAG Systems: RAG Retriever Optimization with LanceDB",
+            "content": "[26:34] the data. And what you do is you just from that corpus, you find top end hard negatives. And that's how you build the\n[26:42] data set. And this is what mining hard negatives mean. Once you do that, it's pretty much simple. Then you just do uh\n[26:48] you know uh cross entropy loss and then use all of your favorite evaluators like BR is the retrieval um benchmark. You\n[26:57] can use something custom. You can use cross encoder ranking loss all of that.",
+            "score": 0.50712156,
+            "raw_content": null,
+            "id": "1acd14-02"
+        }
+    ],
+    "How does ColBERT’s late-interaction scoring mechanism rank documents in a RAG pipeline?": [
+        {
+            "url": "https://www.lancedb.com/blog/late-interaction-efficient-multi-modal-retrievers-need-more-than-just-a-vector-index",
+            "title": "Late Interaction & Efficient Multi-modal Retrievers Need More Than a Vector Index",
+            "content": "Late interaction rankers offer a new architecture where every query embedding interacts with all document embeddings via a MaxSim operator, which computes maximum similarity (e.g., cosine similarity), and the scalar outputs of these operators are summed across query terms. This paradigm allows ColBERT to exploit deep LM-based representations while shifting the cost of encoding documents offline and amortizing the cost of encoding the query once across all ranked documents.",
+            "score": 0.7799929,
+            "raw_content": null,
+            "id": "ec0630-00"
+        },
+        {
+            "url": "https://medium.com/@vanshkharidia7/rag-retrieval-beyond-semantic-search-day-4-late-interaction-b109aa0bfee6",
+            "title": "RAG Retrieval Beyond Semantic Search: Day 4 - Late Interaction",
+            "content": "Score(q,d) = Σ(i=1 to |q|) max(j=1 to |d|) E_q^i · E_d^j\nWhere:\n\n   `E_q^i` = embedding of query token i\n   `E_d^j` = embedding of document token j\n   `·` = cosine similarity\n\nThis MaxSim operation ensures that each query token finds its best match in the document, preserving the precision of exact matching while leveraging the power of semantic embeddings.\n\n## The Architecture of Precision: ColBERT’s Design Philosophy [...] Traditional neural retrieval systems operate as black boxes - you input a query and receive ranked documents with no explanation of the relevance decisions. ColBERT changes this by providing token-level interaction scores that reveal exactly which parts of the query matched which parts of each document. [...] The MaxSim operation is where ColBERT’s precision emerges. Rather than averaging or pooling token representations, MaxSim ensures that every query token finds its optimal match. This approach mirrors how humans read and assess relevance — we look for specific concepts and evaluate how well each is addressed.\n\nWhen a user searches for “machine learning model deployment scalability,” MaxSim ensures that documents are scored based on how well they address:",
+            "score": 0.7647159,
+            "raw_content": null,
+            "id": "a996ad-01"
+        },
+        {
+            "url": "https://www.emergentmind.com/topics/late-interaction-mechanism",
+            "title": "Late Interaction Mechanism in Retrieval",
+            "content": "The canonical late interaction framework encodes queries q={q1​,…,qn​} and documents d={d1​,…,dm​} as sets of d-dimensional token embeddings via independent application of a transformer or vision-LLM. The semantics of their interaction are governed by the score function: Score(q,d)=i=1∑n​1≤j≤mmax​⟨qi​,dj​⟩ as introduced in ColBERT and widely adopted across text, image, vision, and multimodal retrieval tasks (Khattab et al., 2020, Santhanam et al., 2021). Each query token qi​ \"fires\" on its most [...] 3. Re-ranking (Exact Late Interaction): For each candidate, late interaction scores are computed via the sum-max or top-K operators.\n4. Post-processing: Top-ranked results are returned or further consumed by downstream LLMs, QA components, or readers. [...] A late interaction mechanism is an information retrieval paradigm in which queries and documents are independently encoded as sequences of token-level (or patch-level) embeddings, with their mutual relevance evaluated through a fine-grained, token-to-token (or multi-vector) interaction in a dedicated scoring step following the initial encoding. This mechanism contrasts sharply with both early interaction (cross-encoder) models, which fuse query and document representations early via joint",
+            "score": 0.73659015,
+            "raw_content": null,
+            "id": "33bb6f-02"
+        }
+    ],
+    "What is the numerical latency overhead of CRAG’s retrieval evaluator compared with standard RAG?": [
+        {
+            "url": "https://www.mdpi.com/2673-2688/7/7/250",
+            "title": "Cost-Aware Query Routing in RAG: Empirical Analysis of Retrieval Depth Tradeoffs",
+            "content": "CRAG  adds a lightweight retrieval evaluator that fires after retrieval and decides whether to use, discard, or search to supplement the retrieved passages. The corrective action is triggered on a per-passage basis, making it a post-retrieval quality gating mechanism rather than a pre-retrieval depth selection mechanism. CRAG always incurs the token cost and latency of at least one retrieval pass; CA-RAG avoids this overhead entirely on queries routed to direct\\_llm. The two approaches are [...] In summary, Self-RAG requires model fine-tuning; Adaptive-RAG requires labeled training data and sacrifices operational knobs; CRAG operates post-retrieval and always incurs retrieval cost; RAGRouter adds an LLM call overhead per query. CA-RAG’s design point is the only one among these that is training-free, pre-retrieval, cost-zero at routing time, and operator-adjustable via numeric weights.\n\n## 3. Problem Formulation [...] match because it treats the generator as a black box. Adaptive-RAG  is a quality-optimizing router: it achieves strong routing decisions on academic QA because its complexity classifier was trained on the same query distributions. Its advantage is quality; its limitation is that cost and latency are not objectives and the classifier is not recalibrated to production telemetry. CRAG  is a post-retrieval corrective mechanism: it improves answer quality by evaluating and potentially replacing",
+            "score": 0.56247693,
+            "raw_content": null,
+            "id": "9b4ed6-00"
+        },
+        {
+            "url": "https://customgpt.ai/crag-vs-rag-the-evolution-of-rag",
+            "title": "CRAG vs RAG: How Corrective RAG Improves Accuracy",
+            "content": "Standard RAG works by preparing a knowledge base, chunking documents, generating embeddings, and using vector or semantic search to retrieve passages relevant to a user query. The system assembles those passages into a prompt, the language model generates an answer from that context, and the system can display citations. Evaluation and monitoring run alongside to track quality. Standard RAG is simpler and lower-latency than CRAG, and works well when source content is clean and well-structured. [...] | Handling irrelevant documents | Passes them to the model as-is | Filters or replaces them | Lowers the chance of off-topic answers |\n| Hallucination risk | Higher when retrieval is weak | Lower when the evaluator works well, though not eliminated | Better grounding on mixed-quality sources |\n| Latency | Lower | Higher due to evaluation and possible re-search | Speed-sensitive use cases feel the difference | [...] Standard RAG has clear strengths. It uses a simpler architecture, has lower latency, is easier to deploy, works well with clean source content, and is a strong fit for many business knowledge bots.\n\nIt also has real weaknesses. It depends heavily on retrieval quality, can pass irrelevant chunks straight to the model, may struggle with messy documents, can still hallucinate if the retrieved context is weak, and requires ongoing evaluation and monitoring.\n\n## How CRAG Works",
+            "score": 0.53816414,
+            "raw_content": null,
+            "id": "740dc1-01"
+        },
+        {
+            "url": "https://arxiv.org/html/2412.11854v1",
+            "title": "Towards Understanding Systems Trade-offs in Retrieval-Augmented Generation Model Inference",
+            "content": "Figure 2(a) shows that these RAG stages nearly double the TTFT latency, from 495ms to 965ms, compared to the baseline LLM.\nIn both scenarios, using either HNSW-SQ or IVF-SQ, the most significant portion of the overhead comes from the retrieval stage which accounts for nearly 35% of the total TTFT latency.\nFigure 2(c) shows that even as the input sequence increases to 1000 tokens, retrieval continues to be dominant compared to the encoding stage’s latency. [...] We show RAG introduces significant latency overhead to both TTFT latency and end-to-end latency,\nwith retrieval making up 41% of the end-to-end latencies and 45%-47% of the TTFT latencies in our setups.\nFurthermore, design decisions on how retrieval and inference stages are integrated (i.e., retrieval stride or frequency of retrieval) expose trade-offs between accuracy and end-to-end inference latency. [...] With an extremely aggressive stride length of 4, the end-to-end latency increases to nearly 30 seconds.\nIn this case, RAG unique components account for nearly 97% of the end-to-end latency; retrieval and additional prefill overheads (due to added contexts and additional retrievals) account for 36% and 45% of the latency respectively.\nFigure 2(e) shows that this latency overhead also grows with the number of output tokens generated, due to the additional prefill stages from re-retrieval.",
+            "score": 0.3307954,
+            "raw_content": null,
+            "id": "89d6ec-02"
+        }
+    ],
+    "How do approaches for keeping a RAG system up to date as its knowledge base changes differ from approaches for improving retrieval quality?": [
+        {
+            "url": "https://www.kapa.ai/library/how-to-keep-a-rag-knowledge-base-in-sync-with-changing-docs",
+            "title": "How to Keep a RAG Knowledge Base in Sync with Changing Docs | kapa.ai",
+            "content": "A RAG index is a point-in-time snapshot; without a refresh pipeline it drifts out of sync the moment your docs change.\n Incremental (delta) updates keep a knowledge base current far more cheaply than full re-indexing.\n \"Embedding rot\" sets in when content, the embedding model, or the retrieval model age out; re-embed when roughly 10 to 15 percent of the corpus changes. [...] Embedding rot is the gradual decline in answer quality that happens when your content, embedding model, or retrieval model become outdated and you do not re-embed. A common guideline is to re-embed when the embedding model improves, when roughly 10 to 15 percent of your corpus changes, or when the subject domain shifts. A managed platform like Kapa.ai handles re-embedding and model updates for you, so embedding rot does not silently degrade your answers. [...] | Area | DIY RAG | Managed RAG (e.g. Kapa.ai) |\n --- \n| Change detection per source | You build and maintain it | Built in for each connector |\n| Incremental re-indexing | You design the delta pipeline | Automatic |\n| Validation before publish | You implement it | Automatic, with breakage detection |\n| Operational overhead | High, continuous | Minimal |\n| Engineering focus | Pipeline maintenance | Your core product |\n\n## Incremental updates vs full re-indexing",
+            "score": 0.61201984,
+            "raw_content": null,
+            "id": "18a1e4-00"
+        },
+        {
+            "url": "https://redis.io/blog/10-techniques-to-improve-rag-accuracy",
+            "title": "Improving RAG accuracy: 10 techniques that actually work",
+            "content": "Run LLM-as-judge evaluation continuously throughout to catch regressions early. Layer on advanced techniques like query transformation, re-ranking, semantic caching, and long-term memory only after foundational elements are stable, as these amplify existing quality rather than compensating for structural weaknesses.\n\n### How does hybrid search combining BM25 and vector similarity compare to using either approach alone in terms of retrieval recall and answer accuracy? [...] Start by establishing baseline metrics using frameworks like RAGAS, then prioritize retrieval quality first: hybrid search, chunking optimization, and HNSW tuning. Even the best LLM cannot compensate for missing or irrelevant source documents. Once retrieval is reliable, move to model specialization like fine-tuning embeddings and adapting the LLM for domain-specific needs. [...] Redis LangCache (preview) implements semantic caching by converting queries to vector embeddings and comparing them against previously cached query embeddings using a similarity threshold. When a new query is semantically close enough to a cached one, the system returns the cached response rather than invoking the LLM again. This is particularly valuable for stable knowledge bases (FAQs, product docs, internal policy queries) where high-confidence answers exist and should be served reliably. In",
+            "score": 0.52125794,
+            "raw_content": null,
+            "id": "019e4c-01"
+        },
+        {
+            "url": "https://atlan.com/know/advanced-rag-techniques",
+            "title": "12 Advanced RAG Techniques: Beyond Naive Retrieval [2026]",
+            "content": "Advanced RAG adds quality-control layers at one or more stages of that pipeline. These fall into four categories: pre-retrieval (query transformation, HyDE), retrieval-time (hybrid search, contextual chunking), post-retrieval (reranking, compression, self-reflection), and architecture-level changes (Self-RAG, Adaptive RAG, Modular RAG). Each category addresses a different failure mode. The right choice depends on where your pipeline is breaking down. [...] Naive RAG chunks documents, embeds them, retrieves top-K by cosine similarity, and passes results to the LLM. Advanced RAG adds quality-control layers at multiple stages: query transformation, hybrid retrieval, reranking, and self-reflection. On CRAG, straightforward RAG answers 44% of factual questions and the best industry RAG systems reach 63% with no hallucination; advanced techniques push at that ceiling, at the cost of implementation complexity.\n\n### How does Self-RAG work? [...] Advanced RAG techniques are necessary, but they are not sufficient. Hybrid retrieval, RAPTOR, and Self-RAG all assume a clean, well-structured, governed knowledge base on the other side of the retrieval call. When that foundation is missing, even the most sophisticated retrieval algorithm returns results that are relevant but untrustworthy: technically correct vectors pointing to uncertified, context-free data. This is precisely why AI agents need an enterprise context layer — the retrieval",
+            "score": 0.5025196,
+            "raw_content": null,
+            "id": "a79f29-02"
+        }
+    ],
+    "For CRAG evaluation on MSMARCO NLG v2.1, using only the benchmark’s questions and answers and not its gold passages, which retrieved documents should be assessed, and how should relevant versus irrelevant results be handled?": [
+        {
+            "url": "https://arxiv.org/html/2304.12904v1",
+            "title": "The tale of two MS MARCO - and their unfair comparisons",
+            "content": "and that each query is associated with a document, not being a repeated passage is a strong signal that it may be a positive: on the other hand, if a passage belonging to multiple documents is considered a positive this means that we are missing a relevance label for the other documents containing the passage. [...] Finally, we note that “titled” is not the only non standard MSMARCO passage on huggingface. For example,  considers v1.1 as the original Q&A MS MARCO and v2.1 as the MS MARCO-passage dataset. However, there is also the MS MARCO v2 dataset (Craswell et al., 2022), which is an expansion of the MS MARCO-passage, thus it is an expansion of what was previously called v2.1, making it confusing to newcomers. In this work, we consider only the MS MARCO-passage dataset and its “titled” version.",
+            "score": 0.34015632,
+            "raw_content": null,
+            "id": "8ad9bc-00"
+        },
+        {
+            "url": "https://microsoft.github.io/msmarco",
+            "title": "MS MARCO",
+            "content": "Based on the passages and questions in the Question Answering Dataset, a passage ranking task was formulated. There are 8.8 million passages and the goal is to rank based on their relevance.\n\nRelevance labels are derived from what passages was marked as having the answer in the QnA dataset making this one of the largest relevance datasets ever. [...] ## Document Retrieval:RETIRED(08/11/2020-01/01/2023)\n\nBased the questions in the Question Answering Dataset and the documents which answered the questions a document ranking task was formulated. There are 3.2 million documents and the goal is to rank based on their relevance.\n\nRelevance labels are derived from what passages was marked as having the answer in the QnA dataset making this one of the largest relevance datasets ever.",
+            "score": 0.30445513,
+            "raw_content": null,
+            "id": "998e49-01"
+        },
+        {
+            "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2022/04/sigir2022-msmarco-leaderboard.pdf",
+            "title": "[PDF] The Design and Implementation of the MS MARCO Leaderboards",
+            "content": "evaluation sets, but relevance judgments were “transferred” from the passage dataset under the assumption that a document with a relevant passage is a relevant document (although this process was a bit noisy due to the temporal misalignment of the two corpora). Detailed statistics of the queries and relevance judgments for both datasets are shown in Table 1, and detailed statistics of the corpora are shown in Table 2. [...] While the original Question Answering dataset features many unan-swerable questions, the ad hoc ranking task ignores them and as a result the passage ranking task contains only answerable questions that have at least one relevant passage in the corpus. The queries in the passage dataset are divided into a training set, a development set, and an evaluation set. [...] There are two independent MS MARCO leaderboards, one for passage ranking and another for document ranking. Strictly speak-ing, the leaderboard results refer to scores on the held-out evalua-tion queries, although participants are asked to submit results for the development set as well. The evaluation queries are publicly available, but the relevance judgments are withheld from the public and scores can only be obtained via a leaderboard submission. The passage leaderboard “opened” at around the",
+            "score": 0.29675615,
+            "raw_content": null,
+            "id": "2c873a-02"
+        }
+    ],
+    "How do computational limits in the repeated prisoner’s dilemma shape outcomes compared with retrieval-quality limits in retrieval-augmented generation (RAG), and what does this contrast reveal about the role of constraints in each setting?": [
+        {
+            "url": "https://arxiv.org/html/2411.19463v3",
+            "title": "Understanding the Fundamental Design Decisions of Retrieval-Augmented Generation Systems",
+            "content": "Increasing kk introduces a fundamental trade-off: while more documents may include additional golden documents containing relevant information, they also introduce more distracting documents that can harm performance. We test empirically selected kk values ranging from minimal (k=1k=1) to maximum practical limits approaching context window constraints. [...] In summary, this work provides a systematic analysis of fundamental RAG deployment decisions, offering evidence-based guidance to bridge the theory-practice gap. Our findings reveal that effective RAG deployment requires a holistic and context-aware approach: the decision to deploy RAG (RQ1) depends on task characteristics and retrieval quality thresholds; optimal retrieval volume (RQ2) follows universal patterns for QA but requires individual optimization for code generation; and integration [...] ## 4. RQ1: Should RAG be deployed?\n\nTo answer this fundamental engineering question, we conduct a systematic evaluation of RAG’s value proposition under varying retrieval quality conditions. This approach enables us to determine the conditions under which RAG provides measurable benefits and assess its robustness to retrieval quality degradation.\n\n### 4.1. Experimental Design",
+            "score": 0.26779094,
+            "raw_content": null,
+            "id": "93fcce-00"
+        },
+        {
+            "url": "https://www.mdpi.com/2504-2289/10/10/338",
+            "title": "Implementation and Evaluation of an Efficient RAG System in Resource-Constrained Environments",
+            "content": "This divergence highlights a key limitation of RAG systems. Improving retrieval quality does not necessarily lead to better generation performance. The generation stage introduces additional challenges related to information synthesis, coherence, and hallucination, which can affect the final output even when relevant context is available. [...] In addition to retrieval and generation quality, the experimental observations also highlight the computational implications of different RAG configurations in a CPU-only environment. Although execution time was not systematically collected as an aggregate metric across all experiments, representative measurements indicate that additional retrieval and filtering stages introduce a noticeable computational overhead. For example, for the same query, Experiment 3_N required 130.30 s and retrieved [...] Two lightweight embedding models were selected to balance semantic accuracy and computational efficiency under CPU-only constraints. To analyse their behaviour under different retrieval conditions, multiple document segmentation configurations were defined by varying fragment size and overlap. These parameters were chosen based on prior empirical evidence indicating that segmentation granularity directly affects retrieval quality, contextual coverage, and computational cost.",
+            "score": 0.24999616,
+            "raw_content": null,
+            "id": "b8b2ba-01"
+        },
+        {
+            "url": "https://medium.com/@michael_79773/understanding-rag-a-hitchhikers-guide-to-making-llms-more-useful-with-retrieval-augmented-79e34f2854f0",
+            "title": "Understanding RAG: A Hitchhiker’s Guide to Making LLMs More Useful (or Not) with Retrieval…",
+            "content": "FP3: Context processing limitations\n\nRAG systems face limitations in processing retrieved content, especially when token limits or noise in the retrieved data prevent the inclusion of all relevant information.\n\nExample impact: If the system retrieves three detailed papers on colon cancer but only uses snippets from two due to token constraints, it might omit critical nuances, such as the role of a specific medication or procedure, leading to incomplete or misleading advice. [...] RAG offers an interesting and popular approach to enhancing the reliability of LLMs by grounding their responses in real-time and context-specific information. However, this potential comes with challenges. Key limitations include retrieval quality, token constraints, false sense of trust and reliability, more complexity and the inherent challenges of synthesizing accurate answers across multiple sources. [...] These scenarios help expose previously mentioned failure points, such as incomplete context utilization (FP3) or poor retrieval quality (FP2). By carefully designing the test set to include edge cases, ambiguous queries and questions requiring synthesis across documents, developers and end users can better understand the limitations of both retrieval and generation components.\n\nAnalyzing failure patterns",
+            "score": 0.23970512,
+            "raw_content": null,
+            "id": "6963a5-02"
+        }
+    ],
+    "What are the main technical challenges in algorithmic mechanism design versus retrieval-augmented generation (RAG)? How does Corrective RAG (CRAG) address RAG’s challenges, and how does that compare with the difficulty of applying Vickrey–Clarke–Groves (VCG) mechanisms?": [
+        {
+            "url": "https://medium.com/@sahin.samia/crag-corrective-retrieval-augmented-generation-in-llm-what-it-is-and-how-it-works-ce24db3343a7",
+            "title": "CRAG (Corrective Retrieval-Augmented Generation) in LLM: What It Is and How It Works",
+            "content": "Overall, CRAG enhances the robustness, accuracy, and efficiency of AI-generated content by incorporating advanced retrieval and self-correction mechanisms, making it a valuable improvement over traditional RAG methods.\n\n## Key Limitations and challenges\n\nDetection and Correction of Wrong Knowledge:\n\nWhile CRAG aims to improve the RAG framework through corrective mechanisms, detecting and accurately correcting erroneous knowledge still requires further research and development. [...] Despite its advantages, RAG is not without its challenges. One of the main issues is retrieval errors, where the retriever selects documents that are irrelevant or incorrect. These errors can lead to the propagation of misinformation in the generated content. Another significant challenge is hallucination, where the AI model generates content that is factually incorrect or misleading, even when based on retrieved documents.\n\nImage 4 [...] Necessity of Fine-Tuning:\n\nFine-tuning a retrieval evaluator is an inevitable part of implementing CRAG, which can add complexity and time to the integration process.\n\nPotential Bias from Web Searches:\n\nWeb searches can introduce biases due to the varying quality of internet sources. Without careful consideration, this can result in the incorporation of noisy or misleading information into the generated outputs.\n\nQuality of Internet Sources:",
+            "score": 0.57296175,
+            "raw_content": null,
+            "id": "5bb3bd-00"
+        },
+        {
+            "url": "https://www.meilisearch.com/blog/corrective-rag",
+            "title": "Corrective RAG (CRAG): Workflow, implementation, and more | Meilisearch",
+            "content": "Computational cost: More detailed steps mean more computational costs. If we want to run retrieval, evaluation, and correction, the latency infrastructure requirements go up. For applications needing real-time responses, this can be a challenge.\n Dependency on feedback mechanisms: CRAG relies heavily on evaluators or human-in-the-loop feedback to refine outputs. If feedback quality is poor or inconsistent, the corrections can be less effective. [...] Corrective RAG evaluates the generated output and fixes errors after retrieval, while speculative RAG speeds up response generation by predicting multiple candidate outputs early and pruning them later.\n\nIn short, CRAG emphasizes trustworthiness, while speculative RAG prioritizes speed. Both can complement each other depending on system goals.\n\n## Final thoughts on building with corrective RAG [...] CRAG, on the other hand, applies corrective steps before the context reaches the language model. Retrieved documents are filtered, ranked, verified, and even enriched if needed before being passed on to the LLM.\n\nThat way, the LLM receives high-quality, relevant documents before it generates an answer.\n\n## Why is CRAG important in LLM applications?\n\nCRAG makes LLMs more dependable for real-world use cases.\n\nHere’s why CRAG matters in LLM applications:",
+            "score": 0.5702715,
+            "raw_content": null,
+            "id": "96e862-01"
+        },
+        {
+            "url": "https://www.emergentmind.com/topics/corrective-retrieval-augmented-generation-crag",
+            "title": "Corrective Retrieval Augmented Generation (CRAG)",
+            "content": "Limitations include reliance on external LLMs for query rewriting and verification label synthesis, restricted depth of iterative correction in current implementations, and residual challenges in scaling automated API/tool selection for volatile domains (Ouyang et al., 2024, He et al., 2024). [...] context, and hallucinations that often impair standard RAG workflows. CRAG’s operational hypothesis is that both the retrieved context and the query can pose substantive risks for LLM-based knowledge-intensive tasks, and that explicit, data-driven correction mechanisms can produce statistically and practically significant gains in robustness, factuality, and downstream accuracy (Yan et al., 2024, He et al., 2024, Zhang et al., 5 Apr 2025, Callahan et al., 26 Feb 2025). [...] Ablations consistently confirm that routing, domain/dynamism adaptation, web-scale expansion, decomposed filtering, and iterative correctness verification each contribute nontrivially to system robustness; for example, removal of re-ranking, time normalization, or in-context CoT reduces accuracy and increases hallucinations, with up to 12.77 percentage points lost (Ouyang et al., 2024).\n\n## 7. Insights, Limitations, and Outlook\n\nCRAG architectures have established:",
+            "score": 0.51997834,
+            "raw_content": null,
+            "id": "2de2eb-02"
+        }
     ]
 }

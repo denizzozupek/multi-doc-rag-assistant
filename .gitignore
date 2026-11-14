@@ -39,5 +39,3 @@ data/ground_truth.py
 data/ground_truth_prompt.py
 data/audit_ground_truth.py
 data/audit_report.json
-
-decisions.md

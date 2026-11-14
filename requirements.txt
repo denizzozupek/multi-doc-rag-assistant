@@ -22,7 +22,7 @@ pydantic==2.13.4
 pydantic-settings==2.15.0
 
 # State, Cache & Environment
-redis==8.1.0
+
 aiosqlite==0.22.1
 truststore==0.10.4
 python-dotenv==1.2.3

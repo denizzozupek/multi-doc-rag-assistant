@@ -21,15 +21,17 @@ if not OPENAI_API_KEY:
 
 # MODELS
 DEFAULT_LLM = ChatOpenAI(
-    model="gpt-4o-mini",
+    model="gpt-6-luna",
     temperature=0,
+    reasoning_effort="none",
     timeout=30,
     max_retries=3,
 )
 
 CONTEXTUAL_LLM = ChatOpenAI(
-    model="gpt-4o-mini",
+    model="gpt-6-luna",
     temperature=0,
+    reasoning_effort="none",
     timeout=30,
     max_retries=6,
 )
