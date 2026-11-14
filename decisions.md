@@ -20,7 +20,7 @@
 | **Exp B (k=3)** | Sparse BM25 Search | 0.81 | 0.69 | 0.74 | 0.62 | 828 ms | 2,221 ms |
 | **Exp C (k=5)** | Hybrid (Dense + BM25 + RRF) | **0.88** | **0.66** | **0.88** | **0.66** | 1,254 ms | 2,744 ms |
 | **Exp D (top=3)** | Hybrid + Cross-Encoder Rerank | 0.85 | 0.69 | 0.80 | 0.65 | 8,010 ms | 10,302 ms |
-| **Exp E (top=5)** | Hybrid + Cross-Encoder Rerank | **0.92** 🌟 | **0.71** 🌟 | 0.86 | 0.64 | 7,855 ms | 10,010 ms |
+| **Exp E (top=5)** | Hybrid + Cross-Encoder Rerank | **0.92** | **0.71** | 0.86 | 0.64 | 7,855 ms | 10,010 ms |
 
 ### Key Retrieval Takeaways
 1. **Hybrid Retrieval (Exp C & E):** Combining dense semantic search with sparse BM25 significantly outperforms either standalone approach, pushing Hit Rate to **0.92** and MRR to **0.71**.
@@ -58,8 +58,8 @@
 
 | Architecture / Mode | Faithfulness (0-5) | Relevance (0-5) | Multi-turn Score | Avg Gen Latency | P95 Gen Latency | Avg Tokens / Query | Avg Cost / Query | Total Cost (60 Queries) |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **V3 CRAG (Single-Pass)** | **5.00** 🌟 | **5.00** 🌟 | **5.00** | **6.83 s** | **11.33 s** | 2,523 | $0.00042 | $0.0253 |
-| **V4 Pure ReAct Agent** | **5.00** 🌟 | **5.00** 🌟 | **5.00** | 7.64 s | 15.54 s | 2,417 | $0.00046 | $0.0276 |
+| **V3 CRAG (Single-Pass)** | **5.00** | **5.00** | **5.00** | **6.83 s** | **11.33 s** | 2,523 | $0.00042 | $0.0253 |
+| **V4 Pure ReAct Agent** | **5.00** | **5.00** | **5.00** | 7.64 s | 15.54 s | 2,417 | $0.00046 | $0.0276 |
 | **V5 Adaptive Escalate** | **4.93** *(59/60: 5.0)* | **4.93** | **5.00** | 8.22 s | 18.20 s | 2,744 | $0.00047 | $0.0283 |
 
 **Why I Added CRAG:** CRAG introduces a crucial quality-control gate (the Document Grader) between the retriever and the generator. In standard RAG, if the retriever fetches irrelevant chunks, the LLM either refuses to answer or hallucinates. CRAG prevents this by evaluating chunk relevance upfront: if retrieved passages fail the check, it rewrites the query and falls back to Tavily web search to find grounded information. If standard RAG operates blindly on whatever the retriever returns, CRAG acts as a verification layer that ensures only relevant evidence reaches generation—a benefit clearly reflected in the faithfulness scores.
@@ -79,9 +79,9 @@ While all three modes perform strongly, **CRAG** remains the most cost- and late
 
 | Architecture / Mode                 | Configuration              | Faithfulness (0-5) | Relevance (0-5) | Multi-turn Score | Avg Gen Latency | P95 Gen Latency | Avg Tokens / Query | Avg Cost / Query | Total Cost (60 Queries) |
 | ----------------------------------- | -------------------------- | :----------------: | :-------------: | :--------------: | :-------------: | :-------------: | :----------------: | :--------------: | :---------------------: |
-| **V3 CRAG (Single-Pass)**           | `temp=0.0, reasoning=none` |        4.72        |      4.93       |     **4.95**     |  **6.94 s** ⚡   |   **10.53 s**   |       2,369        |   **$0.00027**   |       **$0.0164**       |
-| **V5 Adaptive Escalate**            | `temp=0.0, reasoning=none` | **4.81** *(+0.09)* |      4.95       |     **4.95**     |  **7.23 s** ⚖️  |     15.50 s     |       2,904        |   **$0.00034**   |       **$0.0205**       |
-| **V4 Pure ReAct Agent**             | `temp=0.0, reasoning=none` |    **4.90** 🌟     |   **4.98** 🌟   |       4.85       |     9.98 s      |     35.21 s     |       3,472        |   **$0.00046**   |       **$0.0279**       |
+| **V3 CRAG (Single-Pass)**           | `temp=0.0, reasoning=none` |        4.72        |      4.93       |     **4.95**     |   **6.94 s**    |   **10.53 s**   |       2,369        |   **$0.00027**   |       **$0.0164**       |
+| **V5 Adaptive Escalate**            | `temp=0.0, reasoning=none` | **4.81** *(+0.09)* |      4.95       |     **4.95**     |   **7.23 s**    |     15.50 s     |       2,904        |   **$0.00034**   |       **$0.0205**       |
+| **V4 Pure ReAct Agent**             | `temp=0.0, reasoning=none` |      **4.90**      |    **4.98**     |       4.85       |     9.98 s      |     35.21 s     |       3,472        |   **$0.00046**   |       **$0.0279**       |
 | *(Trial)* **V3 CRAG (Thinking On)** | `temp=1.0, reasoning=open` |        4.87        |      4.97       |       4.85       |     10.52 s     |     16.21 s     |       2,944        |     $0.00033     |         $0.0200         |
 
 **Model Decisions:** All evaluations in this project focused on OpenAI models. Empirically, **non-reasoning configurations (`reasoning_effort="none"`, `temperature=0.0`) consistently outperformed unconstrained reasoning models** in strict RAG settings. Reasoning-enabled models (such as `gpt-5-mini`, `gpt-5-nano`, or `gpt-6-luna` at its default `temperature=1.0`) tend to suffer from **"over-inference" (being overly clever)**—extrapolating beyond the retrieved text by injecting outside domain knowledge (e.g., adding `"(unless P=NP)"` when the source text only states `"NP-complete"`). Under strict LLM-as-a-Judge faithfulness rubrics, any unsupported extrapolation is penalized as a hallucination. By disabling internal reasoning (`reasoning_effort="none"`) on **`gpt-6-luna`**, we unlocked strict `temperature=0.0` determinism, full tool-calling compatibility, zero extrapolation, and an ultra-low pricing tier (**$0.10 / $0.50 per 1M tokens**).
