@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 
 class RunMetadata(BaseModel):
     run_name: str
+    mode: str = "crag"
     timestamp: str
     crag_enabled: bool
     model: str

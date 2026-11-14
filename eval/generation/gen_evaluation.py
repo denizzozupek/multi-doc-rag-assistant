@@ -363,7 +363,7 @@ if __name__ == "__main__":
     judge_llm = base_judge_llm.with_structured_output(JudgeEvaluationPrompt)
 
     run_id = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    crag_enable = True
+    crag_enable = args.mode in ("crag", "escalate")
 
     results = asyncio.run(
         evaluate_queries(
@@ -383,6 +383,7 @@ if __name__ == "__main__":
 
     metadata = RunMetadata(
         run_name=f"{run_prefix}_run_{run_id}",
+        mode=args.mode,
         timestamp=datetime.datetime.now().isoformat(),
         crag_enabled=crag_enable,
         model=getattr(DEFAULT_LLM, "model_name", "gpt-4o-mini"),
