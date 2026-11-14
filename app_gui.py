@@ -289,6 +289,8 @@ chat_history = load_chat_history(st.session_state.active_chat, app)
 
 # Render existing messages
 for message in chat_history:
+    if message.type not in ("human", "ai") or not message.content:
+        continue
     role = "user" if message.type == "human" else "assistant"
     with st.chat_message(role):
         st.markdown(message.content)
@@ -325,7 +327,9 @@ if prompt := st.chat_input("Ask a question about your documents..."):
             ):
                 for node_name, node_output in chunk.items():
                     if "messages" in node_output and node_output["messages"]:
-                        yield node_output["messages"][-1].content
+                        last_msg = node_output["messages"][-1]
+                        if last_msg.type == "ai" and last_msg.content:
+                            yield last_msg.content
 
         st.write_stream(stream_graph_response)
 

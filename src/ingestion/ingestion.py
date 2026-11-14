@@ -272,5 +272,17 @@ def ingestion_pipeline(
     return vector_db
 
 if __name__ == "__main__":
+    import argparse
+
     logging.basicConfig(level=logging.INFO)
-    ingestion_pipeline()
+    parser = argparse.ArgumentParser(
+        description="Ingest a PDF document into ChromaDB and BM25s indexes."
+    )
+    parser.add_argument(
+        "--pdf",
+        type=str,
+        default=str(PDF_PATH),
+        help="Path to the PDF file to ingest (defaults to config PDF_PATH).",
+    )
+    args = parser.parse_args()
+    ingestion_pipeline(pdf_path=args.pdf)

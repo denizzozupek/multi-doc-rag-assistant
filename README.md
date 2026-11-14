@@ -2,7 +2,7 @@
 
 A production-oriented **Tri-Modal Agentic & Corrective RAG** platform built with **LangGraph**, **ChromaDB**, **BM25s**, **Cross-Encoder Reranking**, and **SQLite Checkpointing**. Designed for high-precision multi-document QA with configurable execution modes (**CRAG**, **Agentic ReAct**, and **Adaptive Escalate**) and systematically benchmarked on a 60-question evaluation suite.
 
-![Demo](assets/demo.gif)
+![Demo](assets/multidoc_rag_assistant_example.gif)
 
 ---
 
@@ -173,6 +173,19 @@ pip install -r requirements.txt
 cp .env.example .env
 # Add your OPENAI_API_KEY and TAVILY_API_KEY inside .env
 ```
+
+### First-Time Document Ingestion
+On a fresh clone, the local indexes (`data/vector_db/`, `data/bm25_index/`) and conversation store (`data/graph.db`) do not exist yet—they are generated automatically when you ingest your first document.
+
+* **Option A — Upload via Streamlit UI (Recommended):** Launch `streamlit run app_gui.py` and upload any PDF file(s) from the sidebar. The app automatically computes SHA-256 hashes (preventing duplicate embeddings), enriches chunks with document context, and builds both the ChromaDB vector store and BM25s index.
+* **Option B — Ingest via CLI (Before running `src.main`):**
+  ```bash
+  # Ingest your own PDF file
+  python -m src.ingestion.ingestion --pdf path/to/your_document.pdf
+
+  # Or ingest the included sample paper (default)
+  python -m src.ingestion.ingestion
+  ```
 
 ### Running the Streamlit UI
 ```bash
